@@ -8,6 +8,7 @@ import cookie from "react-cookies";
 import { Layout, Menu, Icon, Drawer, Button } from "antd";
 
 import SideBar from "../Sidebar/SideBar";
+import CourseCard from "./CourseCard";
 
 class Dashboard extends Component {
   state = { courses: "" };
@@ -69,6 +70,7 @@ class Dashboard extends Component {
               }}
             >
               <div>{coursesPresent}</div> {/**If no courses present */}
+              <CourseCard />
             </Content>
           </Layout>
         </div>
