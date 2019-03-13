@@ -85,9 +85,11 @@ class SideBar extends Component {
                   <Icon type="dashboard" />
                   <span className="nav-text">Dashboard</span>
                 </Menu.Item>
-                <Menu.Item key="3" onClick={this.handleShowCourses}>
+                <Menu.Item key="3">
                   <Icon type="book" />
-                  <span className="nav-text">Courses</span>
+                  <span className="nav-text">
+                    <Link to="/courses">Courses</Link>
+                  </span>
                 </Menu.Item>
               </Menu>
             </Sider>

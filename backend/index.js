@@ -6,20 +6,6 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const mysql = require("mysql");
 
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "password",
-  database: "canvas"
-});
-
-db.connect(err => {
-  if (err) {
-    throw err;
-  }
-  console.log("MySql Connected...");
-});
-
 const app = express();
 
 //use cors to allow cross origin resource sharing
@@ -38,8 +24,8 @@ app.use(
   })
 );
 
-app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(bodyParser.json());
 
 // set a cookie
 app.use(function(req, res, next) {
@@ -74,6 +60,20 @@ app.use(function(req, res, next) {
   );
   res.setHeader("Cache-Control", "no-cache");
   next();
+});
+
+const db = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "password",
+  database: "canvas"
+});
+
+db.connect(err => {
+  if (err) {
+    throw err;
+  }
+  console.log("MySql Connected...");
 });
 
 //Route to handle Post Request Call to add a new user

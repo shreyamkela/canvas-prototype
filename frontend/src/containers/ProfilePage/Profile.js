@@ -6,6 +6,7 @@ import { Redirect } from "react-router";
 import { Layout } from "antd";
 
 import SideBar from "../Sidebar/SideBar";
+import Avatar from "./Avatar";
 
 class Profile extends Component {
   render() {
@@ -29,7 +30,18 @@ class Profile extends Component {
           <Layout>
             <SideBar />
           </Layout>
-          <Layout style={{ marginLeft: 150 }}>profile</Layout>
+          <Layout style={{ marginLeft: 150, padding: "0 24px 24px" }}>
+            <Content
+              style={{
+                background: "#fff",
+                padding: 24,
+                margin: "16px 0",
+                minHeight: 570
+              }}
+            >
+              Content
+            </Content>
+          </Layout>
         </div>
       );
     } else if (this.props.sideBar.dashboardVisible === true) {

@@ -28,7 +28,7 @@ class Courses extends Component {
     if (!cookie.load("cookie")) {
       console.log("Redirecting to Login...");
       return <Redirect to="/" />;
-    } else if (this.props.sideBar.coursesVisible) {
+    } else {
       console.log("Staying on Courses...");
       const { Header, Content, Footer, Sider } = Layout;
       return (
@@ -39,16 +39,29 @@ class Courses extends Component {
           <Layout style={{ marginLeft: 150 }}>courses</Layout>
         </div>
       );
-    } else if (this.props.sideBar.dashboardVisible === true) {
-      console.log("Redirecting to Dashboard from Courses...");
-      return <Redirect to="/home" />;
-    } else if (this.props.sideBar.profileVisible === true) {
-      console.log("Redirecting to Profile from Courses...");
-      return <Redirect to="/profile" />;
-    } else {
-      console.log("Returning null from Courses...");
-      return null;
     }
+
+    // else if (this.props.sideBar.coursesVisible) {
+    //   console.log("Staying on Courses...");
+    //   const { Header, Content, Footer, Sider } = Layout;
+    //   return (
+    //     <div>
+    //       <Layout>
+    //         <SideBar />
+    //       </Layout>
+    //       <Layout style={{ marginLeft: 150 }}>courses</Layout>
+    //     </div>
+    //   );
+    // } else if (this.props.sideBar.dashboardVisible === true) {
+    //   console.log("Redirecting to Dashboard from Courses...");
+    //   return <Redirect to="/home" />;
+    // } else if (this.props.sideBar.profileVisible === true) {
+    //   console.log("Redirecting to Profile from Courses...");
+    //   return <Redirect to="/profile" />;
+    // } else {
+    //   console.log("Returning null from Courses...");
+    //   return null;
+    // }
   }
 }
 

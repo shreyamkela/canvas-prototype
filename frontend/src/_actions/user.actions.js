@@ -18,6 +18,7 @@ export const postLoginData = data => dispatch => {
         payload: response
       })
     );
+
   console.log("Actions cookie", cookie.load("cookie"));
 };
 
