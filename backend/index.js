@@ -115,7 +115,7 @@ app.post("/login", function(req, res) {
   let password = loginData.data.password;
   console.log("email & Password: ", email, password);
 
-  // Using an SQL quesy, check if Email and password is present
+  // Using an SQL query, check if Email and password is present
   db.query(`SELECT Persona FROM Users WHERE Email = '${email}' AND BINARY Password = '${password}'`, (err, results) => {
     // Checing for password already present should be case sensitive - The password's case should also match - For this we use the keyword BINARY - https://stackoverflow.com/questions/5629111/how-can-i-make-sql-case-sensitive-string-comparison-on-mysql
     if (err) throw err;
@@ -144,6 +144,36 @@ app.post("/login", function(req, res) {
     } else {
       console.log("Incorrect email or password");
       res.send("Incorrect email or password");
+    }
+  });
+});
+
+//Route to handle Post Request Call to login an existing user
+app.post("/createcourse", function(req, res) {
+  console.log("Create Course Data Posted!");
+  let courseData = req.body.data;
+  let id = courseData.courseId;
+  console.log("Id: ", id);
+
+  db.query(`SELECT Name FROM Courses WHERE Id = '${id}'`, (err, results) => {
+    if (err) throw err;
+    console.log(results);
+    console.log(results[0]);
+    if (results[0] === undefined) {
+      // if not present
+      let { courseName, dept, descrip, room, classCap, waitlistCap, term } = courseData;
+      console.log(id, courseName, dept, descrip, room, classCap, waitlistCap, term);
+      db.query(
+        `INSERT INTO Courses (Id, Name, Department, Description, Room, Capacity, Waitlist, Term) VALUES ('${id}','${courseName}','${dept}','${descrip}','${room}','${classCap}','${waitlistCap}','${term}')`,
+        err => {
+          if (err) throw err;
+          console.log("New details added to Courses table");
+        }
+      );
+      res.send("Creation Successful!");
+    } else {
+      console.log("Course id already present!"); //FIXME Make page stay on frontend if course id already present
+      res.send("Course id already present!");
     }
   });
 });

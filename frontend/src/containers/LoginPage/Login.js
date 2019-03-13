@@ -28,7 +28,7 @@ class Login extends Component {
       event.preventDefault(); // dont do default - default is submitting the data to the database
       event.stopPropagation(); // dont propogate event to parents
     } else {
-      console.log("Sending Login Data!");
+      console.log("Sending Login Data!", this.refs.email.value, this.refs.email, this.refs);
       let data = { email: this.refs.email.value, password: this.refs.password.value };
       dispatch(postLoginData(data));
       console.log("Redirecting to Home...");

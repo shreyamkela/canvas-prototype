@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { connect } from "react-redux"; // Connects the components to the redux store
 import cookie from "react-cookies";
 import { Redirect } from "react-router";
 
@@ -15,15 +14,13 @@ class Profile extends Component {
     // At the server end, we use res.cookie command of the express-session library, to set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
     // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
     // https://stackoverflow.com/questions/44107665/how-to-access-a-browser-cookie-in-a-react-app
-    const { sideBar } = this.props; // redux state to props
-    console.log("ShowProfile:", this.props.sideBar.profileVisible);
 
     console.log(cookie.load("cookie"));
     if (!cookie.load("cookie")) {
       // FIXME We have to include these if else conditions in each an every page to check if the user is logged in. Is there a better way do do this validation so that code is reduced?
       console.log("Redirecting to Login...");
       return <Redirect to="/" />;
-    } else if (this.props.sideBar.profileVisible) {
+    } else {
       const { Header, Content, Footer, Sider } = Layout;
       return (
         <div>
@@ -40,25 +37,13 @@ class Profile extends Component {
               }}
             >
               Content
+              <Avatar />
             </Content>
           </Layout>
         </div>
       );
-    } else if (this.props.sideBar.dashboardVisible === true) {
-      console.log("Redirecting to Dashboard from Profile...");
-      return <Redirect to="/home" />;
-    } else if (this.props.sideBar.coursesVisible === true) {
-      console.log("Redirecting to Courses from Profile...");
-      return <Redirect to="/courses" />;
-    } else {
-      return null;
     }
   }
 }
 
-function mapStateToProps(state) {
-  const { sideBar } = state;
-  return { sideBar };
-}
-
-export default connect(mapStateToProps)(Profile);
+export default Profile;

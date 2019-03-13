@@ -7,6 +7,7 @@ import Login from "../LoginPage/Login";
 import Dashboard from "../HomePage/Dashboard";
 import Profile from "../ProfilePage/Profile";
 import Courses from "../Courses/Courses";
+import Create from "../Courses/Create";
 
 import store from "../../_helpers/store";
 
@@ -24,6 +25,7 @@ class App extends Component {
             <Route path="/home" component={Dashboard} />
             <Route path="/profile" component={Profile} />
             <Route path="/courses" component={Courses} />
+            <Route path="/create" component={Create} /> {/* FIXME Make create route inside the courses file*/}
           </div>
         </BrowserRouter>
       </Provider>

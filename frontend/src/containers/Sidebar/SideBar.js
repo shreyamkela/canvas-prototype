@@ -2,13 +2,8 @@ import React, { Component } from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import cookie from "react-cookies";
-import { connect } from "react-redux"; // Connects the components to the redux store
 
 import { Layout, Menu, Icon, Drawer, Button } from "antd";
-
-import { showProfile } from "../../_actions/user.actions";
-import { showDashboard } from "../../_actions/user.actions";
-import { showCourses } from "../../_actions/user.actions";
 
 class SideBar extends Component {
   state = { accountDrawerVisible: false };
@@ -26,23 +21,7 @@ class SideBar extends Component {
   };
 
   handleShowProfile = () => {
-    let { dispatch } = this.props;
-
-    dispatch(showProfile());
     this.setState({ accountDrawerVisible: false });
-  };
-
-  handleShowDashboard = () => {
-    // Home is the Dashboard page
-    let { dispatch } = this.props;
-
-    dispatch(showDashboard());
-  };
-
-  handleShowCourses = () => {
-    let { dispatch } = this.props;
-
-    dispatch(showCourses());
   };
 
   handleLogOut = () => {
@@ -79,15 +58,30 @@ class SideBar extends Component {
               <Menu theme="dark" mode="inline">
                 <Menu.Item key="1" onClick={this.showDrawer}>
                   <Icon type="user" />
-                  <span className="nav-text">Account</span>
+                  <span className="nav-text">
+                    <Link to="#">
+                      {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
+                      <font size="2">Account</font>
+                    </Link>
+                  </span>
                 </Menu.Item>
-                <Menu.Item key="2" onClick={this.handleShowDashboard}>
+                <Menu.Item key="2">
                   <Icon type="dashboard" />
-                  <span className="nav-text">Dashboard</span>
+                  <span className="nav-text">
+                    <Link to="/home">
+                      {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
+                      <font size="2">Dashboard</font>
+                    </Link>
+                  </span>
                 </Menu.Item>
-                <Menu.Item key="3" onClick={this.handleShowCourses}>
+                <Menu.Item key="3">
                   <Icon type="book" />
-                  <span className="nav-text">Courses</span>
+                  <span className="nav-text">
+                    <Link to="/courses">
+                      {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
+                      <font size="2">Courses</font>
+                    </Link>
+                  </span>
                 </Menu.Item>
               </Menu>
             </Sider>
@@ -130,4 +124,4 @@ class SideBar extends Component {
   }
 }
 
-export default connect(null)(SideBar);
+export default SideBar;
