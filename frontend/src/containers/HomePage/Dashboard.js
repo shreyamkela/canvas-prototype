@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import { Redirect } from "react-router";
+import axios from "axios";
 import cookie from "react-cookies";
 
 import { Layout, Menu, Icon, Drawer, Button } from "antd";
@@ -9,6 +10,22 @@ import { Layout, Menu, Icon, Drawer, Button } from "antd";
 import SideBar from "../Sidebar/SideBar";
 
 class Dashboard extends Component {
+  state = { courses: "" };
+
+  constructor() {
+    super();
+    axios
+      .get("http://localhost:3001/getcourses")
+      .then(response => {
+        // you can access your data here
+        console.log("courses response:", response.data);
+        this.setState({ courses: response.data });
+      })
+      .catch(error => {
+        console.log(error.response);
+      });
+  }
+
   handleLogOut = () => {
     // FIXME Handle logout with state? So that we dont have to include handleLogOut() into each and every page code
     console.log("Log Out Clicked!");
@@ -20,6 +37,7 @@ class Dashboard extends Component {
     // At the server end, we use res.cookie command of the express-session library, to set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
     // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
     // https://stackoverflow.com/questions/44107665/how-to-access-a-browser-cookie-in-a-react-app
+    console.log("COURSES:", this.state.courses[0]);
 
     console.log(cookie.load("cookie"));
     if (!cookie.load("cookie")) {

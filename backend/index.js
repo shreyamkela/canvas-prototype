@@ -76,6 +76,8 @@ db.connect(err => {
   console.log("MySql Connected...");
 });
 
+// FIXME Add get routes in all as well?
+
 //Route to handle Post Request Call to add a new user
 app.post("/newuser", function(req, res) {
   console.log("New User Details Posted!");
@@ -148,7 +150,7 @@ app.post("/login", function(req, res) {
   });
 });
 
-//Route to handle Post Request Call to login an existing user
+//Route to handle Post Request Call to create a new course
 app.post("/createcourse", function(req, res) {
   console.log("Create Course Data Posted!");
   let courseData = req.body.data;
@@ -174,6 +176,21 @@ app.post("/createcourse", function(req, res) {
     } else {
       console.log("Course id already present!"); //FIXME Make page stay on frontend if course id already present
       res.send("Course id already present!");
+    }
+  });
+});
+
+//Route to handle Get Request Call to get all courses for faculty/student depending upon the persona
+app.get("/getcourses", function(req, res) {
+  console.log("Get Courses data...");
+  db.query(`SELECT Id, Name FROM Courses`, (err, results) => {
+    if (err) throw err;
+    console.log(results);
+    if (results[0] !== undefined) {
+      res.send(results);
+    } else {
+      console.log("No courses available.");
+      res.send("noCourses");
     }
   });
 });
