@@ -2,38 +2,16 @@
 
 import React, { Component } from "react";
 import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
 import cookie from "react-cookies";
 import { connect } from "react-redux"; // Connects the components to the redux store
 
 import { Layout, Menu, Icon, Drawer, Button } from "antd";
 
 import SideBar from "../Sidebar/SideBar";
-import { showProfile } from "../../_actions/user.actions";
 
-class Home extends Component {
-  state = { accountDrawerVisible: false };
-
-  showDrawer = () => {
-    this.setState({
-      accountDrawerVisible: true
-    });
-  };
-
-  onClose = () => {
-    this.setState({
-      accountDrawerVisible: false
-    });
-  };
-
-  handleShowProfile = () => {
-    let { dispatch } = this.props;
-
-    dispatch(showProfile(true));
-    this.setState({ accountDrawerVisible: false });
-  };
-
+class Dashboard extends Component {
   handleLogOut = () => {
+    // FIXME Handle logout with state? So that we dont have to include handleLogOut() into each and every page code
     console.log("Log Out Clicked!");
   };
 
@@ -43,12 +21,15 @@ class Home extends Component {
     // At the server end, we use res.cookie command of the express-session library, to set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
     // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
     // https://stackoverflow.com/questions/44107665/how-to-access-a-browser-cookie-in-a-react-app
+    const { sideBar } = this.props; // redux state to props
+    console.log("ShowDashboard:", this.props.sideBar.dashboardVisible);
+
     console.log(cookie.load("cookie"));
     if (!cookie.load("cookie")) {
       console.log("Redirecting to Login...");
       return <Redirect to="/" />;
-    } else {
-      console.log("Staying on Home...");
+    } else if (this.props.sideBar.dashboardVisible === true) {
+      console.log("Staying on Dashboard...");
       const { Header, Content, Footer, Sider } = Layout;
       return (
         <div>
@@ -58,8 +39,22 @@ class Home extends Component {
           <Layout style={{ marginLeft: 150 }}>dashboard</Layout>
         </div>
       );
+    } else if (this.props.sideBar.profileVisible === true) {
+      console.log("Redirecting to Profile from Dashboard...");
+      return <Redirect to="/profile" />;
+    } else if (this.props.sideBar.coursesVisible === true) {
+      console.log("Redirecting to Courses from Dashboard...");
+      return <Redirect to="/courses" />;
+    } else {
+      console.log("Returning null from Dashboard...");
+      return null;
     }
   }
 }
 
-export default connect(null)(Home);
+function mapStateToProps(state) {
+  const { sideBar } = state;
+  return { sideBar };
+}
+
+export default connect(mapStateToProps)(Dashboard);

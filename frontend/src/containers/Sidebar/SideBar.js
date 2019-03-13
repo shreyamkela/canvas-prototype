@@ -7,7 +7,8 @@ import { connect } from "react-redux"; // Connects the components to the redux s
 import { Layout, Menu, Icon, Drawer, Button } from "antd";
 
 import { showProfile } from "../../_actions/user.actions";
-import { showHome } from "../../_actions/user.actions";
+import { showDashboard } from "../../_actions/user.actions";
+import { showCourses } from "../../_actions/user.actions";
 
 class SideBar extends Component {
   state = { accountDrawerVisible: false };
@@ -27,14 +28,21 @@ class SideBar extends Component {
   handleShowProfile = () => {
     let { dispatch } = this.props;
 
-    dispatch(showProfile(true));
+    dispatch(showProfile());
     this.setState({ accountDrawerVisible: false });
   };
 
-  handleShowHome = () => {
+  handleShowDashboard = () => {
+    // Home is the Dashboard page
     let { dispatch } = this.props;
 
-    dispatch(showHome(true));
+    dispatch(showDashboard());
+  };
+
+  handleShowCourses = () => {
+    let { dispatch } = this.props;
+
+    dispatch(showCourses());
   };
 
   handleLogOut = () => {
@@ -68,16 +76,16 @@ class SideBar extends Component {
               collapsible
             >
               <div className="logo" />
-              <Menu theme="dark" mode="inline" defaultSelectedKeys={["2"]}>
+              <Menu theme="dark" mode="inline">
                 <Menu.Item key="1" onClick={this.showDrawer}>
                   <Icon type="user" />
                   <span className="nav-text">Account</span>
                 </Menu.Item>
-                <Menu.Item key="2">
+                <Menu.Item key="2" onClick={this.handleShowDashboard}>
                   <Icon type="dashboard" />
                   <span className="nav-text">Dashboard</span>
                 </Menu.Item>
-                <Menu.Item key="3">
+                <Menu.Item key="3" onClick={this.handleShowCourses}>
                   <Icon type="book" />
                   <span className="nav-text">Courses</span>
                 </Menu.Item>

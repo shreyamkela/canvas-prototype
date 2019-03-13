@@ -1,7 +1,7 @@
 import axios from "axios";
 import cookie from "react-cookies";
 
-import { LOGIN_REQUEST, REGISTER, SHOW_PROFILE } from "./types";
+import { LOGIN_REQUEST, REGISTER, SHOW_PROFILE, SHOW_DASHBOARD, SHOW_COURSES } from "./types";
 
 export const postLoginData = data => dispatch => {
   console.log("postLoginData called!");
@@ -39,9 +39,22 @@ export const postRegistrationData = data => dispatch => {
 };
 
 export const showProfile = data => dispatch => {
-  console.log("showProfile called!", data);
+  console.log("showProfile called!");
   dispatch({
-    type: SHOW_PROFILE, // Sending type in action dispatches is mandatory
-    payload: data
+    type: SHOW_PROFILE // Sending type in action dispatches is mandatory
+  });
+};
+
+export const showDashboard = data => dispatch => {
+  console.log("showDashboard called!");
+  dispatch({
+    type: SHOW_DASHBOARD // Sending type in action dispatches is mandatory
+  });
+};
+
+export const showCourses = data => dispatch => {
+  console.log("showCourses called!");
+  dispatch({
+    type: SHOW_COURSES // Sending type in action dispatches is mandatory
   });
 };

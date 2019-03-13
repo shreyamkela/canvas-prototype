@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
 import loginRequestReducer from "./loginRequest.reducer";
 import registrationRequestReducer from "./registrationRequest.reducer";
-import showProfileReducer from "./showProfile.reducer";
+import sideBarReducer from "./sideBar.reducer";
 
 export default combineReducers({
   loginRequest: loginRequestReducer,
   registrationRequest: registrationRequestReducer,
-  showProfile: showProfileReducer
+  sideBar: sideBarReducer
 });
