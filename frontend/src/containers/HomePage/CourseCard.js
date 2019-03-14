@@ -23,7 +23,7 @@ class CourseCard extends Component {
 
     return (
       <Card
-        style={{ width: 300 }}
+        style={{ width: 250 }}
         cover={<img src={cardImage} />}
         actions={[
           <a href="#">
@@ -38,7 +38,7 @@ class CourseCard extends Component {
           <Icon type="folder" />
         ]}
       >
-        <Meta style={{ height: 20, textAlign: "center" }} title={title} />
+        <Meta style={{ height: 15, textAlign: "center" }} title={title} />
       </Card>
     );
   }

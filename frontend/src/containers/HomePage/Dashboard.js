@@ -43,9 +43,17 @@ class Dashboard extends Component {
     if (this.state.courses === "noCourses") {
       coursesPresent = (
         <font className="font-weight-bold" size="3">
-          No courses available
+          No courses available{/**If no courses present */}
         </font>
       );
+    } else {
+      let allCourses = this.state.courses;
+
+      Object.keys(allCourses).map(function(key) {
+        console.log("This course id: ", allCourses[key]);
+      });
+
+      coursesPresent = <CourseCard />;
     }
 
     console.log(cookie.load("cookie"));
@@ -69,8 +77,7 @@ class Dashboard extends Component {
                 minHeight: 470
               }}
             >
-              <div>{coursesPresent}</div> {/**If no courses present */}
-              <CourseCard />
+              <div>{coursesPresent}</div>
             </Content>
           </Layout>
         </div>
