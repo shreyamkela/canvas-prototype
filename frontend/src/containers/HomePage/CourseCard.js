@@ -13,7 +13,14 @@ class CourseCard extends Component {
   }
 
   componentDidMount() {
-    this.setState({ title: "Enter Title" });
+    console.log("This Course", this.props.course);
+    let titleString = `${this.props.course.Id} - ${this.props.course.Name}`;
+    let courseTitle = (
+      <a href="#">
+        <font size="2">{titleString}</font>
+      </a>
+    );
+    this.setState({ title: courseTitle });
   }
 
   render() {
@@ -28,7 +35,6 @@ class CourseCard extends Component {
         actions={[
           <a href="#">
             <Badge>
-              {" "}
               {/** FIXME Add count display to badge */}
               <Icon type="notification" />
             </Badge>

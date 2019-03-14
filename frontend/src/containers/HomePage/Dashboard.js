@@ -5,7 +5,7 @@ import { Redirect } from "react-router";
 import axios from "axios";
 import cookie from "react-cookies";
 
-import { Layout, Menu, Icon, Drawer, Button } from "antd";
+import { Layout, Menu, Icon, Drawer, Button, Row, Col } from "antd";
 
 import SideBar from "../Sidebar/SideBar";
 import CourseCard from "./CourseCard";
@@ -49,11 +49,16 @@ class Dashboard extends Component {
     } else {
       let allCourses = this.state.courses;
 
-      Object.keys(allCourses).map(function(key) {
-        console.log("This course id: ", allCourses[key]);
-      });
-
-      coursesPresent = <CourseCard />;
+      coursesPresent = (
+        <React.Fragment>
+          {Object.keys(allCourses).map(key => (
+            //console.log("This course id: ", allCourses[key]);
+            <Col className="py-3 mx-2" span={6}>
+              <CourseCard course={allCourses[key]} />
+            </Col>
+          ))}
+        </React.Fragment>
+      );
     }
 
     console.log(cookie.load("cookie"));
@@ -69,7 +74,7 @@ class Dashboard extends Component {
             <SideBar />
           </Layout>
           <Layout style={{ marginLeft: 150 }}>
-            <Header style={{ background: "#fff" }} />
+            {/* <Header style={{ background: "#fff" }} /> */}
             <Content
               style={{
                 background: "#fff",
@@ -77,7 +82,9 @@ class Dashboard extends Component {
                 minHeight: 470
               }}
             >
-              <div>{coursesPresent}</div>
+              <div>
+                <Row>{coursesPresent}</Row>
+              </div>
             </Content>
           </Layout>
         </div>
