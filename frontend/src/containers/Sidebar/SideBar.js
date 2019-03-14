@@ -6,25 +6,22 @@ import cookie from "react-cookies";
 import { Layout, Menu, Icon, Drawer, Button, Col } from "antd";
 
 class SideBar extends Component {
-  state = { accountDrawerVisible: false, coursesDrawerVisible: false, courses: "" };
+  state = { accountDrawerVisible: false, coursesDrawerVisible: false };
 
-  componentDidMount() {
-    console.log("CCCCCCCCCCCCCCC", this.props.course);
-    // Object.keys(allCourses).map(key => (
-    //   //console.log("This course id: ", allCourses[key]);
+  // Object.keys(allCourses).map(key => (
+  //   //console.log("This course id: ", allCourses[key]);
 
-    //     <CourseCard course={allCourses[key]} />
+  //     <CourseCard course={allCourses[key]} />
 
-    // ))
-    // let titleString = `${this.props.course.Id} - ${this.props.course.Name}`;
-    // let link = `/courseview/${this.props.course.Id}`; // Ex: Endpoint for this course is /view/CMPE273
-    // let courseTitle = (
-    //   <a href={link}>
-    //     <font size="2">{titleString}</font>
-    //   </a>
-    // );
-    // this.setState({ title: courseTitle });
-  }
+  // ))
+  // let titleString = `${this.props.course.Id} - ${this.props.course.Name}`;
+  // let link = `/courseview/${this.props.course.Id}`; // Ex: Endpoint for this course is /view/CMPE273
+  // let courseTitle = (
+  //   <a href={link}>
+  //     <font size="2">{titleString}</font>
+  //   </a>
+  // );
+  // this.setState({ title: courseTitle });
 
   showAccountDrawer = () => {
     this.setState({
@@ -51,26 +48,36 @@ class SideBar extends Component {
 
   render() {
     let coursesPresent = null;
-    // if (this.state.courses === "noCourses") {
-    //   coursesPresent = (
-    //     <font className="font-weight-bold" size="3">
-    //       No courses available{/**If no courses present */}
-    //     </font>
-    //   );
-    // } else {
-    //   let allCourses = this.state.courses;
+    let allCourses = null;
 
-    //   coursesPresent = (
-    //     <React.Fragment>
-    //       {Object.keys(allCourses).map(key => (
-    //         //console.log("This course id: ", allCourses[key]);
-    //         <Col className="py-3 mx-2" span={6}>
-    //           <CourseCard course={allCourses[key]} />
-    //         </Col>
-    //       ))}
-    //     </React.Fragment>
-    //   );
-    // }
+    if (this.props.course === "noCourses") {
+      coursesPresent = (
+        <font className="font-weight-bold" size="3">
+          No courses available{/**If no courses present */}
+        </font>
+      );
+    } else {
+      allCourses = this.props.course;
+      console.log("CCCCCCCCCC", allCourses);
+      Object.keys(allCourses).map(key => {
+        let linkString = `${allCourses[key].Id}`;
+        Object.assign(allCourses[key], { Link: `/courseview/${linkString}` });
+      });
+      console.log("CCCCCCCCCC", allCourses);
+      coursesPresent = (
+        //let link = `/courseview/${this.props.course.Id}`;
+        <React.Fragment>
+          {Object.keys(allCourses).map(key => (
+            //console.log("This course id: ", allCourses[key]);
+
+            <Link to={allCourses[key].Link} style={{ textDecoration: "underline" }} onClick={this.onClose}>
+              {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
+              <font size="4">{allCourses[key].Id}</font>
+            </Link>
+          ))}
+        </React.Fragment>
+      );
+    }
 
     if (!cookie.load("cookie")) {
       console.log("Redirecting to Login...");
@@ -160,10 +167,7 @@ class SideBar extends Component {
               onClose={this.onClose}
               visible={this.state.coursesDrawerVisible}
             >
-              <Link to="/courses" style={{ textDecoration: "underline" }} onClick={this.onClose}>
-                {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
-                <font size="4">Courses</font>
-              </Link>
+              {coursesPresent}
               <div
                 style={{
                   position: "absolute",
