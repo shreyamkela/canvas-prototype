@@ -5,7 +5,7 @@ import { Redirect } from "react-router";
 import axios from "axios";
 import cookie from "react-cookies";
 
-import { Layout, Menu, Icon, Drawer, Button, Row, Col } from "antd";
+import { Layout, Row, Col } from "antd";
 
 import SideBar from "../Sidebar/SideBar";
 import CourseCard from "./CourseCard";
@@ -19,7 +19,7 @@ class Dashboard extends Component {
       .get("http://localhost:3001/getcourses")
       .then(response => {
         // you can access your data here
-        console.log("courses response:", response.data);
+        //console.log("courses response:", response.data);
         this.setState({ courses: response.data });
       })
       .catch(error => {
@@ -34,12 +34,13 @@ class Dashboard extends Component {
 
   render() {
     let coursesPresent = null;
-    console.log("Home Page Reached!");
+    let allCourses = null;
+    //console.log("Home Page Reached!");
     //if not logged in go to login page:
     // At the server end, we use res.cookie command of the express-session library, to set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
     // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
     // https://stackoverflow.com/questions/44107665/how-to-access-a-browser-cookie-in-a-react-app
-    console.log("COURSES:", this.state.courses);
+    //console.log("COURSES:", this.state.courses);
     if (this.state.courses === "noCourses") {
       coursesPresent = (
         <font className="font-weight-bold" size="3">
@@ -47,7 +48,7 @@ class Dashboard extends Component {
         </font>
       );
     } else {
-      let allCourses = this.state.courses;
+      allCourses = this.state.courses;
 
       coursesPresent = (
         <React.Fragment>
@@ -71,7 +72,7 @@ class Dashboard extends Component {
       return (
         <div>
           <Layout>
-            <SideBar />
+            <SideBar course={allCourses} />
           </Layout>
           <Layout style={{ marginLeft: 150 }}>
             {/* <Header style={{ background: "#fff" }} /> */}

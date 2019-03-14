@@ -3,10 +3,28 @@ import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import cookie from "react-cookies";
 
-import { Layout, Menu, Icon, Drawer, Button } from "antd";
+import { Layout, Menu, Icon, Drawer, Button, Col } from "antd";
 
 class SideBar extends Component {
-  state = { accountDrawerVisible: false, coursesDrawerVisible: false };
+  state = { accountDrawerVisible: false, coursesDrawerVisible: false, courses: "" };
+
+  componentDidMount() {
+    console.log("CCCCCCCCCCCCCCC", this.props.course);
+    // Object.keys(allCourses).map(key => (
+    //   //console.log("This course id: ", allCourses[key]);
+
+    //     <CourseCard course={allCourses[key]} />
+
+    // ))
+    // let titleString = `${this.props.course.Id} - ${this.props.course.Name}`;
+    // let link = `/courseview/${this.props.course.Id}`; // Ex: Endpoint for this course is /view/CMPE273
+    // let courseTitle = (
+    //   <a href={link}>
+    //     <font size="2">{titleString}</font>
+    //   </a>
+    // );
+    // this.setState({ title: courseTitle });
+  }
 
   showAccountDrawer = () => {
     this.setState({
@@ -32,17 +50,32 @@ class SideBar extends Component {
   };
 
   render() {
-    console.log("Home Page Reached!");
-    //if not logged in go to login page:
-    // At the server end, we use res.cookie command of the express-session library, to set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
-    // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
-    // https://stackoverflow.com/questions/44107665/how-to-access-a-browser-cookie-in-a-react-app
-    console.log(cookie.load("cookie"));
+    let coursesPresent = null;
+    // if (this.state.courses === "noCourses") {
+    //   coursesPresent = (
+    //     <font className="font-weight-bold" size="3">
+    //       No courses available{/**If no courses present */}
+    //     </font>
+    //   );
+    // } else {
+    //   let allCourses = this.state.courses;
+
+    //   coursesPresent = (
+    //     <React.Fragment>
+    //       {Object.keys(allCourses).map(key => (
+    //         //console.log("This course id: ", allCourses[key]);
+    //         <Col className="py-3 mx-2" span={6}>
+    //           <CourseCard course={allCourses[key]} />
+    //         </Col>
+    //       ))}
+    //     </React.Fragment>
+    //   );
+    // }
+
     if (!cookie.load("cookie")) {
       console.log("Redirecting to Login...");
       return <Redirect to="/" />;
     } else {
-      console.log("Staying on Home...");
       const { Header, Content, Footer, Sider } = Layout;
       return (
         <div>
@@ -131,6 +164,24 @@ class SideBar extends Component {
                 {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                 <font size="4">Courses</font>
               </Link>
+              <div
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  bottom: 0,
+                  width: "100%",
+                  borderTop: "1px solid #e9e9e9",
+                  padding: "10px 16px",
+                  background: "#fff",
+                  textAlign: "center"
+                }}
+              >
+                <Link to="/create" style={{ textDecoration: "underline" }}>
+                  {/**FIXME Make routes under the courses page
+                NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
+                  <font size="4">Create a Course</font>
+                </Link>
+              </div>
             </Drawer>
           </Layout>
         </div>

@@ -7,13 +7,8 @@ import cardImage from "../../_public/images/courseCard.jpg";
 class CourseCard extends Component {
   state = { title: "" };
 
-  constructor() {
-    super();
-    // this.setState({ title: "Enter Title" }); // Setting the state in constructor does not work as the CourseCard component is being use as a child under dashboard component, and the card component does not re render when we use setState in its constructor. First courseCard is mounted and the state title is "". Then we have to use componentDidMount to change the state.
-  }
-
   componentDidMount() {
-    console.log("This Course", this.props.course);
+    //console.log("This Course", this.props.course);
     let titleString = `${this.props.course.Id} - ${this.props.course.Name}`;
     let link = `/courseview/${this.props.course.Id}`; // Ex: Endpoint for this course is /view/CMPE273
     let courseTitle = (
@@ -27,7 +22,7 @@ class CourseCard extends Component {
   render() {
     const { Meta } = Card;
     const title = this.state.title;
-    console.log("TITLE:", title);
+    //console.log("TITLE:", title);
 
     return (
       <Card
