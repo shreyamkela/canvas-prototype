@@ -6,22 +6,25 @@ import cookie from "react-cookies";
 import { Layout, Menu, Icon, Drawer, Button } from "antd";
 
 class SideBar extends Component {
-  state = { accountDrawerVisible: false };
+  state = { accountDrawerVisible: false, coursesDrawerVisible: false };
 
-  showDrawer = () => {
+  showAccountDrawer = () => {
     this.setState({
       accountDrawerVisible: true
     });
   };
 
-  onClose = () => {
+  showCoursesDrawer = () => {
     this.setState({
-      accountDrawerVisible: false
+      coursesDrawerVisible: true
     });
   };
 
-  handleShowProfile = () => {
-    this.setState({ accountDrawerVisible: false });
+  onClose = () => {
+    this.setState({
+      accountDrawerVisible: false,
+      coursesDrawerVisible: false
+    });
   };
 
   handleLogOut = () => {
@@ -56,7 +59,7 @@ class SideBar extends Component {
             >
               <div className="logo" />
               <Menu theme="dark" mode="inline">
-                <Menu.Item key="1" onClick={this.showDrawer}>
+                <Menu.Item key="1" onClick={this.showAccountDrawer}>
                   <Icon type="user" />
                   <span className="nav-text">
                     <Link to="#">
@@ -74,10 +77,10 @@ class SideBar extends Component {
                     </Link>
                   </span>
                 </Menu.Item>
-                <Menu.Item key="3">
+                <Menu.Item key="3" onClick={this.showCoursesDrawer}>
                   <Icon type="book" />
                   <span className="nav-text">
-                    <Link to="/courses">
+                    <Link to="#">
                       {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                       <font size="2">Courses</font>
                     </Link>
@@ -85,17 +88,16 @@ class SideBar extends Component {
                 </Menu.Item>
               </Menu>
             </Sider>
-          </Layout>
-          <Layout>
+            {/* FIXME Move the drawer after the sider */}
             <Drawer
-              title="Name"
+              title="Account"
               placement="left"
               style={{ textAlign: "center" }}
               width={300}
               onClose={this.onClose}
               visible={this.state.accountDrawerVisible}
             >
-              <Link to="/profile" style={{ textDecoration: "underline" }} onClick={this.handleShowProfile}>
+              <Link to="/profile" style={{ textDecoration: "underline" }} onClick={this.onClose}>
                 {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                 <font size="4">Profile</font>
               </Link>
@@ -116,6 +118,19 @@ class SideBar extends Component {
                   Log Out
                 </Button>
               </div>
+            </Drawer>
+            <Drawer
+              title="Courses"
+              placement="left"
+              style={{ textAlign: "center" }}
+              width={300}
+              onClose={this.onClose}
+              visible={this.state.coursesDrawerVisible}
+            >
+              <Link to="/courses" style={{ textDecoration: "underline" }} onClick={this.onClose}>
+                {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
+                <font size="4">Courses</font>
+              </Link>
             </Drawer>
           </Layout>
         </div>
