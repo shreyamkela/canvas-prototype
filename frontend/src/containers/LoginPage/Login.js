@@ -31,7 +31,7 @@ class Login extends Component {
       //console.log("Sending Login Data!", this.refs.email.value, this.refs.email, this.refs);
       let data = { email: this.refs.email.value, password: this.refs.password.value };
       dispatch(postLoginData(data));
-      console.log("Redirecting to Home...");
+
       this.setState({ redirect: true });
     }
     this.setState({ validated: true });
@@ -48,11 +48,11 @@ class Login extends Component {
     const { validated } = this.state; // form validations
 
     const { loginRequest } = this.props; // redux state to props
-    //console.log("loginRequest: ", loginRequest);
+    console.log("loginRequest: ", loginRequest);
     console.log("Cookie:", cookie.load("cookie"));
     console.log("State of Redirect:", this.state.redirect);
     if (this.state.redirect === true || cookie.load("cookie")) {
-      console.log("Redirecting to Home...");
+      console.log("Redirecting to Home...", loginRequest.response);
       return <Redirect to="/home" />;
     } else {
       return (

@@ -11,11 +11,10 @@ export default function(state = initialState, action) {
   switch (action.type) {
     case LOGIN_REQUEST:
       let currentPersona = null;
-      let currentPayloadData = action.payload.data;
-
-      if (currentPayloadData.includes("Faculty")) {
+      let currentPayload = action.payload;
+      if (currentPayload.includes("Faculty")) {
         currentPersona = 1;
-      } else if (currentPayloadData.includes("Student")) {
+      } else if (currentPayload.includes("Student")) {
         currentPersona = 2;
       }
 
