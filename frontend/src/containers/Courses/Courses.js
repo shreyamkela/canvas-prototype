@@ -1,13 +1,12 @@
 // Home page is the dashboard page
 
 import React, { Component } from "react";
-import { Redirect } from "react-router";
-import cookie from "react-cookies";
+
 import { connect } from "react-redux";
 
-import { Layout, Menu, Icon, Drawer, Button } from "antd";
+import { Layout } from "antd";
 
-import CourseMenu from "./CourseMenu";
+import CourseMenu from "./CourseMenu/CourseMenu";
 
 class Courses extends Component {
   handleLogOut = () => {
@@ -16,24 +15,54 @@ class Courses extends Component {
   };
 
   render() {
-    const { id } = this.props.match.params; // Course Id passed through :id while routing to this page
+    const { Header, Content } = Layout;
 
-    console.log("Staying on Courses...");
-    const { Header, Content, Footer, Sider } = Layout;
+    const { id } = this.props.match.params; // Course Id passed through :id while routing to this page
+    const { courseDataToSidebar } = this.props; // redux state to props
+    let allCourses = null;
+    let currentCourse = null;
+    let courseTitle = null;
+
+    if (courseDataToSidebar.courses == undefined) {
+      allCourses = null;
+    } else {
+      allCourses = courseDataToSidebar.courses;
+    }
+
+    for (var key in allCourses) {
+      // To find which is the current course clicked, inside courseDataToSidebar
+      if (allCourses[key].Id === undefined) {
+        continue;
+      } else if (allCourses[key].Id === id) {
+        currentCourse = allCourses[key];
+        courseTitle = `${allCourses[key].Id} - ${allCourses[key].Name}`;
+      }
+    }
+
     return (
       <div>
         <Layout style={{ marginLeft: 150 }}>
           <CourseMenu />
 
           <Layout>
-            <Header style={{ background: "#fff", padding: 0, textAlign: "center" }}>COURSE TITLE</Header>
+            <Header style={{ background: "#fff", padding: 0, textAlign: "center" }}>
+              <font size="4">
+                <b>{courseTitle}</b>
+              </font>
+            </Header>
             <Content
               style={{
                 background: "#fff",
                 minHeight: 470
               }}
             >
-              <div>Location</div>
+              <div>
+                <Route path="/" component={Dashboard} />
+                <Route path="/profile" component={Profile} />
+                <Route path="/courses/:id" component={Courses} />
+                {/* FIXME Make create route inside the courses file*/}
+                <Route path="/create" component={Create} /> {/* FIXME Make create route inside the courses file*/}
+              </div>
             </Content>
           </Layout>
         </Layout>

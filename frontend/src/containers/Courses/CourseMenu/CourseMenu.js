@@ -1,14 +1,12 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import cookie from "react-cookies";
 import { connect } from "react-redux"; // Connects the components to the redux store
 
-import { Layout, Menu, Icon, Drawer, Button, Col } from "antd";
+import { Layout, Menu } from "antd";
 
 class CourseMenu extends Component {
   render() {
-    const { Header, Content, Footer, Sider } = Layout;
+    const { Sider } = Layout;
     return (
       <div>
         <Sider
