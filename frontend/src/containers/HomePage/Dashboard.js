@@ -1,14 +1,11 @@
 // Home page is the dashboard page
 
 import React, { Component } from "react";
-import { Redirect } from "react-router";
 import axios from "axios";
-import cookie from "react-cookies";
 import { connect } from "react-redux"; // Connects the components to the redux store
 
 import { Layout, Row, Col } from "antd";
 
-import SideBar from "../Sidebar/SideBar";
 import CourseCard from "./CourseCard";
 import { CourseDataToSidebar } from "../../_actions/user.actions";
 
@@ -69,32 +66,25 @@ class Dashboard extends Component {
       );
     }
 
-    console.log(cookie.load("cookie"));
-    if (!cookie.load("cookie")) {
-      console.log("Redirecting to Login...");
-      return <Redirect to="/signin" />;
-    } else {
-      console.log("Staying on Dashboard...");
-      const { Header, Content, Footer, Sider } = Layout;
-      return (
-        <div>
-          <Layout style={{ marginLeft: 150 }}>
-            {/* <Header style={{ background: "#fff" }} /> */}
-            <Content
-              style={{
-                background: "#fff",
-                padding: 24,
-                minHeight: 470
-              }}
-            >
-              <div>
-                <Row>{coursesPresent}</Row>
-              </div>
-            </Content>
-          </Layout>
-        </div>
-      );
-    }
+    const { Header, Content, Footer, Sider } = Layout;
+    return (
+      <div>
+        <Layout style={{ marginLeft: 150 }}>
+          {/* <Header style={{ background: "#fff" }} /> */}
+          <Content
+            style={{
+              background: "#fff",
+              padding: 24,
+              minHeight: 470
+            }}
+          >
+            <div>
+              <Row>{coursesPresent}</Row>
+            </div>
+          </Content>
+        </Layout>
+      </div>
+    );
   }
 }
 

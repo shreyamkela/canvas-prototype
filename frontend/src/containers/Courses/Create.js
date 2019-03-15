@@ -50,101 +50,87 @@ class Create extends Component {
   };
 
   render() {
-    console.log("Create Courses Page Reached!");
     const { validated } = this.state;
 
     const { createRequest } = this.props;
     console.log("createRequest: ", createRequest);
 
-    //if not logged in go to login page:
-    // At the server end, we use res.cookie command of the express-session library, to set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
-    // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
-    // https://stackoverflow.com/questions/44107665/how-to-access-a-browser-cookie-in-a-react-app
+    const { Header, Content, Footer } = Layout;
+    const { Title } = Typography;
 
-    console.log(cookie.load("cookie"));
-    if (!cookie.load("cookie")) {
-      console.log("Redirecting to Login...");
-      return <Redirect to="/signin" />;
-    } else {
-      console.log("Staying on Create Courses page...");
-      const { validated } = this.state;
-      const { Header, Content, Footer } = Layout;
-      const { Title } = Typography;
-
-      return (
-        <div>
-          <Layout>
-            <SideBar />
-          </Layout>
-          {/* FIXME Make the create page a modal */}
-          <Layout style={{ marginLeft: 150 }}>
-            <Header style={{ background: "#fff" }} />
-            <Content
-              style={{
-                background: "#fff",
-                padding: 24,
-                minHeight: 470
-              }}
-            >
-              <Title>Create a Course:</Title>
-              <Form className="py-2" noValidate validated={validated} onSubmit={e => this.handleSubmit(e)}>
-                <Form.Row className="font-weight-bold">
-                  {/* FIXME Check if course id is already present? course id only number or cmpe+number */}
-                  <Form.Group as={Col} md="4" controlId="validationCustom01">
-                    <Form.Label>Course Id</Form.Label>
-                    <InputGroup>
-                      <Form.Control required type="text" ref="courseId" />
-                    </InputGroup>
-                  </Form.Group>
-                  <Form.Group as={Col} md="4" controlId="validationCustom02">
-                    <Form.Label>Course Name</Form.Label>
-                    <Form.Control required type="text" ref="courseName" />
-                  </Form.Group>
-                  <Form.Group as={Col} md="4" controlId="validationCustom03">
-                    <Form.Label>Department</Form.Label>
-                    <Form.Control required type="text" ref="dept" />
-                  </Form.Group>
-                  <Form.Group as={Col} md="4" controlId="validationCustom04">
-                    <Form.Label>Description</Form.Label>
-                    <Form.Control type="text" ref="descrip" />
-                  </Form.Group>
-                  <Form.Group as={Col} md="4" controlId="validationCustom05">
-                    <Form.Label>Room</Form.Label>
-                    <InputGroup>
-                      <Form.Control required type="text" ref="room" />
-                    </InputGroup>
-                  </Form.Group>
-                  <Form.Group as={Col} md="4" controlId="validationCustom06">
-                    <Form.Label>Course Capacity</Form.Label>
-                    <InputGroup>
-                      <Form.Control required type="number" ref="classCap" />
-                      <Form.Control.Feedback type="invalid">Class capacity should be a number.</Form.Control.Feedback>
-                    </InputGroup>
-                  </Form.Group>
-                  <Form.Group as={Col} md="4" controlId="validationCustom07">
-                    <Form.Label>Waitlist Capacity</Form.Label>
-                    <InputGroup>
-                      <Form.Control required type="number" ref="waitlistCap" />
-                      <Form.Control.Feedback type="invalid">Waitlist capacity should be a number.</Form.Control.Feedback>
-                    </InputGroup>
-                  </Form.Group>
-                  <Form.Group as={Col} md="4" controlId="validationCustom08">
-                    <Form.Label>Course Term</Form.Label>
-                    <Form.Control required type="text" ref="term" />
-                  </Form.Group>
-                </Form.Row>
-                <div className="d-flex flex-column mb-4">
-                  {/* <div className="personaErrorMessage text-danger">{this.state.personaErrorMessage}</div> */}
-                </div>
-                ;<Button type="submit">Create</Button>
-                <div className="text-danger">{createRequest.response}</div>
-              </Form>
-            </Content>
-            <Footer style={{ background: "#fff" }} />
-          </Layout>
-        </div>
-      );
-    }
+    return (
+      <div>
+        <Layout>
+          <SideBar />
+        </Layout>
+        {/* FIXME Make the create page a modal */}
+        <Layout style={{ marginLeft: 150 }}>
+          <Header style={{ background: "#fff" }} />
+          <Content
+            style={{
+              background: "#fff",
+              padding: 24,
+              minHeight: 470
+            }}
+          >
+            <Title>Create a Course:</Title>
+            <Form className="py-2" noValidate validated={validated} onSubmit={e => this.handleSubmit(e)}>
+              <Form.Row className="font-weight-bold">
+                {/* FIXME Check if course id is already present? course id only number or cmpe+number */}
+                <Form.Group as={Col} md="4" controlId="validationCustom01">
+                  <Form.Label>Course Id</Form.Label>
+                  <InputGroup>
+                    <Form.Control required type="text" ref="courseId" />
+                  </InputGroup>
+                </Form.Group>
+                <Form.Group as={Col} md="4" controlId="validationCustom02">
+                  <Form.Label>Course Name</Form.Label>
+                  <Form.Control required type="text" ref="courseName" />
+                </Form.Group>
+                <Form.Group as={Col} md="4" controlId="validationCustom03">
+                  <Form.Label>Department</Form.Label>
+                  <Form.Control required type="text" ref="dept" />
+                </Form.Group>
+                <Form.Group as={Col} md="4" controlId="validationCustom04">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control type="text" ref="descrip" />
+                </Form.Group>
+                <Form.Group as={Col} md="4" controlId="validationCustom05">
+                  <Form.Label>Room</Form.Label>
+                  <InputGroup>
+                    <Form.Control required type="text" ref="room" />
+                  </InputGroup>
+                </Form.Group>
+                <Form.Group as={Col} md="4" controlId="validationCustom06">
+                  <Form.Label>Course Capacity</Form.Label>
+                  <InputGroup>
+                    <Form.Control required type="number" ref="classCap" />
+                    <Form.Control.Feedback type="invalid">Class capacity should be a number.</Form.Control.Feedback>
+                  </InputGroup>
+                </Form.Group>
+                <Form.Group as={Col} md="4" controlId="validationCustom07">
+                  <Form.Label>Waitlist Capacity</Form.Label>
+                  <InputGroup>
+                    <Form.Control required type="number" ref="waitlistCap" />
+                    <Form.Control.Feedback type="invalid">Waitlist capacity should be a number.</Form.Control.Feedback>
+                  </InputGroup>
+                </Form.Group>
+                <Form.Group as={Col} md="4" controlId="validationCustom08">
+                  <Form.Label>Course Term</Form.Label>
+                  <Form.Control required type="text" ref="term" />
+                </Form.Group>
+              </Form.Row>
+              <div className="d-flex flex-column mb-4">
+                {/* <div className="personaErrorMessage text-danger">{this.state.personaErrorMessage}</div> */}
+              </div>
+              ;<Button type="submit">Create</Button>
+              <div className="text-danger">{createRequest.response}</div>
+            </Form>
+          </Content>
+          <Footer style={{ background: "#fff" }} />
+        </Layout>
+      </div>
+    );
   }
 }
 

@@ -8,7 +8,10 @@ import Main from "../Main/Main";
 
 class App extends Component {
   render() {
-    //const { loginRequest } = this.props; // redux state to props
+    //if not logged in go to login page:
+    // At the server end, we use res.cookie command of the express-session library, to set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
+    // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
+    // https://stackoverflow.com/questions/44107665/how-to-access-a-browser-cookie-in-a-react-app
     console.log("Cookie", cookie.load("cookie"));
     if (!cookie.load("cookie")) {
       console.log("Redirecting to Login...");
