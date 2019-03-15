@@ -29,6 +29,7 @@ class SideBar extends Component {
   };
 
   handleLogOut = () => {
+    // FIXME On logout click, also remove the email and persona saved in redux store loginRequest
     console.log("Log Out Clicked!");
   };
 
