@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"; // Connects the components to the redux store
 
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
+
+import { postAnnouncementData } from "../../../_actions/user.actions";
 
 class Announcements extends Component {
   state = { visible: false, validated: false };
@@ -14,15 +16,19 @@ class Announcements extends Component {
   };
 
   handleOk = e => {
+    let { dispatch } = this.props;
     const form = e.currentTarget;
-
     if (form.checkValidity() === false) {
       e.preventDefault(); // dont do default - default is submitting the data to the database
       e.stopPropagation(); // dont propogate event to parents
     } else {
-      console.log("XXXXXXXX", this.refs.title, this.refs.desc);
-      this.setState({ validated: true });
+      if (this.refs.desc.value != undefined && this.state.validated === true) {
+        console.log("XXXXXXXXXXX", this.refs.desc.value);
+        let data = { desc: this.refs.desc.value, title: this.refs.title.value };
+        dispatch(postAnnouncementData(data));
+      }
     }
+    this.setState({ validated: true });
   };
 
   handleCancel = e => {
@@ -33,6 +39,7 @@ class Announcements extends Component {
   };
   render() {
     const { validated } = this.state; // form validations
+    const { announcementCreateRequest } = this.props; // redux state to props
 
     return (
       <React.Fragment>
@@ -40,27 +47,18 @@ class Announcements extends Component {
           <Button type="primary" shape="round" size="large" icon="plus" onClick={this.showModal}>
             Announcement
           </Button>
-
-          <Modal show={this.state.showModal} onHide={this.handleModalClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>New User Details</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Register />
-            </Modal.Body>
-          </Modal>
-
-          <Modal title="Make an announcement:" visible={this.state.visible} onCancel={this.handleCancel}>
+          <Modal title="Make an announcement:" visible={this.state.visible} onOk={e => this.handleOk(e)} onCancel={this.handleCancel}>
             <Form noValidate validated={validated}>
-              <Form.Group as={Col} md="12" controlId="validationTitle">
+              <Form.Group as={Col} md="4" controlId="validationTitle">
                 <Form.Label>Title</Form.Label>
-                <TextArea rows={1} required type="text" placeholder="Enter Title" ref="title" />
+                <Form.Control required type="text" placeholder="Enter Title" ref="title" />
               </Form.Group>
-              <Form.Group as={Col} md="12" controlId="validationDescription">
+              <Form.Group as={Col} md="4" controlId="validationDescription">
                 <Form.Label>Description</Form.Label>
-                <TextArea rows={4} required type="text" placeholder="Enter Description" ref="desc" />
+                <Form.Control required type="text" placeholder="Enter Description" ref="desc" />
               </Form.Group>
             </Form>
+            <div className="text-success">{announcementCreateRequest.response}</div>
           </Modal>
         </div>
       </React.Fragment>
@@ -68,4 +66,9 @@ class Announcements extends Component {
   }
 }
 
-export default connect(null)(Announcements);
+function mapStateToProps(state) {
+  const { announcementCreateRequest } = state;
+  return { announcementCreateRequest };
+}
+
+export default connect(mapStateToProps)(Announcements);

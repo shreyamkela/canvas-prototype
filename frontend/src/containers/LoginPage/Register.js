@@ -101,7 +101,7 @@ class Register extends Component {
           </ButtonGroup>
           <div className="personaErrorMessage text-danger">{this.state.personaErrorMessage}</div>
         </div>
-        ;<Button type="submit">Register</Button>
+        <Button type="submit">Register</Button>
         <div className="text-danger">{registrationRequest.response}</div>
       </Form>
     );

@@ -8,7 +8,6 @@ class CourseMenu extends Component {
   render() {
     const { Sider } = Layout;
     const { courseurl } = this.props;
-    console.log("XXXXXXXXXXXXXXXXXXXXx", courseurl);
 
     const announcementsUrl = `${courseurl}/announcements`;
     const assignmentsUrl = `${courseurl}/assignments`;

@@ -1,7 +1,7 @@
 import axios from "axios";
 import cookie from "react-cookies";
 
-import { LOGIN_REQUEST, REGISTER, CREATE_COURSE, COURSE_DATA_TO_SIDEBAR } from "./types";
+import { LOGIN_REQUEST, REGISTER, CREATE_COURSE, COURSE_DATA_TO_SIDEBAR, ANNOUNCEMENT_CREATE } from "./types";
 
 export const postLoginData = data => dispatch => {
   console.log("postLoginData called!");
@@ -62,4 +62,21 @@ export const CourseDataToSidebar = data => dispatch => {
     type: COURSE_DATA_TO_SIDEBAR, // Sending type in action dispatches is mandatory
     payload: data
   });
+};
+
+export const postAnnouncementData = data => dispatch => {
+  console.log("postAnnouncementData called!");
+  //set the with credentials to true - NOTE withCredentials has to be true if we want to send and receive cookies between express and react
+  axios.defaults.withCredentials = true;
+  axios
+    .post("http://localhost:3001/announcement", {
+      // data is accessible at the backend by req.body.query
+      data
+    })
+    .then(response =>
+      dispatch({
+        type: ANNOUNCEMENT_CREATE, // Sending type in action dispatches is mandatory
+        payload: response.data
+      })
+    );
 };

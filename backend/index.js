@@ -195,6 +195,36 @@ app.get("/getcourses", function(req, res) {
   });
 });
 
+//Route to handle Post Request Call to create a new announcement
+app.post("/announcement", function(req, res) {
+  console.log("Create Announcement Data Posted!");
+  let announcementData = req.body.data;
+  let title = announcementData.title;
+  console.log("Title: ", title);
+
+  // db.query(`SELECT Name FROM Courses WHERE Id = '${id}'`, (err, results) => {
+  //   if (err) throw err;
+  //   console.log(results);
+  //   console.log(results[0]);
+  //   if (results[0] === undefined) {
+  //     // if not present
+  //     let { courseName, dept, descrip, room, classCap, waitlistCap, term } = courseData;
+  //     console.log(id, courseName, dept, descrip, room, classCap, waitlistCap, term);
+  //     db.query(
+  //       `INSERT INTO Courses (Id, Name, Department, Description, Room, Capacity, Waitlist, Term) VALUES ('${id}','${courseName}','${dept}','${descrip}','${room}','${classCap}','${waitlistCap}','${term}')`,
+  //       err => {
+  //         if (err) throw err;
+  //         console.log("New details added to Courses table");
+  //       }
+  //     );
+  //     res.send("Creation Successful!");
+  //   } else {
+  //     console.log("Course id already present!"); //FIXME Make page stay on frontend if course id already present
+  //     res.send("Course id already present!");
+  //   }
+  // });
+});
+
 //start your server on port 3001
 app.listen(3001);
 console.log("Server Listening on port 3001");
