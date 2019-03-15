@@ -80,29 +80,35 @@ class SideBar extends Component {
             <div className="logo" />
             <Menu theme="dark" mode="inline">
               <Menu.Item key="1" onClick={this.showAccountDrawer}>
-                <Icon type="user" />
+                <Icon type="user" style={{ color: "white" }} />
                 <span className="nav-text">
                   <Link to="#">
                     {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
-                    <font size="2">Account</font>
+                    <font size="2" color="white">
+                      Account
+                    </font>
                   </Link>
                 </span>
               </Menu.Item>
               <Menu.Item key="2">
-                <Icon type="dashboard" />
+                <Icon type="dashboard" style={{ color: "white" }} />
                 <span className="nav-text">
                   <Link to="/home">
                     {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
-                    <font size="2">Dashboard</font>
+                    <font size="2" color="white">
+                      Dashboard
+                    </font>
                   </Link>
                 </span>
               </Menu.Item>
               <Menu.Item key="3" onClick={this.showCoursesDrawer}>
-                <Icon type="book" />
+                <Icon type="book" style={{ color: "white" }} />
                 <span className="nav-text">
                   <Link to="#">
                     {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
-                    <font size="2">Courses</font>
+                    <font size="2" color="white">
+                      Courses
+                    </font>
                   </Link>
                 </span>
               </Menu.Item>
