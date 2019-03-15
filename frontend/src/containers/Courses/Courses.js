@@ -1,12 +1,13 @@
 // Home page is the dashboard page
 
 import React, { Component } from "react";
-
+import { Route } from "react-router-dom";
 import { connect } from "react-redux";
 
 import { Layout } from "antd";
 
 import CourseMenu from "./CourseMenu/CourseMenu";
+import Announcements from "./CourseMenu/Announcements";
 
 class Courses extends Component {
   handleLogOut = () => {
@@ -18,10 +19,17 @@ class Courses extends Component {
     const { Header, Content } = Layout;
 
     const { id } = this.props.match.params; // Course Id passed through :id while routing to this page
-    const { courseDataToSidebar } = this.props; // redux state to props
+    const { courseDataToSidebar } = this.props; // redux state to propsl
     let allCourses = null;
     let currentCourse = null;
     let courseTitle = null;
+
+    let announcementsUrl = null;
+    let assignmentsUrl = null;
+    let filesUrl = null;
+    let peopleUrl = null;
+    let quizzesUrl = null;
+    let courseUrl = null;
 
     if (courseDataToSidebar.courses == undefined) {
       allCourses = null;
@@ -36,13 +44,20 @@ class Courses extends Component {
       } else if (allCourses[key].Id === id) {
         currentCourse = allCourses[key];
         courseTitle = `${allCourses[key].Id} - ${allCourses[key].Name}`;
+
+        announcementsUrl = `/courses/${allCourses[key].Id}/announcements`;
+        assignmentsUrl = `/courses/${allCourses[key].Id}/assignments`;
+        filesUrl = `/courses/${allCourses[key].Id}/files`;
+        peopleUrl = `/courses/${allCourses[key].Id}/people`;
+        quizzesUrl = `/courses/${allCourses[key].Id}/quizzes`;
+        courseUrl = `/courses/${allCourses[key].Id}`;
       }
     }
 
     return (
       <div>
         <Layout style={{ marginLeft: 150 }}>
-          <CourseMenu />
+          <CourseMenu courseurl={courseUrl} />
 
           <Layout>
             <Header style={{ background: "#fff", padding: 0, textAlign: "center" }}>
@@ -57,11 +72,11 @@ class Courses extends Component {
               }}
             >
               <div>
-                <Route path="/" component={Dashboard} />
-                <Route path="/profile" component={Profile} />
-                <Route path="/courses/:id" component={Courses} />
-                {/* FIXME Make create route inside the courses file*/}
-                <Route path="/create" component={Create} /> {/* FIXME Make create route inside the courses file*/}
+                <Route path={announcementsUrl} component={Announcements} />
+                <Route path={assignmentsUrl} component={Announcements} />
+                <Route path={peopleUrl} component={Announcements} />
+                <Route path={filesUrl} component={Announcements} />
+                <Route path={quizzesUrl} component={Announcements} />
               </div>
             </Content>
           </Layout>

@@ -7,6 +7,15 @@ import { Layout, Menu } from "antd";
 class CourseMenu extends Component {
   render() {
     const { Sider } = Layout;
+    const { courseurl } = this.props;
+    console.log("XXXXXXXXXXXXXXXXXXXXx", courseurl);
+
+    const announcementsUrl = `${courseurl}/announcements`;
+    const assignmentsUrl = `${courseurl}/assignments`;
+    const filesUrl = `${courseurl}/files`;
+    const peopleUrl = `${courseurl}/people`;
+    const quizzesUrl = `${courseurl}/quizzes`;
+
     return (
       <div>
         <Sider
@@ -23,7 +32,7 @@ class CourseMenu extends Component {
           <Menu theme="light" mode="inline" style={{ textAlign: "center" }}>
             <Menu.Item key="1">
               <span className="nav-text">
-                <Link to="#">
+                <Link to={announcementsUrl}>
                   {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                   <font size="3">Announcements</font>
                 </Link>
@@ -31,7 +40,7 @@ class CourseMenu extends Component {
             </Menu.Item>
             <Menu.Item key="2">
               <span className="nav-text">
-                <Link to="#">
+                <Link to={assignmentsUrl}>
                   {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                   <font size="3">Assignments</font>
                 </Link>
@@ -39,7 +48,7 @@ class CourseMenu extends Component {
             </Menu.Item>
             <Menu.Item key="3">
               <span className="nav-text">
-                <Link to="#">
+                <Link to={peopleUrl}>
                   {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                   <font size="3">People</font>
                 </Link>
@@ -47,7 +56,7 @@ class CourseMenu extends Component {
             </Menu.Item>
             <Menu.Item key="4">
               <span className="nav-text">
-                <Link to="#">
+                <Link to={filesUrl}>
                   {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                   <font size="3">Files</font>
                 </Link>
@@ -55,7 +64,7 @@ class CourseMenu extends Component {
             </Menu.Item>
             <Menu.Item key="5">
               <span className="nav-text">
-                <Link to="#">
+                <Link to={quizzesUrl}>
                   {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                   <font size="3">Quizzes</font>
                 </Link>
