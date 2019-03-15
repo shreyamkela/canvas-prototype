@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import cookie from "react-cookies";
+import { connect } from "react-redux"; // Connects the components to the redux store
 
 import { Layout, Menu, Icon, Drawer, Button, Col } from "antd";
 
@@ -47,17 +48,18 @@ class SideBar extends Component {
   };
 
   render() {
+    const { courseDataToSidebar } = this.props; // redux state to props
     let coursesPresent = null;
     let allCourses = null;
 
-    if (this.props.course === "noCourses") {
+    if (courseDataToSidebar.courses === "") {
       coursesPresent = (
         <font className="font-weight-bold" size="3">
           No courses available{/**If no courses present */}
         </font>
       );
     } else {
-      allCourses = this.props.course;
+      allCourses = courseDataToSidebar.courses;
       console.log("CCCCCCCCCC", allCourses);
       Object.keys(allCourses).map(key => {
         let linkString = `${allCourses[key].Id}`;
@@ -194,4 +196,9 @@ class SideBar extends Component {
   }
 }
 
-export default SideBar;
+function mapStateToProps(state) {
+  const { courseDataToSidebar } = state;
+  return { courseDataToSidebar };
+}
+
+export default connect(mapStateToProps)(SideBar);

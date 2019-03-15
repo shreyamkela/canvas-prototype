@@ -4,11 +4,13 @@ import React, { Component } from "react";
 import { Redirect } from "react-router";
 import axios from "axios";
 import cookie from "react-cookies";
+import { connect } from "react-redux"; // Connects the components to the redux store
 
 import { Layout, Row, Col } from "antd";
 
 import SideBar from "../Sidebar/SideBar";
 import CourseCard from "./CourseCard";
+import { CourseDataToSidebar } from "../../_actions/user.actions";
 
 class Dashboard extends Component {
   state = { courses: "" };
@@ -49,6 +51,11 @@ class Dashboard extends Component {
         </font>
       );
     } else {
+      let { dispatch } = this.props;
+
+      dispatch(CourseDataToSidebar(this.state.courses)); // NOTE Posting course data to sidebar so that the courses drawer can show the courses. Also, here the sidebar is a child of dashboard but sidebar is also child of account and courses page. Here in dashboard if we pass coursesData as props to sidebar then there would not be a single source of truth for the sidebar as account and courses page do not pass props to sidebar. Therefore, we use redux store as a single source of truth where the sidebar's state will be updated with the courses data
+      // If courses are available then dispatch them to the sidebar as well
+
       allCourses = this.state.courses;
 
       coursesPresent = (
@@ -94,4 +101,4 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard;
+export default connect(null)(Dashboard);

@@ -1,3 +1,4 @@
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
 export const REGISTER = "REGISTER";
 export const CREATE_COURSE = "CREATE_COURSE";
+export const COURSE_DATA_TO_SIDEBAR = "COURSE_DATA_TO_SIDEBAR";
