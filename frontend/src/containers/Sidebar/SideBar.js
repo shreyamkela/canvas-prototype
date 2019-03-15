@@ -165,7 +165,7 @@ class SideBar extends Component {
                   textAlign: "center"
                 }}
               >
-                <Link to="/create" style={{ textDecoration: "underline" }}>
+                <Link to="/create" style={{ textDecoration: "underline" }} onClick={this.onClose}>
                   {/**FIXME Make routes under the courses page
                 NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                   <font size="4">Create a Course</font>

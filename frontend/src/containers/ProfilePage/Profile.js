@@ -24,9 +24,6 @@ class Profile extends Component {
       const { Header, Content, Footer, Sider } = Layout;
       return (
         <div>
-          <Layout>
-            <SideBar />
-          </Layout>
           <Layout style={{ marginLeft: 150, padding: "0 24px 24px" }}>
             <Content
               style={{
