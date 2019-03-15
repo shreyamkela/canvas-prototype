@@ -64,7 +64,7 @@ class Create extends Component {
     console.log(cookie.load("cookie"));
     if (!cookie.load("cookie")) {
       console.log("Redirecting to Login...");
-      return <Redirect to="/" />;
+      return <Redirect to="/signin" />;
     } else {
       console.log("Staying on Create Courses page...");
       const { validated } = this.state;

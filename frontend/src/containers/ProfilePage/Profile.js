@@ -19,7 +19,7 @@ class Profile extends Component {
     if (!cookie.load("cookie")) {
       // FIXME We have to include these if else conditions in each an every page to check if the user is logged in. Is there a better way do do this validation so that code is reduced?
       console.log("Redirecting to Login...");
-      return <Redirect to="/" />;
+      return <Redirect to="/signin" />;
     } else {
       const { Header, Content, Footer, Sider } = Layout;
       return (

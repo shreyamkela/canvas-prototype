@@ -5,7 +5,7 @@ const initialState = {
 };
 
 export default function(state = initialState, action) {
-  console.log("Login Request Reducer Called! Payload: ", action.payload);
+  //console.log("Login Request Reducer Called! Payload: ", action.payload);
   switch (action.type) {
     case LOGIN_REQUEST:
       return {

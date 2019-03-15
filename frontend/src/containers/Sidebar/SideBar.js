@@ -64,8 +64,8 @@ class SideBar extends Component {
     }
 
     if (!cookie.load("cookie")) {
-      console.log("Redirecting to Login...");
-      return <Redirect to="/" />;
+      console.log("ReEEEEdirecting to Login...");
+      return <Redirect to="/signin" />;
     } else {
       const { Header, Content, Footer, Sider } = Layout;
       return (

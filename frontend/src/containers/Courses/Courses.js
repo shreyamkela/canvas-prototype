@@ -25,7 +25,7 @@ class Courses extends Component {
     console.log(cookie.load("cookie"));
     if (!cookie.load("cookie")) {
       console.log("Redirecting to Login...");
-      return <Redirect to="/" />;
+      return <Redirect to="/signin" />;
     } else {
       console.log("Staying on Courses...");
       const { Header, Content, Footer, Sider } = Layout;
@@ -44,13 +44,7 @@ class Courses extends Component {
                 minHeight: 470
               }}
             />
-            <Footer style={{ textAlign: "left", background: "#fff", padding: 24 }}>
-              <Link to="/create" style={{ textDecoration: "underline" }}>
-                {/**FIXME Make routes under the courses page
-                NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
-                <font size="4">Create a Course</font>
-              </Link>
-            </Footer>
+            <Footer style={{ textAlign: "left", background: "#fff", padding: 24 }} />
           </Layout>
         </div>
       );

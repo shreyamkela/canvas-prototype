@@ -72,7 +72,7 @@ class Dashboard extends Component {
     console.log(cookie.load("cookie"));
     if (!cookie.load("cookie")) {
       console.log("Redirecting to Login...");
-      return <Redirect to="/" />;
+      return <Redirect to="/signin" />;
     } else {
       console.log("Staying on Dashboard...");
       const { Header, Content, Footer, Sider } = Layout;

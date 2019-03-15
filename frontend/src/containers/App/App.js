@@ -1,37 +1,33 @@
 import React, { Component } from "react";
-import { BrowserRouter, Route } from "react-router-dom";
-import { Provider } from "react-redux"; // Glues react and redux together
+import cookie from "react-cookies";
+import { Redirect } from "react-router";
+import { connect } from "react-redux"; // Connects the components to the redux store
 
 //import './App.css';
-import Login from "../LoginPage/Login";
-import Dashboard from "../HomePage/Dashboard";
-import Profile from "../ProfilePage/Profile";
-import Courses from "../Courses/Courses";
-import Create from "../Courses/Create"; // Create a course
-
-import store from "../../_helpers/store";
+import Main from "../Main/Main";
 
 class App extends Component {
   render() {
-    return (
-      <Provider store={store}>
-        {/* Order of provider and browserrouter doesnt matter.
-        Use Browser Router to route to different pages. */}
-        <BrowserRouter>
-          <div>
-            {/** All valid routes must be declared here for routing to work */}
-            {/* App Component Has a Child Component called Login*/}
-            <Route path="/" component={Login} />
-            <Route path="/home" component={Dashboard} />
-            <Route path="/profile" component={Profile} />
-            <Route path="/courses/:id" component={Courses} />
-            {/* FIXME Make create route inside the courses file*/}
-            <Route path="/create" component={Create} /> {/* FIXME Make create route inside the courses file*/}
-          </div>
-        </BrowserRouter>
-      </Provider>
-    );
+    //const { loginRequest } = this.props; // redux state to props
+    console.log("Cookie", cookie.load("cookie"));
+    if (!cookie.load("cookie")) {
+      console.log("Redirecting to Login...");
+      return <Redirect to="/signin" />;
+    } else {
+      return <Main />;
+    }
   }
 }
 
-export default App;
+// NOTE Why are we connecting the App.js to the store and mapping state to props when we are not using any state/redux in this file?
+// Answer: When we login and server sends the cookie the cookie is saved in redux store as the axios.post postLogiData is a dispatch action and its response is taken as payload inside of redux (see user.actions.js postLoginData method).
+// Now as the reponse received from server is inside redux store, we need to connect app.js to the redux store so that App.js can access the cookies when we do cookie.load('cookie').
+// When login is clicked, index.js of frontend will route the webpage to the App component that is, this component, but as App is not able to find the already set cookie (which is in redux store) therefore App.js redirects back to login.
+// And therefore, we need to connect App.js as well to the redux store and mapStateToProps (mapStateToProps brings loginRequest reducer payload into App.js as the state, and we are able to access the cookie with cookie.load)
+
+function mapStateToProps(state) {
+  const { loginRequest } = state;
+  return { loginRequest };
+}
+
+export default connect(mapStateToProps)(App);

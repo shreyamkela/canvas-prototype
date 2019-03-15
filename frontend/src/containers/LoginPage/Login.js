@@ -52,7 +52,7 @@ class Login extends Component {
     console.log("Cookie:", cookie.load("cookie"));
     console.log("State of Redirect:", this.state.redirect);
     if (this.state.redirect === true || cookie.load("cookie")) {
-      console.log("Reedirecting to Home...");
+      console.log("Redirecting to Home...");
       return <Redirect to="/home" />;
     } else {
       return (
