@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 import { Card, Icon, Badge } from "antd";
 
@@ -10,11 +11,12 @@ class CourseCard extends Component {
   componentDidMount() {
     //console.log("This Course", this.props.course);
     let titleString = `${this.props.course.Id} - ${this.props.course.Name}`;
-    let link = `/courseview/${this.props.course.Id}`; // Ex: Endpoint for this course is /view/CMPE273
+    let link = `/courses/${this.props.course.Id}`; // Ex: Endpoint for this course is /view/CMPE273
     let courseTitle = (
-      <a href={link}>
+      // NOTE Dont use <a> for including links in react. As react uses react router to route between pages, therefore, we should only us the Link tag provided by react react. <a> tag can malfunction with react router
+      <Link to={link} style={{ textDecoration: "underline" }}>
         <font size="2">{titleString}</font>
-      </a>
+      </Link>
     );
     this.setState({ title: courseTitle });
   }

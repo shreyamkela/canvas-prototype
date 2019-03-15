@@ -9,21 +9,6 @@ import { Layout, Menu, Icon, Drawer, Button, Col } from "antd";
 class SideBar extends Component {
   state = { accountDrawerVisible: false, coursesDrawerVisible: false };
 
-  // Object.keys(allCourses).map(key => (
-  //   //console.log("This course id: ", allCourses[key]);
-
-  //     <CourseCard course={allCourses[key]} />
-
-  // ))
-  // let titleString = `${this.props.course.Id} - ${this.props.course.Name}`;
-  // let link = `/courseview/${this.props.course.Id}`; // Ex: Endpoint for this course is /view/CMPE273
-  // let courseTitle = (
-  //   <a href={link}>
-  //     <font size="2">{titleString}</font>
-  //   </a>
-  // );
-  // this.setState({ title: courseTitle });
-
   showAccountDrawer = () => {
     this.setState({
       accountDrawerVisible: true
@@ -60,18 +45,15 @@ class SideBar extends Component {
       );
     } else {
       allCourses = courseDataToSidebar.courses;
-      console.log("CCCCCCCCCC", allCourses);
       Object.keys(allCourses).map(key => {
         let linkString = `${allCourses[key].Id}`;
-        Object.assign(allCourses[key], { Link: `/courseview/${linkString}` });
+        Object.assign(allCourses[key], { Link: `/courses/${linkString}` });
       });
-      console.log("CCCCCCCCCC", allCourses);
       coursesPresent = (
         //let link = `/courseview/${this.props.course.Id}`;
         <React.Fragment>
           {Object.keys(allCourses).map(key => (
-            //console.log("This course id: ", allCourses[key]);
-
+            // NOTE Dont use <a> for including links in react. As react uses react router to route between pages, therefore, we should only us the Link tag provided by react react. <a> tag can malfunction with react router
             <Link to={allCourses[key].Link} style={{ textDecoration: "underline" }} onClick={this.onClose}>
               {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
               <font size="4">{allCourses[key].Id}</font>
@@ -139,6 +121,7 @@ class SideBar extends Component {
               onClose={this.onClose}
               visible={this.state.accountDrawerVisible}
             >
+              {/* NOTE Dont use <a> for including links in react. As react uses react router to route between pages, therefore, we should only us the Link tag provided by react react. <a> tag can malfunction with react router */}
               <Link to="/profile" style={{ textDecoration: "underline" }} onClick={this.onClose}>
                 {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                 <font size="4">Profile</font>
