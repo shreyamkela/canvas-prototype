@@ -48,7 +48,7 @@ class Announcements extends Component {
               </Form.Group>
               <Form.Group as={Col} md="4" controlId="validationDescription">
                 <Form.Label>Description</Form.Label>
-                <Form.Control required type="text" placeholder="Enter Description" ref="desc" />
+                <TextArea rows={4} />
               </Form.Group>
             </Form>
           </Modal>
