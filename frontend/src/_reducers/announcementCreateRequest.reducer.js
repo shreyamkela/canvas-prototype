@@ -9,7 +9,7 @@ export default function(state = initialState, action) {
     case ANNOUNCEMENT_CREATE:
       return {
         ...state,
-        courses: action.payload
+        response: action.payload
       }; // Return a new state - This state is assigned all the props of the previos state (initialState) and the response is overwritten - Just like Object.assign()
 
     default:

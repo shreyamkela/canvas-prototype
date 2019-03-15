@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"; // Connects the components to the redux store
+import { Redirect } from "react-router";
 
 import { Button, Modal } from "antd";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
@@ -7,7 +8,7 @@ import { Form, Col } from "react-bootstrap"; // for the new user modal
 import { postAnnouncementData } from "../../../_actions/user.actions";
 
 class Announcements extends Component {
-  state = { visible: false, validated: false };
+  state = { visible: false, validated: false, redirect: false, message: "" };
 
   showModal = () => {
     this.setState({
@@ -16,17 +17,17 @@ class Announcements extends Component {
   };
 
   handleOk = e => {
+    var { announcementCreateRequest } = this.props; // redux state to props
     let { dispatch } = this.props;
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.preventDefault(); // dont do default - default is submitting the data to the database
       e.stopPropagation(); // dont propogate event to parents
-    } else {
-      if (this.refs.desc.value != undefined && this.state.validated === true) {
-        console.log("XXXXXXXXXXX", this.refs.desc.value);
-        let data = { desc: this.refs.desc.value, title: this.refs.title.value };
-        dispatch(postAnnouncementData(data));
-      }
+    } else if (this.refs.title.value != "" && this.refs.desc.value != "") {
+      // Only dispatch when both fields are non empty
+      let data = { desc: this.refs.desc.value, title: this.refs.title.value };
+      dispatch(postAnnouncementData(data));
+      this.setState({ redirect: true, message: `${announcementCreateRequest.response}` }); // Update creation message
     }
     this.setState({ validated: true });
   };
@@ -39,10 +40,17 @@ class Announcements extends Component {
   };
   render() {
     const { validated } = this.state; // form validations
-    const { announcementCreateRequest } = this.props; // redux state to props
 
+    let redirectVal = null;
+    let redirectLink = `${window.location.pathname}`;
+    if (this.state.redirect === true) {
+      // If announcement is created then redirect to /courses/<courseid>
+      var newRedirectLink = redirectLink.replace("announcements", "");
+      redirectVal = <Redirect to={newRedirectLink} />;
+    }
     return (
       <React.Fragment>
+        {redirectVal}
         <div style={{ textAlign: "right", marginRight: 20 }}>
           <Button type="primary" shape="round" size="large" icon="plus" onClick={this.showModal}>
             Announcement
@@ -58,7 +66,7 @@ class Announcements extends Component {
                 <Form.Control required type="text" placeholder="Enter Description" ref="desc" />
               </Form.Group>
             </Form>
-            <div className="text-success">{announcementCreateRequest.response}</div>
+            <div className="text-success">{this.state.message}</div>
           </Modal>
         </div>
       </React.Fragment>
