@@ -29,8 +29,11 @@ class SideBar extends Component {
   };
 
   handleLogOut = () => {
+    // FIXME API Call to remove session on the backend
     // FIXME On logout click, also remove the email and persona saved in redux store loginRequest
+    cookie.remove("cookie");
     console.log("Log Out Clicked!");
+    window.location.replace("/"); // Can use this for logout
   };
 
   render() {
@@ -55,7 +58,7 @@ class SideBar extends Component {
         <React.Fragment>
           {Object.keys(allCourses).map(key => (
             // NOTE Dont use <a> for including links in react. As react uses react router to route between pages, therefore, we should only us the Link tag provided by react react. <a> tag can malfunction with react router
-            <Link to={allCourses[key].Link} style={{ textDecoration: "underline" }} onClick={this.onClose}>
+            <Link to={allCourses[key].Link} style={{ textDecoration: "underline" }} onClick={this.onClose} key={key}>
               {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
               <font size="4">{allCourses[key].Id}</font>
               <br />

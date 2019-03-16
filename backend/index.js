@@ -8,6 +8,8 @@ const mysql = require("mysql");
 
 const app = express();
 
+// FIXME Use the structure of webstorm/rohit bhaiya repo for backend
+
 //use cors to allow cross origin resource sharing
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 

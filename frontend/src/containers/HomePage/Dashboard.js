@@ -11,22 +11,24 @@ import { courseDataToComponent } from "../../_actions/user.actions";
 
 class Dashboard extends Component {
   state = { courses: "" };
-
-  constructor(props) {
-    super(props);
+  // NOTE For fetching the data once a page loads - No api get call inside constructor. Let page load without any data then do the api get call inside componentDidMount
+  async componentDidMount() {
     const { loginRequest } = this.props;
     // Sending email of the current logged in faculty to select only those courses to get to the frontend, that have been created by this faculty
     const data = { email: loginRequest.email, persona: loginRequest.persona };
-    axios
-      .get("http://localhost:3001/getcourses", { params: data })
-      .then(response => {
-        // you can access your data here
-        //console.log("courses response:", response.data);
-        this.setState({ courses: response.data });
-      })
-      .catch(error => {
-        console.log(error.response);
-      });
+    try {
+      let response = await axios.get("http://localhost:3001/getcourses", { params: data });
+      // you can access your data here
+      //console.log("courses response:", response.data);
+
+      let { dispatch } = this.props;
+
+      dispatch(courseDataToComponent(response.data)); // NOTE Posting course data to sidebar so that the courses drawer can show the courses. Also, here the sidebar is a child of dashboard but sidebar is also child of account and courses page. Here in dashboard if we pass coursesData as props to sidebar then there would not be a single source of truth for the sidebar as account and courses page do not pass props to sidebar. Therefore, we use redux store as a single source of truth where the sidebar's state will be updated with the courses data
+      // If courses are available then dispatch them to the sidebar as well
+      this.setState({ courses: response.data });
+    } catch (error) {
+      console.log(error.response);
+    }
   }
 
   handleLogOut = () => {
@@ -51,17 +53,12 @@ class Dashboard extends Component {
         </font>
       );
     } else {
-      let { dispatch } = this.props;
-
-      dispatch(courseDataToComponent(this.state.courses)); // NOTE Posting course data to sidebar so that the courses drawer can show the courses. Also, here the sidebar is a child of dashboard but sidebar is also child of account and courses page. Here in dashboard if we pass coursesData as props to sidebar then there would not be a single source of truth for the sidebar as account and courses page do not pass props to sidebar. Therefore, we use redux store as a single source of truth where the sidebar's state will be updated with the courses data
-      // If courses are available then dispatch them to the sidebar as well
-
       allCourses = this.state.courses;
 
       coursesPresent = (
         <React.Fragment>
           {Object.keys(allCourses).map(key => (
-            <Col className="py-3 mx-2" span={6}>
+            <Col className="py-3 mx-2" span={6} key={key}>
               <CourseCard course={allCourses[key]} />
             </Col>
           ))}

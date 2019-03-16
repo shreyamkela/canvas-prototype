@@ -45,6 +45,7 @@ class Courses extends Component {
         continue;
       } else if (allCourses[key].Id === id) {
         currentCourse = allCourses[key];
+        // FIXME Remove dispatch from render. Render is only for rendering props and state and not for changing state or dispatching to redux
         dispatch(currentCourseDataToComponent(currentCourse)); // dispatch current course data to components that require it
         courseTitle = `${allCourses[key].Id} - ${allCourses[key].Name}`;
 

@@ -10,20 +10,17 @@ import { postAnnouncementData } from "../../../_actions/user.actions";
 
 class Announcements extends Component {
   state = { visible: false, validated: false, redirect: false, message: "", announcements: "" };
-  constructor(props) {
-    super(props); // We can make an async request in the constructor in this way
+
+  async componentDidMount() {
     const { currentCourseDataToComponent, loginRequest } = this.props; // redux state to props
     const data = { email: loginRequest.email, courseId: currentCourseDataToComponent.currentCourse.Id };
-    axios
-      .get("http://localhost:3001/announcement", { params: data }) // In GET request, params is used to send data
-      .then(response => {
-        // you can access your data here
-        //console.log("courses response:", response.data);
-        this.setState({ announcements: response.data });
-      })
-      .catch(error => {
-        console.log(error.response);
-      });
+
+    try {
+      let response = await axios.get("http://localhost:3001/announcement", { params: data });
+      this.setState({ announcements: response.data });
+    } catch (error) {
+      console.log(error.response);
+    }
   }
 
   showModal = () => {
@@ -102,7 +99,8 @@ class Announcements extends Component {
         <div className="px-4 my-4">
           <Collapse accordion>
             {Object.keys(allAnnouncements).map(key => (
-              <Panel header={allAnnouncements[key].Title} style={{ textAlign: "left", fontWeight: "bold" }}>
+              <Panel header={allAnnouncements[key].Title} style={{ textAlign: "left", fontWeight: "bold" }} key={key}>
+                {/* NOTE all the elements inside the map should have unique key */}
                 <p style={{ textAlign: "left" }}>{allAnnouncements[key].Description}</p>
               </Panel>
             ))}
@@ -121,13 +119,13 @@ class Announcements extends Component {
           <Modal title="Make an announcement:" visible={this.state.visible} onOk={e => this.handleOk(e)} onCancel={this.handleCancel}>
             <Form noValidate validated={validated}>
               {/* FIXME Fix the size of the text boxes. Also, description feild should be a text area */}
-              <Form.Group as={Col} md="4" controlId="validationTitle">
+              <Form.Group as={Col} controlId="validationTitle">
                 <Form.Label>Title</Form.Label>
                 <Form.Control required type="text" placeholder="Enter Title" ref="title" />
               </Form.Group>
-              <Form.Group as={Col} md="4" controlId="validationDescription">
+              <Form.Group as={Col} controlId="validationDescription">
                 <Form.Label>Description</Form.Label>
-                <Form.Control required type="text" placeholder="Enter Description" ref="desc" />
+                <Form.Control required as="textarea" rows="3" placeholder="Enter Description" ref="desc" />
               </Form.Group>
             </Form>
             <div className="text-success">{this.state.message}</div>
