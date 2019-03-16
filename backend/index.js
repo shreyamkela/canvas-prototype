@@ -198,7 +198,7 @@ app.get("/getcourses", function(req, res) {
 //Route to handle Get Request Call to load all announcements for the faculty email and courseId
 app.get("/announcement", function(req, res) {
   console.log("Get Announcement Data Called! Announcement Data:", req.query);
-  let announcementData = req.query;
+  let announcementData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
 
   db.query(
     `SELECT Title, Description FROM Announcements WHERE CourseId = '${announcementData.courseId}' AND Email = '${announcementData.email}'`,

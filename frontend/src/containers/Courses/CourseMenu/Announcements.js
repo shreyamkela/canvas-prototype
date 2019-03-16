@@ -3,7 +3,7 @@ import { connect } from "react-redux"; // Connects the components to the redux s
 import { Redirect } from "react-router";
 import axios from "axios";
 
-import { Button, Modal } from "antd";
+import { Button, Modal, Collapse } from "antd";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
 
 import { postAnnouncementData } from "../../../_actions/user.actions";
@@ -11,12 +11,11 @@ import { postAnnouncementData } from "../../../_actions/user.actions";
 class Announcements extends Component {
   state = { visible: false, validated: false, redirect: false, message: "", announcements: "" };
   constructor(props) {
-    super(props);
+    super(props); // We can make an async request in the constructor in this way
     const { currentCourseDataToComponent, loginRequest } = this.props; // redux state to props
     const data = { email: loginRequest.email, courseId: currentCourseDataToComponent.currentCourse.Id };
-    console.log("XXXXXXXXXXxxxx", data);
     axios
-      .get("http://localhost:3001/announcement", { params: data })
+      .get("http://localhost:3001/announcement", { params: data }) // In GET request, params is used to send data
       .then(response => {
         // you can access your data here
         //console.log("courses response:", response.data);
@@ -60,8 +59,21 @@ class Announcements extends Component {
       visible: false
     });
   };
+
+  reverseObject = Obj => {
+    // To reverse the allAnnouncements object
+    var TempArr = [];
+    var NewObj = [];
+    for (var Key in Obj) {
+      TempArr.push(Key);
+    }
+    for (var i = 0; i < TempArr.length; i++) {
+      NewObj[TempArr.length - 1 - i] = Obj[i];
+    }
+    return NewObj;
+  };
+
   render() {
-    console.log("DDDDDDDDDDDDDDDDDDDD", this.state.announcements);
     const { validated } = this.state; // form validations
 
     let redirectVal = null;
@@ -71,6 +83,33 @@ class Announcements extends Component {
       var newRedirectLink = redirectLink.replace("announcements", "");
       redirectVal = <Redirect to={newRedirectLink} />;
     }
+
+    let allAnnouncements = this.state.announcements;
+    let announcementPresent = null;
+    const Panel = Collapse.Panel;
+    if (allAnnouncements === "") {
+      announcementPresent = (
+        <font className="font-weight-bold" size="3">
+          No announcement available.{/**If no courses present */}
+        </font>
+      );
+    } else {
+      //Announcements present
+      // Order of announcements shown should be front the latest to the oldest. In database, the announcements are saved from oldest to latest, top to bottom. Therefore we have to reverse the allAnnouncements object
+      allAnnouncements = this.reverseObject(allAnnouncements);
+      console.log("XXXXXXXXXXXXXXXXXXX", allAnnouncements);
+      announcementPresent = ( // Showing all announcements
+        <div className="px-4 my-4">
+          <Collapse accordion>
+            {Object.keys(allAnnouncements).map(key => (
+              <Panel header={allAnnouncements[key].Title} style={{ textAlign: "left", fontWeight: "bold" }}>
+                <p style={{ textAlign: "left" }}>{allAnnouncements[key].Description}</p>
+              </Panel>
+            ))}
+          </Collapse>
+        </div>
+      );
+    }
     return (
       <React.Fragment>
         {redirectVal}
@@ -78,6 +117,7 @@ class Announcements extends Component {
           <Button type="primary" shape="round" size="large" icon="plus" onClick={this.showModal}>
             Announcement
           </Button>
+          <div>{announcementPresent}</div>
           <Modal title="Make an announcement:" visible={this.state.visible} onOk={e => this.handleOk(e)} onCancel={this.handleCancel}>
             <Form noValidate validated={validated}>
               <Form.Group as={Col} md="4" controlId="validationTitle">
