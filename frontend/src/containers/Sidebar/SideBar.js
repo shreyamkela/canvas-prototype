@@ -34,7 +34,7 @@ class SideBar extends Component {
   };
 
   render() {
-    const { courseDataToComponent } = this.props; // redux state to props
+    const { courseDataToComponent, loginRequest } = this.props; // redux state to props
     let coursesPresent = null;
     let allCourses = null;
 
@@ -63,6 +63,27 @@ class SideBar extends Component {
             </Link>
           ))}
         </React.Fragment>
+      );
+    }
+
+    // Checking the persona and displaying either Create a course or Enroll into a Course
+    let enrolOrCreate = null;
+    if (loginRequest.persona === 1) {
+      enrolOrCreate = (
+        <Link to="/create" style={{ textDecoration: "underline" }} onClick={this.onClose}>
+          {/**FIXME Make routes under the courses page
+      NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
+          <font size="4">Create a Course</font>
+        </Link>
+      );
+    } else if (loginRequest.persona === 2) {
+      // FIXME Configure app so as to enroll course on url /courses/enroll and create courses on /courses/create
+      enrolOrCreate = (
+        <Link to="/enroll" style={{ textDecoration: "underline" }} onClick={this.onClose}>
+          {/**FIXME Make routes under the courses page
+      NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
+          <font size="4">Enroll into a Course</font>
+        </Link>
       );
     }
 
@@ -170,11 +191,7 @@ class SideBar extends Component {
                 textAlign: "center"
               }}
             >
-              <Link to="/create" style={{ textDecoration: "underline" }} onClick={this.onClose}>
-                {/**FIXME Make routes under the courses page
-                NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
-                <font size="4">Create a Course</font>
-              </Link>
+              {enrolOrCreate}
             </div>
           </Drawer>
         </Layout>
@@ -184,8 +201,8 @@ class SideBar extends Component {
 }
 
 function mapStateToProps(state) {
-  const { courseDataToComponent } = state;
-  return { courseDataToComponent };
+  const { courseDataToComponent, loginRequest } = state;
+  return { courseDataToComponent, loginRequest };
 }
 
 export default connect(mapStateToProps)(SideBar);

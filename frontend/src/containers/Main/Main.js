@@ -9,6 +9,7 @@ import Profile from "../ProfilePage/Profile";
 import Courses from "../Courses/Courses";
 import Create from "../Courses/Create"; // Create a course
 import SideBar from "../Sidebar/SideBar";
+import Enroll from "../Courses/Enroll";
 
 import { Layout } from "antd";
 
@@ -29,7 +30,8 @@ class Main extends Component {
               <Route path="/profile" component={Profile} />
               <Route path="/courses/:id" component={Courses} />
               {/* FIXME Make create route inside the courses file*/}
-              <Route path="/create" component={Create} /> {/* FIXME Make create route inside the courses file*/}
+              <Route path="/create" component={Create} /> {/* FIXME Configure create and enroll route inside the courses file*/}
+              <Route path="/enroll" component={Enroll} />
             </Layout>
           </Content>
         </Layout>
