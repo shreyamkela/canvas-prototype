@@ -27,27 +27,27 @@ app.use(
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-// set a cookie
-app.use(function(req, res, next) {
-  // check if client sent cookie
-  var cookie = req.cookies.cookieName;
-  if (cookie === undefined) {
-    console.log("Cookie does not exist");
-    // res.cookie("cookie", "LoggedIn", {
-    //   // Set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
-    //   // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
-    //   maxAge: 900000,
-    //   httpOnly: false,
-    //   path: "/"
-    // });
-    // console.log("cookie created successfully");
-    // console.log("Cookie: ", cookie);
-  } else {
-    // yes, cookie was already present
-    console.log("Cookie exists", cookie);
-  }
-  next(); // <-- important!
-});
+// // set a cookie
+// app.use(function(req, res, next) {
+//   // check if client sent cookie
+//   var cookie = req.cookies.cookieName;
+//   if (cookie === undefined) {
+//     console.log("Cookie does not exist");
+//     // res.cookie("cookie", "LoggedIn", {
+//     //   // Set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
+//     //   // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
+//     //   maxAge: 900000,
+//     //   httpOnly: false,
+//     //   path: "/"
+//     // });
+//     // console.log("cookie created successfully");
+//     // console.log("Cookie: ", cookie);
+//   } else {
+//     // yes, cookie was already present
+//     console.log("Cookie exists", cookie);
+//   }
+//   next(); // <-- important!
+// });
 
 //Allow Access Control
 app.use(function(req, res, next) {
@@ -193,6 +193,21 @@ app.get("/getcourses", function(req, res) {
       res.send("noCourses");
     }
   });
+});
+
+//Route to handle Get Request Call to load all announcements for the faculty email and courseId
+app.get("/announcement", function(req, res) {
+  console.log("Get Announcement Data Called! Announcement Data:", req.query);
+  let announcementData = req.query;
+
+  db.query(
+    `SELECT Title, Description FROM Announcements WHERE CourseId = '${announcementData.courseId}' AND Email = '${announcementData.email}'`,
+    (err, results) => {
+      if (err) throw err;
+      console.log("Announcements for this Email and CourseId:", results);
+      res.send(results);
+    }
+  );
 });
 
 //Route to handle Post Request Call to create a new announcement

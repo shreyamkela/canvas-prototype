@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"; // Connects the components to the redux store
 import { Redirect } from "react-router";
+import axios from "axios";
 
 import { Button, Modal } from "antd";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
@@ -8,7 +9,23 @@ import { Form, Col } from "react-bootstrap"; // for the new user modal
 import { postAnnouncementData } from "../../../_actions/user.actions";
 
 class Announcements extends Component {
-  state = { visible: false, validated: false, redirect: false, message: "" };
+  state = { visible: false, validated: false, redirect: false, message: "", announcements: "" };
+  constructor(props) {
+    super(props);
+    const { currentCourseDataToComponent, loginRequest } = this.props; // redux state to props
+    const data = { email: loginRequest.email, courseId: currentCourseDataToComponent.currentCourse.Id };
+    console.log("XXXXXXXXXXxxxx", data);
+    axios
+      .get("http://localhost:3001/announcement", { params: data })
+      .then(response => {
+        // you can access your data here
+        //console.log("courses response:", response.data);
+        this.setState({ announcements: response.data });
+      })
+      .catch(error => {
+        console.log(error.response);
+      });
+  }
 
   showModal = () => {
     this.setState({
@@ -17,10 +34,9 @@ class Announcements extends Component {
   };
 
   handleOk = e => {
-    var { announcementCreateRequest, currentCourseDataToComponent, loginRequest } = this.props; // redux state to props
+    const { announcementCreateRequest, currentCourseDataToComponent, loginRequest } = this.props; // redux state to props
     let { dispatch } = this.props;
     const form = e.currentTarget;
-    console.log("XXXXXXXXXXXXXX", currentCourseDataToComponent);
     if (form.checkValidity() === false) {
       e.preventDefault(); // dont do default - default is submitting the data to the database
       e.stopPropagation(); // dont propogate event to parents
@@ -45,6 +61,7 @@ class Announcements extends Component {
     });
   };
   render() {
+    console.log("DDDDDDDDDDDDDDDDDDDD", this.state.announcements);
     const { validated } = this.state; // form validations
 
     let redirectVal = null;
