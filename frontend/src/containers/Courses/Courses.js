@@ -8,6 +8,7 @@ import { Layout } from "antd";
 
 import CourseMenu from "./CourseMenu/CourseMenu";
 import Announcements from "./CourseMenu/Announcements";
+import { currentCourseDataToComponent } from "../../_actions/user.actions";
 
 class Courses extends Component {
   handleLogOut = () => {
@@ -18,8 +19,9 @@ class Courses extends Component {
   render() {
     const { Header, Content } = Layout;
 
+    const { dispatch } = this.props;
     const { id } = this.props.match.params; // Course Id passed through :id while routing to this page
-    const { courseDataToSidebar } = this.props; // redux state to propsl
+    const { courseDataToComponent } = this.props; // redux state to propsl
     let allCourses = null;
     let currentCourse = null;
     let courseTitle = null;
@@ -31,18 +33,19 @@ class Courses extends Component {
     let quizzesUrl = null;
     let courseUrl = null;
 
-    if (courseDataToSidebar.courses == undefined) {
+    if (courseDataToComponent.courses == undefined) {
       allCourses = null;
     } else {
-      allCourses = courseDataToSidebar.courses;
+      allCourses = courseDataToComponent.courses;
     }
 
     for (var key in allCourses) {
-      // To find which is the current course clicked, inside courseDataToSidebar
+      // To find which is the current course clicked, inside courseDataToComponent
       if (allCourses[key].Id === undefined) {
         continue;
       } else if (allCourses[key].Id === id) {
         currentCourse = allCourses[key];
+        dispatch(currentCourseDataToComponent(currentCourse)); // dispatch current course data to components that require it
         courseTitle = `${allCourses[key].Id} - ${allCourses[key].Name}`;
 
         announcementsUrl = `/courses/${allCourses[key].Id}/announcements`;
@@ -87,8 +90,8 @@ class Courses extends Component {
 }
 
 function mapStateToProps(state) {
-  const { courseDataToSidebar } = state;
-  return { courseDataToSidebar };
+  const { courseDataToComponent } = state;
+  return { courseDataToComponent };
 }
 
 export default connect(mapStateToProps)(Courses);

@@ -34,18 +34,18 @@ class SideBar extends Component {
   };
 
   render() {
-    const { courseDataToSidebar } = this.props; // redux state to props
+    const { courseDataToComponent } = this.props; // redux state to props
     let coursesPresent = null;
     let allCourses = null;
 
-    if (courseDataToSidebar.courses === "") {
+    if (courseDataToComponent.courses === "") {
       coursesPresent = (
         <font className="font-weight-bold" size="3">
           No courses available{/**If no courses present */}
         </font>
       );
     } else {
-      allCourses = courseDataToSidebar.courses;
+      allCourses = courseDataToComponent.courses;
       Object.keys(allCourses).map(key => {
         let linkString = `${allCourses[key].Id}`;
         Object.assign(allCourses[key], { Link: `/courses/${linkString}` });
@@ -182,8 +182,8 @@ class SideBar extends Component {
 }
 
 function mapStateToProps(state) {
-  const { courseDataToSidebar } = state;
-  return { courseDataToSidebar };
+  const { courseDataToComponent } = state;
+  return { courseDataToComponent };
 }
 
 export default connect(mapStateToProps)(SideBar);

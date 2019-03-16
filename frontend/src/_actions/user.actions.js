@@ -1,7 +1,7 @@
 import axios from "axios";
 import cookie from "react-cookies";
 
-import { LOGIN_REQUEST, REGISTER, CREATE_COURSE, COURSE_DATA_TO_SIDEBAR, ANNOUNCEMENT_CREATE } from "./types";
+import { LOGIN_REQUEST, REGISTER, CREATE_COURSE, COURSE_DATA_TO_COMPONENT, CURRENT_COURSE_DATA_TO_COMPONENT, ANNOUNCEMENT_CREATE } from "./types";
 
 export const postLoginData = data => dispatch => {
   console.log("postLoginData called!");
@@ -57,10 +57,20 @@ export const postCreationData = data => dispatch => {
     );
 };
 
-export const CourseDataToSidebar = data => dispatch => {
-  console.log("CourseDataToSidebar called!");
+export const courseDataToComponent = data => dispatch => {
+  // Data of all the courses
+  console.log("courseDataToComponent called!");
   dispatch({
-    type: COURSE_DATA_TO_SIDEBAR, // Sending type in action dispatches is mandatory
+    type: COURSE_DATA_TO_COMPONENT, // Sending type in action dispatches is mandatory
+    payload: data
+  });
+};
+
+export const currentCourseDataToComponent = data => dispatch => {
+  // Data of current course
+  console.log("courseDataToComponent called!");
+  dispatch({
+    type: CURRENT_COURSE_DATA_TO_COMPONENT, // Sending type in action dispatches is mandatory
     payload: data
   });
 };

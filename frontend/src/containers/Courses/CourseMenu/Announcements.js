@@ -17,15 +17,21 @@ class Announcements extends Component {
   };
 
   handleOk = e => {
-    var { announcementCreateRequest } = this.props; // redux state to props
+    var { announcementCreateRequest, currentCourseDataToComponent, loginRequest } = this.props; // redux state to props
     let { dispatch } = this.props;
     const form = e.currentTarget;
+    console.log("XXXXXXXXXXXXXX", currentCourseDataToComponent);
     if (form.checkValidity() === false) {
       e.preventDefault(); // dont do default - default is submitting the data to the database
       e.stopPropagation(); // dont propogate event to parents
     } else if (this.refs.title.value != "" && this.refs.desc.value != "") {
       // Only dispatch when both fields are non empty
-      let data = { desc: this.refs.desc.value, title: this.refs.title.value };
+      let data = {
+        desc: this.refs.desc.value,
+        title: this.refs.title.value,
+        email: loginRequest.email,
+        courseId: currentCourseDataToComponent.currentCourse.Id
+      };
       dispatch(postAnnouncementData(data));
       this.setState({ redirect: true, message: `${announcementCreateRequest.response}` }); // Update creation message
     }
@@ -75,8 +81,8 @@ class Announcements extends Component {
 }
 
 function mapStateToProps(state) {
-  const { announcementCreateRequest } = state;
-  return { announcementCreateRequest };
+  const { announcementCreateRequest, currentCourseDataToComponent, loginRequest } = state;
+  return { announcementCreateRequest, currentCourseDataToComponent, loginRequest };
 }
 
 export default connect(mapStateToProps)(Announcements);

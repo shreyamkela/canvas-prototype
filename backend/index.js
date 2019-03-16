@@ -202,11 +202,16 @@ app.post("/announcement", function(req, res) {
   // let title = announcementData.title;
   // console.log("Title: ", title);
 
-  db.query(`INSERT INTO Announcements (Title, Description) VALUES ('${announcementData.title}','${announcementData.desc}')`, err => {
-    if (err) throw err;
-    console.log("New details added to Announcement table");
-    res.send("Creation Successful!");
-  });
+  db.query(
+    `INSERT INTO Announcements (Title, Description, Email, CourseId) VALUES ('${announcementData.title}','${announcementData.desc}','${
+      announcementData.email
+    }','${announcementData.courseId}')`,
+    err => {
+      if (err) throw err;
+      console.log("New details added to Announcement table");
+      res.send("Creation Successful!");
+    }
+  );
 });
 
 //start your server on port 3001
