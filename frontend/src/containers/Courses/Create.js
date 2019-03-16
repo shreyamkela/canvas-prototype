@@ -28,6 +28,7 @@ class Create extends Component {
       event.preventDefault(); // dont do default - default is submitting the data to the database
       event.stopPropagation(); // dont propogate event to parents
     } else {
+      const { loginRequest } = this.props;
       let data = {
         // data is accessible at the backend by req.body.query
         courseId: this.refs.courseId.value,
@@ -37,9 +38,11 @@ class Create extends Component {
         room: this.refs.room.value,
         classCap: this.refs.classCap.value,
         waitlistCap: this.refs.waitlistCap.value,
-        term: this.refs.term.value
+        term: this.refs.term.value,
+        email: loginRequest.email
       };
       dispatch(postCreationData(data));
+      // FIXME Redirect to dashboard when a course is successfully created
     }
     this.setState({ validated: true });
   };
@@ -124,7 +127,7 @@ class Create extends Component {
                 {/* <div className="personaErrorMessage text-danger">{this.state.personaErrorMessage}</div> */}
               </div>
               ;<Button type="submit">Create</Button>
-              <div className="text-danger">{createRequest.response}</div>
+              <div className="text-success">{createRequest.response}</div>
             </Form>
           </Content>
           <Footer style={{ background: "#fff" }} />
@@ -135,8 +138,8 @@ class Create extends Component {
 }
 
 function mapStateToProps(state) {
-  const { createRequest } = state;
-  return { createRequest };
+  const { createRequest, loginRequest } = state;
+  return { createRequest, loginRequest };
 }
 
 export default connect(mapStateToProps)(Create);

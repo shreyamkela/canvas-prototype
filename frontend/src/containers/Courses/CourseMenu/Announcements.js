@@ -99,6 +99,7 @@ class Announcements extends Component {
       allAnnouncements = this.reverseObject(allAnnouncements);
       console.log("XXXXXXXXXXXXXXXXXXX", allAnnouncements);
       announcementPresent = ( // Showing all announcements
+        // FIXME Make announcements as link/clickable and route to their own component for each announcement
         <div className="px-4 my-4">
           <Collapse accordion>
             {Object.keys(allAnnouncements).map(key => (

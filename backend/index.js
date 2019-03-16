@@ -163,10 +163,10 @@ app.post("/createcourse", function(req, res) {
     console.log(results[0]);
     if (results[0] === undefined) {
       // if not present
-      let { courseName, dept, descrip, room, classCap, waitlistCap, term } = courseData;
-      console.log(id, courseName, dept, descrip, room, classCap, waitlistCap, term);
+      let { courseName, dept, descrip, room, classCap, waitlistCap, term, email } = courseData;
+      console.log(id, courseName, dept, descrip, room, classCap, waitlistCap, term, email);
       db.query(
-        `INSERT INTO Courses (Id, Name, Department, Description, Room, Capacity, Waitlist, Term) VALUES ('${id}','${courseName}','${dept}','${descrip}','${room}','${classCap}','${waitlistCap}','${term}')`,
+        `INSERT INTO Courses (Id, Name, Department, Description, Room, Capacity, Waitlist, Term, Email) VALUES ('${id}','${courseName}','${dept}','${descrip}','${room}','${classCap}','${waitlistCap}','${term}', '${email}')`,
         err => {
           if (err) throw err;
           console.log("New details added to Courses table");
