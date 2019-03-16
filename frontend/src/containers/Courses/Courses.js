@@ -11,11 +11,6 @@ import Announcements from "./CourseMenu/Announcements";
 import { currentCourseDataToComponent } from "../../_actions/user.actions";
 
 class Courses extends Component {
-  handleLogOut = () => {
-    // FIXME Handle logout with state? So that we dont have to include handleLogOut() into each and every page code
-    console.log("Log Out Clicked!");
-  };
-
   render() {
     const { Header, Content } = Layout;
 

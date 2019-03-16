@@ -33,7 +33,9 @@ class SideBar extends Component {
     // FIXME On logout click, also remove the email and persona saved in redux store loginRequest
     cookie.remove("cookie");
     console.log("Log Out Clicked!");
-    window.location.replace("/"); // Can use this for logout
+    window.location.replace("/");
+    // Can use this method for logout. Replace replaces the last pushed link in the history.push so on logout, we remove the previous link so that on logout the user cannot go to the previous page/logged in state using the back button
+    // NOTE this method is not ideal for normal routing. For normal routing to pages, we use history.push() or redirect or link. But history.push is preferred
   };
 
   render() {

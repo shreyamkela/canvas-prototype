@@ -25,16 +25,15 @@ class Dashboard extends Component {
 
       dispatch(courseDataToComponent(response.data)); // NOTE Posting course data to sidebar so that the courses drawer can show the courses. Also, here the sidebar is a child of dashboard but sidebar is also child of account and courses page. Here in dashboard if we pass coursesData as props to sidebar then there would not be a single source of truth for the sidebar as account and courses page do not pass props to sidebar. Therefore, we use redux store as a single source of truth where the sidebar's state will be updated with the courses data
       // If courses are available then dispatch them to the sidebar as well
-      this.setState({ courses: response.data });
+      this.setState({ courses: response.data }); // FIXME Here we have stored the whole courses data into the redux store. This is not ideal. We dont use redux store for storing stuff that can change on the serverside. We only use redux store to pass props.
+      // This is because in distributed systems, another user might update that dataset that we had just dispatched and therefore our dispatch has old data. Therefore we do api calls on all pages and routes and dont pass data using redux.
+      // Though api call on each page is expensive but we have to do this if we want updated data, every second. However, one clever usage of redux store could be that we do store all data in redux store but still do api calls on each page.
+      // We update the store on each api call. This way, the redux store is always kept up to date and we can use the redux store as a cache and load load from it first (when a page loads) and then do api call to fetch newer data and update the store which will bring the new contents also on the page.
+      // This way, we do load some part of the data so that user can atleast see something and doent just show the loading dial, and then as soon as new data arrives from the call to the store, the page renders the new data as well. This is an option but we have to check whether this is actually done in the industry or not. In the industry, pagination is done on frontend and backend to retreive only chunks of data
     } catch (error) {
       console.log(error.response);
     }
   }
-
-  handleLogOut = () => {
-    // FIXME Handle logout with state? So that we dont have to include handleLogOut() into each and every page code
-    console.log("Log Out Clicked!");
-  };
 
   render() {
     let coursesPresent = null;

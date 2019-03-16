@@ -1,15 +1,10 @@
 // Home page is the dashboard page
 
 import React, { Component } from "react";
-import { Redirect } from "react-router";
-import cookie from "react-cookies";
 import { connect } from "react-redux";
-
-import { postCreationData } from "../../_actions/user.actions";
+import axios from "axios";
 
 import { Typography, Layout, Input, Radio } from "antd";
-
-import { Form, Col, InputGroup, Button } from "react-bootstrap"; // for the new user modal
 
 import SideBar from "../Sidebar/SideBar";
 
@@ -18,60 +13,45 @@ class Enroll extends Component {
     validated: false,
     courseErrorMessage: "",
     filterPresent: true,
-    value: 1
+    filterRadioValue: 1,
+    searchByRadioValue: "id"
   };
 
-  handleSubmit = event => {
-    let { dispatch } = this.props;
-    console.log("Create Clicked!");
-    const form = event.currentTarget;
+  async handleSearch(searchValue) {
+    // NOTE using arrow function with async keyword shows error or async keyword
+    console.log("Search term:", searchValue);
+    console.log("Filter Radio:", this.state.filterRadioValue);
+    console.log("Search By Radio:", this.state.searchByRadioValue);
+    if (searchValue !== "") {
+      const data = { searchValue: searchValue, filterRadioValue: this.state.filterRadioValue, searchByRadioValue: this.state.searchByRadioValue };
 
-    if (form.checkValidity() === false) {
-      event.preventDefault(); // dont do default - default is submitting the data to the database
-      event.stopPropagation(); // dont propogate event to parents
-    } else {
-      const { loginRequest } = this.props;
-      let data = {
-        // data is accessible at the backend by req.body.query
-        courseId: this.refs.courseId.value,
-        courseName: this.refs.courseName.value,
-        dept: this.refs.dept.value,
-        descrip: this.refs.descrip.value,
-        room: this.refs.room.value,
-        classCap: this.refs.classCap.value,
-        waitlistCap: this.refs.waitlistCap.value,
-        term: this.refs.term.value,
-        email: loginRequest.email
-      };
-      dispatch(postCreationData(data));
-      // FIXME Redirect to dashboard when a course is successfully created
+      try {
+        let response = await axios.get("http://localhost:3001/searchcourses", { params: data });
+        //this.setState({ announcements: response.data });
+      } catch (error) {
+        console.log(error.response);
+      }
     }
-    this.setState({ validated: true });
-  };
+  }
 
   onChange = e => {
     // For radio buttons
-    console.log(`radio checked:${e.target.value}`);
-    if (e.target.value !== "a") {
+    //console.log(`radio checked:${e.target.value}`);
+    if (e.target.value !== "id") {
       // If course Id button is not selected, then remove the filter
-      this.setState({ filterPresent: false });
-    } else if (e.target.value === "a" && this.state.filterPresent === false) {
+      this.setState({ filterPresent: false, searchByRadioValue: e.target.value, filterRadioValue: 0 });
+    } else if (e.target.value === "id" && this.state.filterPresent === false) {
       // If any other button was clicked and course id is clicked again
-      this.setState({ filterPresent: true });
+      this.setState({ filterPresent: true, searchByRadioValue: e.target.value, filterRadioValue: 1 });
     }
   };
 
   onFilterChange = e => {
     // for filter radios
-    console.log(`filter checked:${e.target.value}`);
+    // console.log(`filter checked:${e.target.value}`);
     this.setState({
-      value: e.target.value
+      filterRadioValue: e.target.value
     });
-  };
-
-  handleLogOut = () => {
-    // FIXME Handle logout with state? So that we dont have to include handleLogOut() into each and every page code
-    console.log("Log Out Clicked!");
   };
 
   render() {
@@ -90,11 +70,11 @@ class Enroll extends Component {
     if (this.state.filterPresent === true) {
       filter = (
         <div>
-          <font className="font-weight-bold" size="2">
+          <font className="font-weight-bold" size="3">
             Filter:
           </font>
           <br />
-          <RadioGroup onChange={this.onFilterChange} value={this.state.value}>
+          <RadioGroup onChange={this.onFilterChange} value={this.state.filterRadioValue}>
             <Radio value={1}>Exact</Radio>
             <Radio value={2}>Greater than</Radio>
             <Radio value={3}>Less than</Radio>
@@ -123,20 +103,20 @@ class Enroll extends Component {
               placeholder="Search for a course by id, term, or course name"
               enterButton="Search"
               size="large"
-              onSearch={value => console.log(value)}
+              onSearch={searchValue => this.handleSearch(searchValue)}
               style={{ width: 700 }}
             />
             <br />
             <br />
             <div>
-              <font className="font-weight-bold" size="2">
+              <font className="font-weight-bold" size="3">
                 Search by:
               </font>
               <br />
-              <Radio.Group onChange={this.onChange} defaultValue="a" buttonStyle="solid" size="large" style={{ marginRight: 10 }}>
-                <Radio.Button value="a">Course Id</Radio.Button>
-                <Radio.Button value="b">Term</Radio.Button>
-                <Radio.Button value="c">Course Name</Radio.Button>
+              <Radio.Group onChange={this.onChange} defaultValue="id" buttonStyle="solid" size="large" style={{ marginRight: 10 }}>
+                <Radio.Button value="id">Course Id</Radio.Button>
+                <Radio.Button value="term">Term</Radio.Button>
+                <Radio.Button value="name">Course Name</Radio.Button>
               </Radio.Group>
 
               <br />

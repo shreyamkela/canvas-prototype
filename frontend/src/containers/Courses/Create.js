@@ -47,11 +47,6 @@ class Create extends Component {
     this.setState({ validated: true });
   };
 
-  handleLogOut = () => {
-    // FIXME Handle logout with state? So that we dont have to include handleLogOut() into each and every page code
-    console.log("Log Out Clicked!");
-  };
-
   render() {
     const { validated } = this.state;
 
