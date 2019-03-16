@@ -14,7 +14,8 @@ class Enroll extends Component {
     courseErrorMessage: "",
     filterPresent: true,
     filterRadioValue: 1,
-    searchByRadioValue: "id"
+    searchByRadioValue: "id",
+    courses: ""
   };
 
   async handleSearch(searchValue) {
@@ -27,7 +28,7 @@ class Enroll extends Component {
 
       try {
         let response = await axios.get("http://localhost:3001/searchcourses", { params: data });
-        //this.setState({ announcements: response.data });
+        this.setState({ courses: response.data });
       } catch (error) {
         console.log(error.response);
       }
@@ -83,6 +84,23 @@ class Enroll extends Component {
       );
     }
 
+    let coursesSearched = null;
+    if (this.state.courses === "noCourses") {
+      coursesSearched = (
+        <font className="font-weight-bold" size="3">
+          No courses available{/**If no courses present */}
+        </font>
+      );
+    } else if (this.state.courses.length > 0) {
+      // there is something other than noCourses
+      coursesSearched = (
+        <font className="font-weight-bold" size="3">
+          {this.state.courses}
+          {/**If no courses present */}
+        </font>
+      );
+    }
+
     return (
       <div>
         <Layout>
@@ -123,6 +141,7 @@ class Enroll extends Component {
               <br />
               {filter}
             </div>
+            <div>{coursesSearched}</div>
 
             <div className="d-flex flex-column mb-4">
               {/* <div className="personaErrorMessage text-danger">{this.state.personaErrorMessage}</div> */}
