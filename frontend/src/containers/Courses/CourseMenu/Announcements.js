@@ -97,7 +97,6 @@ class Announcements extends Component {
       //Announcements present
       // Order of announcements shown should be front the latest to the oldest. In database, the announcements are saved from oldest to latest, top to bottom. Therefore we have to reverse the allAnnouncements object
       allAnnouncements = this.reverseObject(allAnnouncements);
-      console.log("XXXXXXXXXXXXXXXXXXX", allAnnouncements);
       announcementPresent = ( // Showing all announcements
         // FIXME Make announcements as link/clickable and route to their own component for each announcement
         <div className="px-4 my-4">

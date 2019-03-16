@@ -182,8 +182,9 @@ app.post("/createcourse", function(req, res) {
 
 //Route to handle Get Request Call to get all courses for faculty/student depending upon the persona
 app.get("/getcourses", function(req, res) {
-  console.log("Get Courses data...");
-  db.query(`SELECT Id, Name FROM Courses`, (err, results) => {
+  console.log("Get Courses data...", req.query);
+  const email = req.query.email; // Selecting only those courses to send to frontend, that have been created by the logged in faculty
+  db.query(`SELECT Id, Name FROM Courses WHERE Email = '${email}'`, (err, results) => {
     if (err) throw err;
     console.log(results);
     if (results[0] !== undefined) {

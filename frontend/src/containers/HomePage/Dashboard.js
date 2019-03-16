@@ -12,10 +12,14 @@ import { courseDataToComponent } from "../../_actions/user.actions";
 class Dashboard extends Component {
   state = { courses: "" };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    const { loginRequest } = this.props;
+    // Sending email of the current logged in faculty to select only those courses to get to the frontend, that have been created by this faculty
+    const data = { email: loginRequest.email };
+
     axios
-      .get("http://localhost:3001/getcourses")
+      .get("http://localhost:3001/getcourses", { params: data })
       .then(response => {
         // you can access your data here
         //console.log("courses response:", response.data);
@@ -88,4 +92,9 @@ class Dashboard extends Component {
   }
 }
 
-export default connect(null)(Dashboard);
+function mapStateToProps(state) {
+  const { loginRequest } = state;
+  return { loginRequest };
+}
+
+export default connect(mapStateToProps)(Dashboard);
