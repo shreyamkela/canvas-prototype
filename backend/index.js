@@ -182,18 +182,40 @@ app.post("/createcourse", function(req, res) {
 
 //Route to handle Get Request Call to get all courses for faculty/student depending upon the persona
 app.get("/getcourses", function(req, res) {
-  console.log("Get Courses data...", req.query);
-  const email = req.query.email; // Selecting only those courses to send to frontend, that have been created by the logged in faculty
-  db.query(`SELECT Id, Name FROM Courses WHERE Email = '${email}'`, (err, results) => {
-    if (err) throw err;
-    console.log(results);
-    if (results[0] !== undefined) {
-      res.send(results);
-    } else {
-      console.log("No courses available.");
-      res.send("noCourses");
-    }
-  });
+  if (req.query.persona === "1") {
+    // Persona is of faculty
+    console.log("Get Courses data for faculty...", req.query);
+    const email = req.query.email; // Selecting only those courses to send to frontend, that have been created by the logged in faculty
+    db.query(`SELECT Id, Name FROM Courses WHERE Email = '${email}'`, (err, results) => {
+      if (err) throw err;
+      console.log(results);
+      if (results[0] !== undefined) {
+        res.send(results);
+      } else {
+        console.log("No courses available.");
+        res.send("noCourses");
+      }
+    });
+  } else if (req.query.persona === "2") {
+    console.log("Get Courses data for student...", req.query);
+    const email = req.query.email; // Selecting only those courses to send to frontend, that have been created by the logged in faculty
+    db.query(`SELECT CourseId FROM courseEnrolments WHERE StudentEmail = '${email}'`, (err, results) => {
+      if (err) throw err;
+      console.log("Student is enrolled in the following course ids:", results);
+      if (results[0] !== undefined) {
+        for (var key in results) {
+          db.query(`SELECT Id, Name FROM Courses WHERE Id = '${results[key].CourseId}'`, (err, results_1) => {
+            if (err) throw err;
+            console.log("Student with this email is enrolled in the following courses:", results_1);
+            res.send(results_1);
+          });
+        }
+      } else {
+        console.log("No courses available.");
+        res.send("noCourses");
+      }
+    });
+  }
 });
 
 //Route to handle Get Request Call to load all announcements for the faculty email and courseId

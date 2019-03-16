@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import cookie from "react-cookies";
 import { connect } from "react-redux"; // Connects the components to the redux store
 
-import { Layout, Menu, Icon, Drawer, Button, Col } from "antd";
+import { Layout, Menu, Icon, Drawer, Button, Col, Row } from "antd";
 
 class SideBar extends Component {
   state = { accountDrawerVisible: false, coursesDrawerVisible: false };
@@ -58,6 +58,8 @@ class SideBar extends Component {
             <Link to={allCourses[key].Link} style={{ textDecoration: "underline" }} onClick={this.onClose}>
               {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
               <font size="4">{allCourses[key].Id}</font>
+              <br />
+              <br />
             </Link>
           ))}
         </React.Fragment>

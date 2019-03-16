@@ -16,7 +16,7 @@ class Dashboard extends Component {
     super(props);
     const { loginRequest } = this.props;
     // Sending email of the current logged in faculty to select only those courses to get to the frontend, that have been created by this faculty
-    const data = { email: loginRequest.email };
+    const data = { email: loginRequest.email, persona: loginRequest.persona };
     axios
       .get("http://localhost:3001/getcourses", { params: data })
       .then(response => {

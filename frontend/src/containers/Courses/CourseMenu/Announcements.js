@@ -120,6 +120,7 @@ class Announcements extends Component {
           <div>{announcementPresent}</div>
           <Modal title="Make an announcement:" visible={this.state.visible} onOk={e => this.handleOk(e)} onCancel={this.handleCancel}>
             <Form noValidate validated={validated}>
+              {/* FIXME Fix the size of the text boxes. Also, description feild should be a text area */}
               <Form.Group as={Col} md="4" controlId="validationTitle">
                 <Form.Label>Title</Form.Label>
                 <Form.Control required type="text" placeholder="Enter Title" ref="title" />
