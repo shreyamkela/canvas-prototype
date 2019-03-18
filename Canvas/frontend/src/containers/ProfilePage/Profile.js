@@ -12,7 +12,7 @@ class Profile extends Component {
     const { Header, Content, Footer, Sider } = Layout;
     return (
       <div>
-        <Layout style={{ marginLeft: 150, padding: "0 24px 24px" }}>
+        <Layout style={{ background: "#fff", marginLeft: 150, padding: "0 24px 24px" }}>
           <Content
             style={{
               background: "#fff",

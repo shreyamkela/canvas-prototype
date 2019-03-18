@@ -354,6 +354,19 @@ app.post("/announcement", function(req, res) {
   );
 });
 
+// let temp = {
+//   "About me": "Software Engineering graduate student at SJSU",
+//   Gender: "Male",
+//   "Contact No": 6699887766,
+//   City: "San Jose",
+//   Country: "United States",
+//   Company: "An Awesome Company",
+//   School: "An Awesome School",
+//   Hometown: "An Awesome Hometown",
+//   Languages: "English, Hindi"
+// };
+// console.log(JSON.stringify(temp, undefined, 2));
+
 //start your server on port 3001
 app.listen(3001);
 console.log("Server Listening on port 3001");
