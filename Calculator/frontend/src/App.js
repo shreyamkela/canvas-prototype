@@ -16,6 +16,12 @@ const appStyle = {
   width: "178px"
 };
 
+const calStyle = {
+  // Setting the css to be used in JSX. App contains the calculator container
+  marginLeft: "220px",
+  marginTop: "70px"
+};
+
 class App extends Component {
   state = {
     expression: "", // Initially we set expression to empty. Expression is the property which is sent to the backend. eval function evaluates this expression
@@ -90,86 +96,88 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App border border-primary" style={appStyle}>
-        <div className="container m-1">
-          <div className="row">
-            <div className="card border border-primary" style={cardStyle}>
-              <div className="card-body">
-                <p className="card-title">{this.displayTruncated()}</p>{" "}
-                {/* Here we have used this.displayTruncated() instead of this.displayTruncated. When ever we have to print the returned value of function that is call the function, we use (), and whenever we have to use the reference that is, when we have to only execute that function, we dont use ()*/}
+      <div style={calStyle}>
+        <div className="App border border-primary" style={appStyle}>
+          <div className="container m-1">
+            <div className="row">
+              <div className="card border border-primary" style={cardStyle}>
+                <div className="card-body">
+                  <p className="card-title">{this.displayTruncated()}</p>{" "}
+                  {/* Here we have used this.displayTruncated() instead of this.displayTruncated. When ever we have to print the returned value of function that is call the function, we use (), and whenever we have to use the reference that is, when we have to only execute that function, we dont use ()*/}
+                </div>
               </div>
             </div>
-          </div>
-          <div className="row">
-            <button id="7" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              7
-            </button>
-            <button id="8" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              8
-            </button>
-            <button id="9" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              9
-            </button>
-            <button id="/" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              &divide;
-            </button>
-          </div>
+            <div className="row">
+              <button id="7" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                7
+              </button>
+              <button id="8" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                8
+              </button>
+              <button id="9" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                9
+              </button>
+              <button id="/" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                &divide;
+              </button>
+            </div>
 
-          <div className="row">
-            <button id="4" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              4
-            </button>
-            <button id="5" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              5
-            </button>
-            <button id="6" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              6
-            </button>
-            <button id="*" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              x
-            </button>
-          </div>
+            <div className="row">
+              <button id="4" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                4
+              </button>
+              <button id="5" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                5
+              </button>
+              <button id="6" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                6
+              </button>
+              <button id="*" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                x
+              </button>
+            </div>
 
-          <div className="row">
-            <button id="1" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              1
-            </button>
-            <button id="2" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              2
-            </button>
-            <button id="3" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              3
-            </button>
-            <button id="-" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              -
-            </button>
-          </div>
+            <div className="row">
+              <button id="1" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                1
+              </button>
+              <button id="2" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                2
+              </button>
+              <button id="3" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                3
+              </button>
+              <button id="-" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                -
+              </button>
+            </div>
 
-          <div className="row">
-            <button id="0" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              0
-            </button>
-            <button id="." onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              .
-            </button>
-            <button id="=" onClick={this.handleEquals} type="button" className="btn btn-outline-primary waves-effect m-1">
-              =
-            </button>
-            <button id="+" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
-              +
-            </button>
-          </div>
-          <div className="row px-3">
-            <button
-              id="clear"
-              onClick={() => {
-                this.setState({ expression: "", errorFlag: false });
-              }}
-              type="button"
-              className="btn btn-outline-primary waves-effect px-5"
-            >
-              Clear
-            </button>
+            <div className="row">
+              <button id="0" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                0
+              </button>
+              <button id="." onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                .
+              </button>
+              <button id="=" onClick={this.handleEquals} type="button" className="btn btn-outline-primary waves-effect m-1">
+                =
+              </button>
+              <button id="+" onClick={this.handleClick} type="button" className="btn btn-outline-primary waves-effect m-1">
+                +
+              </button>
+            </div>
+            <div className="row px-3">
+              <button
+                id="clear"
+                onClick={() => {
+                  this.setState({ expression: "", errorFlag: false });
+                }}
+                type="button"
+                className="btn btn-outline-primary waves-effect px-5"
+              >
+                Clear
+              </button>
+            </div>
           </div>
         </div>
       </div>
