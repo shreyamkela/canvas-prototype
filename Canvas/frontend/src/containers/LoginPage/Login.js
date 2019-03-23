@@ -5,6 +5,7 @@ import { Redirect } from "react-router";
 import cookie from "react-cookies";
 
 import Register from "./Register"; // New user modal form
+import canvasImage from "../../_public/images/canvasLogo.jpg";
 import { postLoginData } from "../../_actions/user.actions";
 
 class Login extends Component {
@@ -58,39 +59,57 @@ class Login extends Component {
       return (
         <div>
           {/* If cookie name is null then redirectVar is /login, else it is null. If redirectVar is /login. the react router routes the page to login, without loading the divs below */}
-          <div className="row align-items-center justify-content-center">
-            <div className="container">
-              <div className="login-form border border-default p-4 w-50">
-                <div className="panel">
-                  <h4>Sign In</h4>
+          <div className="container" style={{ marginTop: 100, width: 500 }}>
+            <div className="login-form border border-default p-4">
+              <br />
+              <div className="panel" style={{ textAlign: "center" }}>
+                <img src={canvasImage} style={{ width: 150 }} />
+                <br />
+                <br />
+                <font size="4">
+                  <b>Login</b>
+                </font>
+              </div>
+              <br />
+              <Form className="px-2" noValidate validated={validated} onSubmit={e => this.handleLogin(e)}>
+                <Form.Row>
+                  <Form.Group as={Col} controlId="validationEmail">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control required type="text" placeholder="Enter email" ref="email" />
+                  </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                  <Form.Group as={Col} controlId="validationPassword">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control required type="text" placeholder="Enter password" ref="password" />
+                  </Form.Group>
+                </Form.Row>
+
+                <br />
+                <div style={{ textAlign: "center" }}>
+                  <Button type="submit" className="btn btn-primary btn-block">
+                    Submit
+                  </Button>
                 </div>
-                <Form noValidate validated={validated} onSubmit={e => this.handleLogin(e)}>
-                  <Form.Row>
-                    <Form.Group as={Col} md="4" controlId="validationEmail">
-                      <Form.Label>Email</Form.Label>
-                      <Form.Control required type="text" placeholder="Email" ref="email" />
-                    </Form.Group>
-                    <Form.Group as={Col} md="4" controlId="validationPassword">
-                      <Form.Label>Password</Form.Label>
-                      <Form.Control required type="text" placeholder="Password" ref="password" />
-                    </Form.Group>
-                  </Form.Row>
-                  <Button type="submit">Login</Button>
-                </Form>
+              </Form>
+              <br />
+              <div className="px-2">
                 <a href="#" onClick={this.handleModalShow}>
                   New User?
                 </a>
-                <div className="text-danger">{loginRequest.response}</div>
-                {/* Show a modal if showModal state is true, else dont show */}
-                <Modal show={this.state.showModal} onHide={this.handleModalClose}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>New User Details</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Register />
-                  </Modal.Body>
-                </Modal>
               </div>
+              <div className="text-danger" style={{ textAlign: "center" }}>
+                {loginRequest.response}
+              </div>
+              {/* Show a modal if showModal state is true, else dont show */}
+              <Modal show={this.state.showModal} onHide={this.handleModalClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>New User Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Register />
+                </Modal.Body>
+              </Modal>
             </div>
           </div>
         </div>
