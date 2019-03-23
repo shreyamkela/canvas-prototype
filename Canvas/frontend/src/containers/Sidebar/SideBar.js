@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import cookie from "react-cookies";
 import { connect } from "react-redux"; // Connects the components to the redux store
 
+import canvasImage from "../../_public/images/canvasLogo_dark.jpg";
+
 import { Layout, Menu, Icon, Drawer, Button, Col, Row } from "antd";
 
 class SideBar extends Component {
@@ -97,6 +99,7 @@ class SideBar extends Component {
       <div>
         <Layout>
           <Sider
+            className="shadow"
             style={{
               overflow: "auto",
               height: "100vh",
@@ -104,9 +107,11 @@ class SideBar extends Component {
               left: 0
             }}
             width="150"
-            collapsible
+            // collapsible
           >
-            <div className="logo" />
+            <Header className="px-1" style={{ textAlign: "left" }}>
+              <img src={canvasImage} style={{ width: 140 }} />
+            </Header>
             <Menu theme="dark" mode="inline">
               <Menu.Item key="1" onClick={this.showAccountDrawer}>
                 <Icon type="user" style={{ color: "white" }} />
@@ -144,6 +149,7 @@ class SideBar extends Component {
             </Menu>
           </Sider>
           {/* FIXME Move the drawer after the sider */}
+
           <Drawer
             title="Account"
             placement="left"
@@ -170,7 +176,7 @@ class SideBar extends Component {
                 textAlign: "center"
               }}
             >
-              <Button type="primary" onClick={this.handleLogOut}>
+              <Button className="shadow" type="primary" onClick={this.handleLogOut}>
                 Log Out
               </Button>
             </div>

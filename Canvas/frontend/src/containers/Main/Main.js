@@ -20,12 +20,22 @@ class Main extends Component {
     return (
       <React.Fragment>
         <Layout>
+          {/* <Header
+            style={{
+              background: "#fff"
+            }}
+          /> */}
           <SideBar />
           {/** All valid routes must be declared here for routing to work */}
           {/* App Component Has a Child Component called Login*/}
           <Content>
             {/* Layout inside layout would make the internal layout towards the right of parent layout i.e horizontally. All the components inside a layout would be displayed vertically from top to bottom */}
             <Layout>
+              <Header
+                style={{
+                  background: "#fff"
+                }}
+              />
               <Route exact path="/home" component={Dashboard} />
               <Route path="/profile" component={Profile} />
               <Route path="/courses/:id" component={Courses} />

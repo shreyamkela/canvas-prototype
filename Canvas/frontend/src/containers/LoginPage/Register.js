@@ -51,14 +51,15 @@ class Register extends Component {
         <Form noValidate validated={validated} onSubmit={e => this.handleSubmit(e)}>
           <Form.Row>
             <Form.Group as={Col} className="px-3" controlId="validationCustom01">
-              <Form.Label>Firstname</Form.Label>
-              <Form.Control required type="text" placeholder="Enter firstname" ref="firstname" />
+              <Form.Label>First name</Form.Label>
+              <Form.Control required type="text" placeholder="Enter first name" ref="firstname" />
             </Form.Group>
             <Form.Group as={Col} className="px-3" controlId="validationCustom02">
-              <Form.Label>Lastname</Form.Label>
-              <Form.Control required type="text" placeholder="Enter lastname" ref="lastname" />
+              <Form.Label>Last name</Form.Label>
+              <Form.Control required type="text" placeholder="Enter last name" ref="lastname" />
             </Form.Group>
           </Form.Row>
+          <br />
           <Form.Row>
             <Form.Group as={Col} className="px-3" controlId="validationCustomEmail">
               <Form.Label>E-mail</Form.Label>
@@ -107,7 +108,9 @@ class Register extends Component {
             <div className="personaErrorMessage text-danger">{this.state.personaErrorMessage}</div>
           </div>
           <div>
-            <Button type="submit">Register</Button>
+            <Button className="shadow" type="submit">
+              Register
+            </Button>
           </div>
           <div className="text-danger">{registrationRequest.response}</div>
         </Form>

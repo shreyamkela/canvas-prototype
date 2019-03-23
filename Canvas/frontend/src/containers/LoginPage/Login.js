@@ -5,7 +5,7 @@ import { Redirect } from "react-router";
 import cookie from "react-cookies";
 
 import Register from "./Register"; // New user modal form
-import canvasImage from "../../_public/images/canvasLogo.jpg";
+import canvasImage from "../../_public/images/canvasLogo_light.jpg";
 import { postLoginData } from "../../_actions/user.actions";
 import { Layout } from "antd";
 
@@ -75,35 +75,40 @@ class Login extends Component {
               <Form className="px-2" noValidate validated={validated} onSubmit={e => this.handleLogin(e)}>
                 <Form.Row>
                   <Form.Group as={Col} controlId="validationEmail">
-                    <Form.Label>E-mail</Form.Label>
+                    <Form.Label>
+                      <font size="3">E-mail</font>
+                    </Form.Label>
                     <Form.Control required type="text" placeholder="Enter email" ref="email" />
                   </Form.Group>
                 </Form.Row>
                 <Form.Row>
                   <Form.Group as={Col} controlId="validationPassword">
-                    <Form.Label>Password</Form.Label>
+                    <Form.Label>
+                      <font size="3">Password</font>
+                    </Form.Label>
                     <Form.Control required type="text" placeholder="Enter password" ref="password" />
                   </Form.Group>
                 </Form.Row>
 
                 <br />
                 <div style={{ textAlign: "center" }}>
-                  <Button type="submit" className="btn btn-primary btn-block">
+                  <Button type="submit" className="btn btn-primary btn-block shadow">
                     Submit
                   </Button>
                 </div>
               </Form>
               <br />
+              <div className="text-danger" style={{ textAlign: "center" }}>
+                {loginRequest.response}
+              </div>
               <div className="px-2">
                 <a href="#" onClick={this.handleModalShow}>
                   New User?
                 </a>
               </div>
-              <div className="text-danger" style={{ textAlign: "center" }}>
-                {loginRequest.response}
-              </div>
+
               {/* Show a modal if showModal state is true, else dont show */}
-              <Modal show={this.state.showModal} onHide={this.handleModalClose}>
+              <Modal show={this.state.showModal} onHide={this.handleModalClose} style={{ marginTop: 50 }}>
                 <Modal.Header closeButton>
                   <Modal.Title className="px-4">Enter details</Modal.Title>
                 </Modal.Header>

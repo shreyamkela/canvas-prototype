@@ -28,6 +28,7 @@ class CourseCard extends Component {
 
     return (
       <Card
+        className="shadow"
         style={{ width: 250 }}
         cover={<img src={cardImage} />}
         actions={[
