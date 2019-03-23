@@ -20,10 +20,10 @@ ReactDOM.render(
     Use Browser Router to route to different pages. */}
     <BrowserRouter>
       {/* NOTE Routes can also be switched between each other by using Switch, but in our case it is not working. So we use <div> */}
-      <div>
+      <React.Fragment>
         <Route path="/" component={App} />
         <Route path="/signin" component={Login} />
-      </div>
+      </React.Fragment>
     </BrowserRouter>
   </Provider>,
   document.getElementById("root")

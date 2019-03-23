@@ -7,6 +7,7 @@ import cookie from "react-cookies";
 import Register from "./Register"; // New user modal form
 import canvasImage from "../../_public/images/canvasLogo.jpg";
 import { postLoginData } from "../../_actions/user.actions";
+import { Layout } from "antd";
 
 class Login extends Component {
   state = { showModal: false, validated: false, redirect: false };
@@ -46,6 +47,8 @@ class Login extends Component {
   // install react-bootstrap and refer - https://www.freecodecamp.org/forum/t/reactjs-how-to-assign-an-jsx-element-to-a-variable-and-use-it-in-render-method/230442/4
 
   render() {
+    const { Content, Footer, Header } = Layout;
+
     const { validated } = this.state; // form validations
 
     const { loginRequest } = this.props; // redux state to props
@@ -57,24 +60,22 @@ class Login extends Component {
       return <Redirect to="/home" />;
     } else {
       return (
-        <div>
+        <Layout style={{ height: "100%", width: "100%", background: "light-grey" }}>
           {/* If cookie name is null then redirectVar is /login, else it is null. If redirectVar is /login. the react router routes the page to login, without loading the divs below */}
-          <div className="container" style={{ marginTop: 100, width: 500 }}>
-            <div className="login-form border border-default p-4">
+          <div className="container shadow p-3 mb-5 bg-white rounded" style={{ marginTop: 100, width: 500 }}>
+            <div className="login-form ">
               <br />
               <div className="panel" style={{ textAlign: "center" }}>
                 <img src={canvasImage} style={{ width: 150 }} />
                 <br />
                 <br />
-                <font size="4">
-                  <b>Login</b>
-                </font>
+                <font size="5">Login</font>
               </div>
               <br />
               <Form className="px-2" noValidate validated={validated} onSubmit={e => this.handleLogin(e)}>
                 <Form.Row>
                   <Form.Group as={Col} controlId="validationEmail">
-                    <Form.Label>Email</Form.Label>
+                    <Form.Label>E-mail</Form.Label>
                     <Form.Control required type="text" placeholder="Enter email" ref="email" />
                   </Form.Group>
                 </Form.Row>
@@ -112,7 +113,7 @@ class Login extends Component {
               </Modal>
             </div>
           </div>
-        </div>
+        </Layout>
       );
     }
   }
