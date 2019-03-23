@@ -47,63 +47,70 @@ class Register extends Component {
 
     return (
       // https://react-bootstrap.netlify.com/components/forms/?#forms
-      <Form noValidate validated={validated} onSubmit={e => this.handleSubmit(e)}>
-        <Form.Row>
-          <Form.Group as={Col} md="4" controlId="validationCustom01">
-            <Form.Label>First name</Form.Label>
-            <Form.Control required type="text" placeholder="First name" ref="firstname" />
-          </Form.Group>
-          <Form.Group as={Col} md="4" controlId="validationCustom02">
-            <Form.Label>Last name</Form.Label>
-            <Form.Control required type="text" placeholder="Last name" ref="lastname" />
-          </Form.Group>
-          <Form.Group as={Col} md="4" controlId="validationCustomEmail">
-            <Form.Label>E-mail</Form.Label>
-            <InputGroup>
-              <Form.Control required type="text" placeholder="E-mail" ref="email" />
-              <Form.Control.Feedback type="invalid">Please enter your e-mail.</Form.Control.Feedback>
-            </InputGroup>
-          </Form.Group>
+      <div className="p-4">
+        <Form noValidate validated={validated} onSubmit={e => this.handleSubmit(e)}>
+          <Form.Row>
+            <Form.Group as={Col} className="px-2" controlId="validationCustom01">
+              <Form.Label>Firstname</Form.Label>
+              <Form.Control required type="text" placeholder="Enter firstname" ref="firstname" />
+            </Form.Group>
+            <Form.Group as={Col} className="px-2" controlId="validationCustom02">
+              <Form.Label>Lastname</Form.Label>
+              <Form.Control required type="text" placeholder="Enter lastname" ref="lastname" />
+            </Form.Group>
+          </Form.Row>
+          <Form.Row>
+            <Form.Group as={Col} className="px-2" controlId="validationCustomEmail">
+              <Form.Label>E-mail</Form.Label>
+              <InputGroup>
+                <Form.Control required type="text" placeholder="Enter email" ref="email" />
+                <Form.Control.Feedback type="invalid">Please enter your e-mail.</Form.Control.Feedback>
+              </InputGroup>
+            </Form.Group>
 
-          <Form.Group as={Col} md="4" controlId="validationCustomPassword">
-            <Form.Label>Password</Form.Label>
-            <InputGroup>
-              <Form.Control type="password" placeholder="Password" required ref="password" />
-              {/** type="password" makes the password dotted */}
-              <Form.Control.Feedback type="invalid">Please enter a password.</Form.Control.Feedback>
-            </InputGroup>
-          </Form.Group>
-        </Form.Row>
-        <div className="d-flex flex-column mb-4">
-          <ButtonGroup toggle className="mt-3">
-            <ToggleButton
-              variant="outline-primary"
-              type="radio"
-              name="radio"
-              value="1"
-              onClick={() => {
-                this.setState({ persona: 2, personaErrorMessage: "" });
-              }}
-            >
-              Student
-            </ToggleButton>
-            <ToggleButton
-              variant="outline-primary"
-              type="radio"
-              name="radio"
-              value="2"
-              onClick={() => {
-                this.setState({ persona: 1, personaErrorMessage: "" });
-              }}
-            >
-              Faculty
-            </ToggleButton>
-          </ButtonGroup>
-          <div className="personaErrorMessage text-danger">{this.state.personaErrorMessage}</div>
-        </div>
-        <Button type="submit">Register</Button>
-        <div className="text-danger">{registrationRequest.response}</div>
-      </Form>
+            <Form.Group as={Col} className="px-2" controlId="validationCustomPassword">
+              <Form.Label>Password</Form.Label>
+              <InputGroup>
+                <Form.Control type="password" placeholder="Enter password" required ref="password" />
+                {/** type="password" makes the password dotted */}
+                <Form.Control.Feedback type="invalid">Please enter a password.</Form.Control.Feedback>
+              </InputGroup>
+            </Form.Group>
+          </Form.Row>
+          <div className="d-flex flex-column mb-4">
+            <ButtonGroup toggle className="mt-3">
+              <ToggleButton
+                variant="outline-primary"
+                type="radio"
+                name="radio"
+                value="1"
+                onClick={() => {
+                  this.setState({ persona: 2, personaErrorMessage: "" });
+                }}
+              >
+                Student
+              </ToggleButton>
+              <ToggleButton
+                variant="outline-primary"
+                type="radio"
+                name="radio"
+                value="2"
+                onClick={() => {
+                  this.setState({ persona: 1, personaErrorMessage: "" });
+                }}
+              >
+                Faculty
+              </ToggleButton>
+            </ButtonGroup>
+            <br />
+            <div className="personaErrorMessage text-danger">{this.state.personaErrorMessage}</div>
+          </div>
+          <div>
+            <Button type="submit">Register</Button>
+          </div>
+          <div className="text-danger">{registrationRequest.response}</div>
+        </Form>
+      </div>
     );
   }
 }

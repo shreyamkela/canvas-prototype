@@ -104,7 +104,7 @@ class Login extends Component {
               {/* Show a modal if showModal state is true, else dont show */}
               <Modal show={this.state.showModal} onHide={this.handleModalClose}>
                 <Modal.Header closeButton>
-                  <Modal.Title>New User Details</Modal.Title>
+                  <Modal.Title className="px-4">Enter details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                   <Register />
