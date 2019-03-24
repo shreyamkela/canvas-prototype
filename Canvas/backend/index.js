@@ -5,8 +5,10 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const mysql = require("mysql");
+const bcrypt = require("bcrypt");
 
 const app = express();
+const saltRounds = 10; // for bcrypt
 
 // FIXME Use the structure of webstorm/rohit bhaiya repo for backend
 
@@ -89,15 +91,19 @@ app.post("/newuser", function(req, res) {
   let email = newUserDetails.data.email;
   let password = newUserDetails.data.password;
   let persona = newUserDetails.data.persona;
-  console.log("Firstname, Lastname, Email, Password, Persona: ", firstname, lastname, email, password, persona);
+  console.log("Firstname, Lastname, Email, Unhashed Password, Persona: ", firstname, lastname, email, password, persona);
   // Using an SQL quesy, check if Email is already present. If email not present then register, else show warning
   db.query(`SELECT Persona FROM Users WHERE Email = '${email}'`, (err, results) => {
     if (err) throw err;
     if (results[0] === undefined) {
-      // if email not present, then register
-      db.query(`INSERT INTO Users (Email, Password, Persona) VALUES ('${email}','${password}',${persona})`, (err, results) => {
-        if (err) throw err;
-        console.log("New details added to Users table");
+      // if email not present, then only register
+      // Save hashed passwrod into db using bcrypt
+      bcrypt.hash(password, saltRounds, function(err, hash) {
+        // Store hash in your password DB.
+        db.query(`INSERT INTO Users (Email, Password, Persona) VALUES ('${email}','${hash}',${persona})`, (err, results) => {
+          if (err) throw err;
+          console.log("New details added to Users table");
+        });
       });
       db.query(`INSERT INTO FullNames (Email, Firstname, Lastname) VALUES ('${email}','${firstname}','${lastname}')`, err => {
         if (err) throw err;
@@ -117,37 +123,54 @@ app.post("/login", function(req, res) {
   let loginData = req.body;
   let email = loginData.data.email;
   let password = loginData.data.password;
-  console.log("email & Password: ", email, password);
+  console.log("email & Unhashed Password: ", email, password);
+
+  // Hashing the input password so that it can be compared with the hashed password stored in the db for this email - BUT THIS DOESNT WORK AS EVEN IF THE PASSWORD IS SAME< IF WE USE bcrypt.hash, THE SALT WOULD BE DIFFERENT AND THEREFORE HASHED VERSION WOULD BE DIFFERENT
+  // let hashedPassword = null;
+  // bcrypt.hash(password, saltRounds, function(err, hash) {
+  //   if (err) throw err;
+  //   hashedPassword = hash;
+  //   console.log(hashedPassword, hash);
+  // });
 
   // Using an SQL query, check if Email and password is present
-  db.query(`SELECT Persona FROM Users WHERE Email = '${email}' AND BINARY Password = '${password}'`, (err, results) => {
-    // Checing for password already present should be case sensitive - The password's case should also match - For this we use the keyword BINARY - https://stackoverflow.com/questions/5629111/how-can-i-make-sql-case-sensitive-string-comparison-on-mysql
+  // db.query(`SELECT Persona FROM Users WHERE Email = '${email}' AND BINARY Password = '${password}'`, (err, results) => {
+  // Checking for password already present should be case sensitive - The password's case should also match - For this we use the keyword BINARY - https://stackoverflow.com/questions/5629111/how-can-i-make-sql-case-sensitive-string-comparison-on-mysql
+  db.query(`SELECT Password, Persona FROM Users WHERE Email = '${email}' `, (err, results) => {
     if (err) throw err;
     console.log(results);
     if (results[0] !== undefined) {
-      // if present
-      let persona = results[0].Persona;
-      console.log("Persona: ", persona);
-      res.cookie("cookie", "LoggedIn", {
-        // Set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
-        // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
-        maxAge: 900000,
-        httpOnly: false,
-        path: "/"
+      // if email present
+      bcrypt.compare(password, results[0].Password, function(err, comparisonResult) {
+        if (comparisonResult == true) {
+          // If password correct
+          let persona = results[0].Persona;
+          console.log("Persona: ", persona);
+          res.cookie("cookie", "LoggedIn", {
+            // Set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
+            // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
+            maxAge: 900000,
+            httpOnly: false,
+            path: "/"
+          });
+          switch (persona) {
+            case 1:
+              console.log("Faculty Login Successful!");
+              res.end("Faculty Login Successful!");
+              break;
+            case 2:
+              console.log("Student Login Successful!");
+              res.end("Student Login Successful!");
+              break;
+          }
+        } else {
+          console.log("Incorrect password!");
+          res.send("Incorrect password!");
+        }
       });
-      switch (persona) {
-        case 1:
-          console.log("Faculty");
-          res.end("Faculty Login Successful!");
-          break;
-        case 2:
-          console.log("Student");
-          res.end("Student Login Successful!");
-          break;
-      }
     } else {
-      console.log("Incorrect email or password");
-      res.send("Incorrect email or password");
+      console.log("Email does not exist!");
+      res.send("Email does not exist!");
     }
   });
 });
