@@ -1,18 +1,15 @@
 import React, { Component } from "react";
 import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
-import { connect } from "react-redux"; // Connects the components to the redux store
-
-import { postRegistrationData } from "../../_actions/user.actions";
+import axios from "axios";
 
 class Register extends Component {
   state = {
     persona: 0, // persona 0 is persona not set, 1 is faculty, and 2 is student
-    personaErrorMessage: "",
+    message: "",
     validated: false
   };
 
   handleSubmit = event => {
-    let { dispatch } = this.props;
     console.log("Register Clicked!");
     const form = event.currentTarget;
 
@@ -22,7 +19,7 @@ class Register extends Component {
 
       if (this.state.persona === 0) {
         console.log("Select a Persona: Student or Faculty.");
-        this.setState({ personaErrorMessage: "Select a Persona: Student or Faculty." });
+        this.setState({ message: "Select a Persona: Student or Faculty." });
       }
     } else {
       console.log("Sending Registration Data!");
@@ -34,7 +31,23 @@ class Register extends Component {
         password: this.refs.password.value,
         persona: this.state.persona
       };
-      dispatch(postRegistrationData(data));
+
+      axios
+        .post("http://localhost:3001/newuser", {
+          // data is accessible at the backend by req.body.query
+          data
+        })
+        .then(response => {
+          console.log("Registration successful!");
+          this.setState({ message: `${response.data}` });
+        })
+        .catch(err => {
+          // If bad request 400 status sent from backend - email already taken
+
+          console.log("Email already registered!");
+          // FIXME Modal closes and page reloads even if the email is already registered. Modal should stay put and just display the warning message
+          this.setState({ message: "Email already registered!" });
+        });
     }
     this.setState({ validated: true });
   };
@@ -42,8 +55,6 @@ class Register extends Component {
   render() {
     const { validated } = this.state;
     console.log("Persona:", this.state.persona);
-    const { registrationRequest } = this.props;
-    console.log("registrationRequest: ", registrationRequest);
 
     return (
       // https://react-bootstrap.netlify.com/components/forms/?#forms
@@ -87,7 +98,7 @@ class Register extends Component {
                 name="radio"
                 value="1"
                 onClick={() => {
-                  this.setState({ persona: 2, personaErrorMessage: "" });
+                  this.setState({ persona: 2, message: "" });
                 }}
               >
                 Student
@@ -98,30 +109,24 @@ class Register extends Component {
                 name="radio"
                 value="2"
                 onClick={() => {
-                  this.setState({ persona: 1, personaErrorMessage: "" });
+                  this.setState({ persona: 1, message: "" });
                 }}
               >
                 Faculty
               </ToggleButton>
             </ButtonGroup>
             <br />
-            <div className="personaErrorMessage text-danger">{this.state.personaErrorMessage}</div>
+            <div className="text-danger">{this.state.message}</div>
           </div>
           <div>
             <Button className="shadow" type="submit">
               Register
             </Button>
           </div>
-          <div className="text-danger">{registrationRequest.response}</div>
         </Form>
       </div>
     );
   }
 }
 
-function mapStateToProps(state) {
-  const { registrationRequest } = state;
-  return { registrationRequest };
-}
-
-export default connect(mapStateToProps)(Register);
+export default Register;

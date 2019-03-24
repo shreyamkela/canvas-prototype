@@ -109,10 +109,10 @@ app.post("/newuser", function(req, res) {
         if (err) throw err;
         console.log("New details added to Fullnames table");
       });
-      res.send("Registration Successful!");
+      res.status(200).send("Registration Successful!");
     } else {
       console.log("Email already registered");
-      res.send("Email already registered");
+      res.status(400).send(); // Bad request - Catch this error at frontend axios
     }
   });
 });
