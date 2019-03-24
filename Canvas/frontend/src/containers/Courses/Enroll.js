@@ -20,9 +20,9 @@ class Enroll extends Component {
 
   async handleSearch(searchValue) {
     // NOTE using arrow function with async keyword shows error or async keyword
-    console.log("Search term:", searchValue);
-    console.log("Filter Radio:", this.state.filterRadioValue);
-    console.log("Search By Radio:", this.state.searchByRadioValue);
+    // console.log("Search term:", searchValue);
+    // console.log("Filter Radio:", this.state.filterRadioValue);
+    // console.log("Search By Radio:", this.state.searchByRadioValue);
     if (searchValue !== "") {
       const data = { searchValue: searchValue, filterRadioValue: this.state.filterRadioValue, searchByRadioValue: this.state.searchByRadioValue };
 
@@ -84,6 +84,7 @@ class Enroll extends Component {
       );
     }
 
+    console.log("Courses data:", this.state.courses);
     let coursesSearched = null;
     if (this.state.courses === "noCourses") {
       coursesSearched = (
@@ -93,13 +94,42 @@ class Enroll extends Component {
       );
     } else if (this.state.courses.length > 0) {
       // there is something other than noCourses
-      console.log("XXXXXXXXXXXXXXXXXXXXXXXXX", this.state.courses);
       coursesSearched = (
         <React.Fragment>
           {Object.keys(this.state.courses).map(key => (
-            <font size="4" key={key}>
-              {this.state.courses[key].Id}
-            </font>
+            <div key={key}>
+              <div className="card">
+                <div className="card-body">
+                  <div className="row">
+                    <div className="col-sm">
+                      <h5 className="card-title">
+                        {this.state.courses[key].Id} {this.state.courses[key].Name}
+                      </h5>
+                    </div>
+                    <div className="col-sm">
+                      {/* NOTE by specifiying className as button you can make links with <a> tag as a button in bootstrap */}
+                      {/* <a href="#" className="btn btn-success">
+                        Enroll
+                      </a> */}
+                      <button type="button" className="btn btn-success btn-sm m-2">
+                        Enroll
+                      </button>
+                      <button type="button" className="btn btn-primary btn-sm m-2">
+                        Waitlist
+                      </button>
+                      <button type="button" className="btn btn-warning btn-sm m-2">
+                        Request permission number
+                      </button>
+                    </div>
+                  </div>
+
+                  <p className="card-text">{this.state.courses[key].Description}</p>
+                  <p className="card-text">{this.state.courses[key].Capacity}</p>
+                  <p className="card-text">{this.state.courses[key].Waitlist}</p>
+                </div>
+              </div>
+              <br />
+            </div>
           ))}
         </React.Fragment>
       );
@@ -107,9 +137,6 @@ class Enroll extends Component {
 
     return (
       <div>
-        <Layout>
-          <SideBar />
-        </Layout>
         {/* FIXME Make the create page a modal */}
         <Layout style={{ marginLeft: 150 }}>
           <Content
@@ -145,6 +172,8 @@ class Enroll extends Component {
               <br />
               {filter}
             </div>
+            <br />
+            <br />
             <div>{coursesSearched}</div>
 
             <div className="d-flex flex-column mb-4">

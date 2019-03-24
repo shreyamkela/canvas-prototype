@@ -121,6 +121,8 @@ class SideBar extends Component {
                       Account
                     </font>
                   </Link>
+                  {/* FIXME Here as link is used therefore the account tab is not a clickable button/menu item. Link only rounds when we click on the
+                  characters of the word account. The link should route when we click anywhere on the account tab */}
                 </span>
               </Menu.Item>
               <Menu.Item key="2">

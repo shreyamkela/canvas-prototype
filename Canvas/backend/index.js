@@ -265,7 +265,7 @@ app.get("/searchcourses", function(req, res) {
   }
 
   if (searchByQuery === "Id") {
-    db.query(`SELECT Id, Name, CapacityUsed, WaitlistUsed FROM Courses`, (err, results) => {
+    db.query(`SELECT Id, Name, Description, Capacity, Waitlist, CapacityUsed, WaitlistUsed FROM Courses`, (err, results) => {
       if (err) throw err;
       if (results[0] !== undefined) {
         for (var key in results) {
