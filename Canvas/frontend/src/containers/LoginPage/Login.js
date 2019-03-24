@@ -55,7 +55,7 @@ class Login extends Component {
     console.log("loginRequest: ", loginRequest);
     console.log("Cookie:", cookie.load("cookie"));
     console.log("State of Redirect:", this.state.redirect);
-    if (cookie.load("cookie")) {
+    if (this.state.redirect == true || cookie.load("cookie")) {
       console.log("Redirecting to Home...", loginRequest.response);
       return <Redirect to="/home" />;
     } else {

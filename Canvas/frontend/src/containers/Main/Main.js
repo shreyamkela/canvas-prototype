@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Route } from "react-router-dom";
-import cookie from "react-cookies";
-import { Redirect } from "react-router";
+import { connect } from "react-redux"; // Connects the components to the redux store
 
 //import './App.css';
 import Dashboard from "../HomePage/Dashboard";
@@ -16,7 +15,14 @@ import { Layout } from "antd";
 class Main extends Component {
   render() {
     const { Header, Content, Footer, Sider } = Layout;
-
+    const { loginRequest } = this.props; // redux state to props
+    // NOTE For this project we are fetching all data from server on login and then populating all the components in our app with that data. Actually we should be rendering from props in each component first then also include api calls in each component so that any new data can be updated and then dispatch this change back to the store.
+    let persona = null; // Showing email and persona on the header of main
+    if (loginRequest.persona == 1) {
+      persona = "Faculty - ";
+    } else if (loginRequest.persona == 2) {
+      persona = "Student - ";
+    }
     return (
       <React.Fragment>
         <Layout>
@@ -33,9 +39,17 @@ class Main extends Component {
             <Layout>
               <Header
                 style={{
-                  background: "#fff"
+                  background: "#fff",
+                  textAlign: "center",
+                  marginLeft: 150,
+                  borderBottom: "1px solid #e9e9e9"
                 }}
-              />
+              >
+                <font size="5" color="00CCFF">
+                  {persona}
+                  {loginRequest.email}
+                </font>
+              </Header>
               <Route exact path="/home" component={Dashboard} />
               <Route path="/profile" component={Profile} />
               <Route path="/courses/:id" component={Courses} />
@@ -50,4 +64,9 @@ class Main extends Component {
   }
 }
 
-export default Main;
+function mapStateToProps(state) {
+  const { loginRequest } = state;
+  return { loginRequest };
+}
+
+export default connect(mapStateToProps)(Main);
