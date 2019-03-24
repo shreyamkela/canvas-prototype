@@ -44,8 +44,7 @@ class SideBar extends Component {
     const { courseDataToComponent, loginRequest } = this.props; // redux state to props
     let coursesPresent = null;
     let allCourses = null;
-
-    if (courseDataToComponent.courses === "") {
+    if (courseDataToComponent.courses === "noCourses") {
       coursesPresent = (
         <font className="font-weight-bold" size="3">
           No courses available{/**If no courses present */}

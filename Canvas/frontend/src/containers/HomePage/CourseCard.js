@@ -28,7 +28,7 @@ class CourseCard extends Component {
 
     return (
       <Card
-        className="shadow"
+        className="rounded shadow"
         style={{ width: 250 }}
         cover={<img src={cardImage} />}
         actions={[

@@ -74,8 +74,8 @@ class Register extends Component {
             <Form.Group as={Col} className="px-3" controlId="validationCustomEmail">
               <Form.Label>E-mail</Form.Label>
               <InputGroup>
-                <Form.Control required type="text" placeholder="Enter email" ref="email" />
-                <Form.Control.Feedback type="invalid">Please enter your e-mail.</Form.Control.Feedback>
+                <Form.Control required type="email" placeholder="Enter email" ref="email" />
+                <Form.Control.Feedback type="invalid">Please enter a valid e-mail.</Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
 
