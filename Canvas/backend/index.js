@@ -265,7 +265,7 @@ app.get("/searchcourses", function(req, res) {
   }
 
   if (searchByQuery === "Id") {
-    db.query(`SELECT Id, Name, CapacityUsed, WaitlistUsed  FROM Courses`, (err, results) => {
+    db.query(`SELECT Id, Name, CapacityUsed, WaitlistUsed FROM Courses`, (err, results) => {
       if (err) throw err;
       if (results[0] !== undefined) {
         for (var key in results) {
@@ -275,40 +275,31 @@ app.get("/searchcourses", function(req, res) {
               if (currentId === searchValue) {
                 searchedCourses.push(results[key]);
                 console.log("searchedCourses", searchedCourses);
-                if (searchedCourses == []) {
-                  console.log("No courses available.");
-                  res.send("noCourses");
-                } else {
-                  res.send(searchedCourses);
-                }
               }
               break;
             case "2":
               if (currentId > searchValue) {
                 searchedCourses.push(results[key]);
                 console.log("searchedCourses", searchedCourses);
-                if (searchedCourses == []) {
-                  console.log("No courses available.");
-                  res.send("noCourses");
-                } else {
-                  res.send(searchedCourses);
-                }
               }
               break;
             case "3":
               if (currentId < searchValue) {
                 searchedCourses.push(results[key]);
                 console.log("searchedCourses", searchedCourses);
-                if (searchedCourses == []) {
-                  console.log("No courses available.");
-                  res.send("noCourses");
-                } else {
-                  res.send(searchedCourses);
-                }
               }
               break;
           }
         }
+        if (searchedCourses == []) {
+          console.log("No courses available.");
+          res.send("noCourses");
+        } else {
+          res.send(searchedCourses);
+        }
+      } else {
+        console.log("No courses available.");
+        res.send("noCourses");
       }
     });
   } else if (searchByQuery === "Term" || searchByQuery === "Name") {

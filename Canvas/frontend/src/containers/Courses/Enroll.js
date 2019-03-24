@@ -93,11 +93,15 @@ class Enroll extends Component {
       );
     } else if (this.state.courses.length > 0) {
       // there is something other than noCourses
+      console.log("XXXXXXXXXXXXXXXXXXXXXXXXX", this.state.courses);
       coursesSearched = (
-        <font className="font-weight-bold" size="3">
-          {this.state.courses}
-          {/**If no courses present */}
-        </font>
+        <React.Fragment>
+          {Object.keys(this.state.courses).map(key => (
+            <font size="4" key={key}>
+              {this.state.courses[key].Id}
+            </font>
+          ))}
+        </React.Fragment>
       );
     }
 
