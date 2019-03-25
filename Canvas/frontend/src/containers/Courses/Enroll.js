@@ -8,7 +8,6 @@ import { Typography, Layout, Input, Radio, message } from "antd";
 
 class Enroll extends Component {
   state = {
-    validated: false,
     message: "",
     filterPresent: true,
     filterRadioValue: 1,
@@ -54,7 +53,7 @@ class Enroll extends Component {
   };
 
   handleEnroll = async key => {
-    console.log("Enroll - key, capacity, used:", key, this.state.courses[key].Capacity, this.state.courses[key].CapacityUsed);
+    // console.log("Enroll - key, capacity, used, difference:", key, this.state.courses[key].Capacity, this.state.courses[key].CapacityUsed, this.state.courses[key].Capacity - this.state.courses[key].CapacityUsed);
     if (this.state.courses[key].Capacity - this.state.courses[key].CapacityUsed === 0) {
       message.error("Cannot enroll as the class capacity is full!");
     } else {
@@ -64,7 +63,7 @@ class Enroll extends Component {
         let response = await axios.post("http://localhost:3001/enroll", { data });
         message.success(response.data);
 
-        // dispatch?
+        // FIXME dispatch? so that the count is updated on enroll page
       } catch (error) {
         console.log(error.response);
         message.error(error.response.data);
@@ -73,19 +72,31 @@ class Enroll extends Component {
   };
 
   handleWaitlist = async key => {
-    console.log("Waitlist - key, waitlist, used:", key, this.state.courses[key].Waitlist, this.state.courses[key].WaitlistUsed);
+    console.log(
+      "Waitlist - key, waitlist, used, difference:",
+      key,
+      this.state.courses[key].Waitlist,
+      this.state.courses[key].WaitlistUsed,
+      this.state.courses[key].Waitlist - this.state.courses[key].WaitlistUsed
+    );
     if (this.state.courses[key].Waitlist - this.state.courses[key].WaitlistUsed === 0) {
       message.error("Cannot add to waitlist as the waitlist is full!");
     } else {
-      // at the end
-      message.success("Course waitlisted!");
+      const { loginRequest } = this.props;
+      const data = { courseId: this.state.courses[key].Id, email: loginRequest.email };
+      try {
+        let response = await axios.post("http://localhost:3001/waitlist", { data });
+        message.success(response.data);
+
+        // FIXME dispatch? so that the count is updated on enroll page
+      } catch (error) {
+        console.log(error.response);
+        message.error(error.response.data);
+      }
     }
   };
 
   render() {
-    const { validated } = this.state;
-    const { loginRequest } = this.props;
-
     const { Header, Content, Footer } = Layout;
     const { Title } = Typography;
     const Search = Input.Search;
@@ -159,13 +170,13 @@ class Enroll extends Component {
 
                   <div className="row" style={{ marginLeft: 1 }}>
                     <p className="card-text mr-4">
-                      <b>Capacity: {this.state.courses[key].Capacity}</b>
+                      <b>Total capacity: {this.state.courses[key].Capacity}</b>
                     </p>
                     <p className="card-text mx-4">
                       <b>Capacity Left: {this.state.courses[key].Capacity - this.state.courses[key].CapacityUsed}</b>
                     </p>
                     <p className="card-text mx-4">
-                      <b>Waitlist: {this.state.courses[key].Waitlist}</b>
+                      <b>Total waitlist: {this.state.courses[key].Waitlist}</b>
                     </p>
                     <p className="card-text mx-4">
                       <b>Waitlist Left: {this.state.courses[key].Waitlist - this.state.courses[key].WaitlistUsed}</b>

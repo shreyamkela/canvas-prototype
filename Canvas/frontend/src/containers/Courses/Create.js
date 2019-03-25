@@ -58,9 +58,6 @@ class Create extends Component {
 
     return (
       <div>
-        <Layout>
-          <SideBar />
-        </Layout>
         {/* FIXME Make the create page a modal */}
         <Layout style={{ marginLeft: 150 }}>
           <Content
