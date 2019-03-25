@@ -370,21 +370,41 @@ app.post("/announcement", function(req, res) {
 
 //Route to handle Post Request Call to enroll into a course and increment the capacity used
 app.post("/enroll", function(req, res) {
-  console.log("Enroll Data Posted!");
-  let announcementData = req.body.data;
-  // let title = announcementData.title;
-  // console.log("Title: ", title);
+  console.log("Enrolling into a course!");
+  let enrollData = req.body.data;
+  console.log("Enroll data: ", enrollData);
 
-  db.query(
-    `INSERT INTO Announcements (Title, Description, Email, CourseId) VALUES ('${announcementData.title}','${announcementData.desc}','${
-      announcementData.email
-    }','${announcementData.courseId}')`,
-    err => {
+  let alreadyEnrolled = false;
+  if (enrollData.courseId != undefined) {
+    db.query(`SELECT * FROM courseenrolments WHERE CourseId = '${enrollData.courseId}'`, (err, results) => {
       if (err) throw err;
-      console.log("New details added to Announcement table");
-      res.send("Creation Successful!");
-    }
-  );
+      console.log(results);
+      for (var key in results) {
+        if (results[key].StudentEmail == enrollData.email) {
+          console.log("Course already enrolled for this email!");
+          alreadyEnrolled = true;
+          res.status(400).end("Course already enrolled!"); // res.end will end the response here and dont go futher in this post request? But this doesnt work here why? return res.end also doesnt work if a db.query is after this db.query
+          break;
+        }
+      }
+      if (alreadyEnrolled !== true) {
+        db.query(`INSERT INTO courseenrolments (CourseId, StudentEmail) VALUES ('${enrollData.courseId}','${enrollData.email}')`, err => {
+          if (err) throw err;
+          console.log("New details added to courseenrolments table");
+        });
+        db.query(`SELECT CapacityUsed FROM courses WHERE Id= '${enrollData.courseId}'`, (err, results_courses) => {
+          if (err) throw err;
+          // Increment the capacityUsed
+          let capacityUsed = results_courses[0].CapacityUsed + 1;
+          db.query(`UPDATE courses SET CapacityUsed = '${capacityUsed}' WHERE Id = '${enrollData.courseId}'`, err => {
+            if (err) throw err;
+            console.log("CapacityUsed updated in the courses table");
+            res.status(200).end("Course enrolled!");
+          });
+        });
+      }
+    });
+  }
 });
 
 //start your server on port 3001
