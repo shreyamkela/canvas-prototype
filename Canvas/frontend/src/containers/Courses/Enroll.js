@@ -62,6 +62,11 @@ class Enroll extends Component {
       try {
         let response = await axios.post("http://localhost:3001/enroll", { data });
         message.success(response.data);
+        // Change the count of the capacity used - NOTE Here we are not fetching the courses data again, after the update. We are updating the frontend without requesting any new data from the backend as we know that the database would have been already updated so we can change the count.
+        // If the database would not have been updated then then this setState wont run as there must be an error at backend which will be caught by the catch below
+        let newCourses = this.state.courses;
+        newCourses[key].CapacityUsed++;
+        this.setState({ courses: newCourses });
 
         // FIXME dispatch? so that the count is updated on enroll page
       } catch (error) {
@@ -87,7 +92,11 @@ class Enroll extends Component {
       try {
         let response = await axios.post("http://localhost:3001/waitlist", { data });
         message.success(response.data);
-
+        // Change the count of the waitlist used - NOTE Here we are not fetching the courses data again, after the update. We are updating the frontend without requesting any new data from the backend as we know that the database would have been already updated so we can change the count.
+        // If the database would not have been updated then then this setState wont run as there must be an error at backend which will be caught by the catch below
+        let newCourses = this.state.courses;
+        newCourses[key].WaitlistUsed++;
+        this.setState({ courses: newCourses });
         // FIXME dispatch? so that the count is updated on enroll page
       } catch (error) {
         console.log(error.response);
