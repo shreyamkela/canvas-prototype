@@ -1,12 +1,15 @@
 import React, { Component } from "react";
-import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
 import axios from "axios";
+import { connect } from "react-redux"; // Connects the components to the redux store
+
+import { postRegistrationData } from "../../_actions/user.actions"; // FIXME REMOVE THIS and its call
+
+import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
 
 class Register extends Component {
   state = {
     persona: 0, // persona 0 is persona not set, 1 is faculty, and 2 is student
-    message: "",
-    validated: false
+    message: ""
   };
 
   handleSubmit = event => {
@@ -20,6 +23,7 @@ class Register extends Component {
       if (this.state.persona === 0) {
         console.log("Select a Persona: Student or Faculty.");
         this.setState({ message: "Select a Persona: Student or Faculty." });
+        // FIXME use ant design's message.error instead of setting state of message
       }
     } else {
       console.log("Sending Registration Data!");
@@ -31,7 +35,10 @@ class Register extends Component {
         password: this.refs.password.value,
         persona: this.state.persona
       };
-
+      // FIXME Remove redux from register.js if there is no use
+      const { dispatch } = this.props;
+      dispatch(postRegistrationData(data));
+      //
       axios
         .post("http://localhost:3001/newuser", {
           // data is accessible at the backend by req.body.query
@@ -39,6 +46,7 @@ class Register extends Component {
         })
         .then(response => {
           console.log("Registration successful!");
+
           this.setState({ message: `${response.data}` });
         })
         .catch(err => {
@@ -48,17 +56,15 @@ class Register extends Component {
           this.setState({ message: "Email already registered!" });
         });
     }
-    this.setState({ validated: true });
   };
 
   render() {
-    const { validated } = this.state;
     console.log("Persona:", this.state.persona);
 
     return (
       // https://react-bootstrap.netlify.com/components/forms/?#forms
       <div className="p-4">
-        <Form noValidate validated={validated} onSubmit={e => this.handleSubmit(e)}>
+        <Form onSubmit={e => this.handleSubmit(e)}>
           <Form.Row>
             <Form.Group as={Col} className="px-3" controlId="validationCustom01">
               <Form.Label>First name</Form.Label>
@@ -75,16 +81,14 @@ class Register extends Component {
               <Form.Label>E-mail</Form.Label>
               <InputGroup>
                 <Form.Control required type="email" placeholder="Enter email" ref="email" />
-                <Form.Control.Feedback type="invalid">Please enter a valid e-mail.</Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
 
             <Form.Group as={Col} className="px-3" controlId="validationCustomPassword">
               <Form.Label>Password</Form.Label>
               <InputGroup>
-                <Form.Control type="password" placeholder="Enter password" required ref="password" />
+                <Form.Control required type="password" placeholder="Enter password" ref="password" />
                 {/** type="password" makes the password dotted */}
-                <Form.Control.Feedback type="invalid">Please enter a password.</Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
           </Form.Row>
@@ -128,4 +132,4 @@ class Register extends Component {
   }
 }
 
-export default Register;
+export default connect(null)(Register);

@@ -14,7 +14,6 @@ class Dashboard extends Component {
   // NOTE For fetching the data once a page loads - No api get call inside constructor. Let page load without any data then do the api get call inside componentDidMount
   async componentDidMount() {
     const { loginRequest } = this.props;
-    // Sending email of the current logged in faculty to select only those courses to get to the frontend, that have been created by this faculty
     const data = { email: loginRequest.email, persona: loginRequest.persona };
     try {
       let response = await axios.get("http://localhost:3001/getcourses", { params: data });

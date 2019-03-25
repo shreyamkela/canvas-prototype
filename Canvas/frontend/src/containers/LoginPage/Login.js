@@ -12,7 +12,7 @@ import { Layout } from "antd";
 class Login extends Component {
   state = { showModal: false, validated: false, redirect: false };
 
-  // New user model - Toggle the modal by a state property "showModal" - Show a modal if showModal state is true, else dont show
+  // Registration modal - Toggle the modal by a state property "showModal" - Show a modal if showModal state is true, else dont show
   handleModalClose = () => {
     this.setState({ showModal: false });
   };

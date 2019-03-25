@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Route } from "react-router-dom";
 import { connect } from "react-redux"; // Connects the components to the redux store
+import axios from "axios";
 
 //import './App.css';
 import Dashboard from "../HomePage/Dashboard";
@@ -10,12 +11,35 @@ import Create from "../Courses/Create"; // Create a course
 import SideBar from "../Sidebar/SideBar";
 import Enroll from "../Courses/Enroll";
 
+import { courseDataToComponent } from "../../_actions/user.actions";
+
 import { Layout } from "antd";
 
 class Main extends Component {
+  async componentDidMount() {
+    const { loginRequest } = this.props;
+
+    const data = { email: loginRequest.email, persona: loginRequest.persona };
+    try {
+      let response = await axios.get("http://localhost:3001/getcourses", { params: data });
+      // you can access your data here
+      //console.log("courses response:", response.data);
+
+      let { dispatch } = this.props;
+
+      dispatch(courseDataToComponent(response.data)); // NOTE Posting course data to sidebar so that the courses drawer can show the courses. Also, here the sidebar is a child of dashboard but sidebar is also child of account and courses page. Here in dashboard if we pass coursesData as props to sidebar then there would not be a single source of truth for the sidebar as account and courses page do not pass props to sidebar. Therefore, we use redux store as a single source of truth where the sidebar's state will be updated with the courses data
+      // If courses are available then dispatch them to the sidebar as well
+    } catch (error) {
+      console.log(error.response);
+    }
+  }
+
   render() {
+    console.log("MAIN Called!", loginRequest);
     const { Header, Content, Footer, Sider } = Layout;
     const { loginRequest } = this.props; // redux state to props
+    console.log("MAIN Called!", loginRequest);
+
     // NOTE For this project we are fetching all data from server on login and then populating all the components in our app with that data. Actually we should be rendering from props in each component first then also include api calls in each component so that any new data can be updated and then dispatch this change back to the store.
     let persona = null; // Showing email and persona on the header of main
     if (loginRequest.persona == 1) {

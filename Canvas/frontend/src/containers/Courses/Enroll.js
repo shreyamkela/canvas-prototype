@@ -77,13 +77,13 @@ class Enroll extends Component {
   };
 
   handleWaitlist = async key => {
-    console.log(
-      "Waitlist - key, waitlist, used, difference:",
-      key,
-      this.state.courses[key].Waitlist,
-      this.state.courses[key].WaitlistUsed,
-      this.state.courses[key].Waitlist - this.state.courses[key].WaitlistUsed
-    );
+    // console.log(
+    //   "Waitlist - key, waitlist, used, difference:",
+    //   key,
+    //   this.state.courses[key].Waitlist,
+    //   this.state.courses[key].WaitlistUsed,
+    //   this.state.courses[key].Waitlist - this.state.courses[key].WaitlistUsed
+    // );
     if (this.state.courses[key].Waitlist - this.state.courses[key].WaitlistUsed === 0) {
       message.error("Cannot add to waitlist as the waitlist is full!");
     } else {
@@ -98,6 +98,7 @@ class Enroll extends Component {
         newCourses[key].WaitlistUsed++;
         this.setState({ courses: newCourses });
         // FIXME dispatch? so that the count is updated on enroll page
+        // FIXME send a notification to faculty that waitlists exist
       } catch (error) {
         console.log(error.response);
         message.error(error.response.data);

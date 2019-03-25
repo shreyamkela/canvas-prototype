@@ -111,8 +111,8 @@ app.post("/newuser", function(req, res) {
       });
       res.status(200).send("Registration Successful!"); // status should come before send
     } else {
-      console.log("Email already registered");
-      res.status(400).send(); // Bad request - Catch this error at frontend axios
+      console.log("Email already registered!");
+      res.status(400).send("Email already registered!"); // Bad request - Catch this error at frontend axios
     }
   });
 });

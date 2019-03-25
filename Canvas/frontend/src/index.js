@@ -22,7 +22,7 @@ ReactDOM.render(
       {/* NOTE Routes can also be switched between each other by using Switch, but in our case it is not working. So we use <div> */}
       <React.Fragment>
         <Route path="/" component={App} />
-        <Route path="/signin" component={Login} />
+        {/* Here | is the OR operator which means that App component is for / and /signin route. Example /(home|main) means the same component for /home and /main */}
       </React.Fragment>
     </BrowserRouter>
   </Provider>,
