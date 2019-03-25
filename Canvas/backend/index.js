@@ -368,18 +368,24 @@ app.post("/announcement", function(req, res) {
   );
 });
 
-// let temp = {
-//   "About me": "Software Engineering graduate student at SJSU",
-//   Gender: "Male",
-//   "Contact No": 6699887766,
-//   City: "San Jose",
-//   Country: "United States",
-//   Company: "An Awesome Company",
-//   School: "An Awesome School",
-//   Hometown: "An Awesome Hometown",
-//   Languages: "English, Hindi"
-// };
-// console.log(JSON.stringify(temp, undefined, 2));
+//Route to handle Post Request Call to enroll into a course and increment the capacity used
+app.post("/enroll", function(req, res) {
+  console.log("Enroll Data Posted!");
+  let announcementData = req.body.data;
+  // let title = announcementData.title;
+  // console.log("Title: ", title);
+
+  db.query(
+    `INSERT INTO Announcements (Title, Description, Email, CourseId) VALUES ('${announcementData.title}','${announcementData.desc}','${
+      announcementData.email
+    }','${announcementData.courseId}')`,
+    err => {
+      if (err) throw err;
+      console.log("New details added to Announcement table");
+      res.send("Creation Successful!");
+    }
+  );
+});
 
 //start your server on port 3001
 app.listen(3001);

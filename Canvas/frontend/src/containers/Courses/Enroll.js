@@ -4,14 +4,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
 
-import { Typography, Layout, Input, Radio } from "antd";
+import { Typography, Layout, Input, Radio, message } from "antd";
 
 import SideBar from "../Sidebar/SideBar";
 
 class Enroll extends Component {
   state = {
     validated: false,
-    courseErrorMessage: "",
+    message: "",
     filterPresent: true,
     filterRadioValue: 1,
     searchByRadioValue: "id",
@@ -55,11 +55,26 @@ class Enroll extends Component {
     });
   };
 
+  handleEnroll = key => {
+    console.log("Enroll - key, capacity, used:", key, this.state.courses[key].Capacity, this.state.courses[key].CapacityUsed);
+    if (this.state.courses[key].Capacity - this.state.courses[key].CapacityUsed === 0) {
+      message.error("Cannot enroll as the class capacity is full!");
+    } else {
+      message.success("Course enrolled!");
+    }
+  };
+
+  handleWaitlist = key => {
+    console.log("Waitlist - key, waitlist, used:", key, this.state.courses[key].Waitlist, this.state.courses[key].WaitlistUsed);
+    if (this.state.courses[key].Waitlist - this.state.courses[key].WaitlistUsed === 0) {
+      message.error("Cannot add to waitlist as the waitlist is full!");
+    } else {
+      message.success("Course waitlisted!");
+    }
+  };
+
   render() {
     const { validated } = this.state;
-
-    const { createRequest } = this.props;
-    //console.log("createRequest: ", createRequest);
 
     const { Header, Content, Footer } = Layout;
     const { Title } = Typography;
@@ -84,7 +99,7 @@ class Enroll extends Component {
       );
     }
 
-    console.log("Courses data:", this.state.courses);
+    //console.log("Courses data:", this.state.courses);
     let coursesSearched = null;
     if (this.state.courses === "noCourses") {
       coursesSearched = (
@@ -98,7 +113,7 @@ class Enroll extends Component {
         <React.Fragment>
           {Object.keys(this.state.courses).map(key => (
             <div key={key}>
-              <div className="card">
+              <div className="card" style={{ width: 900 }}>
                 <div className="card-body">
                   <div className="row">
                     <div className="col-sm">
@@ -106,26 +121,47 @@ class Enroll extends Component {
                         {this.state.courses[key].Id} {this.state.courses[key].Name}
                       </h5>
                     </div>
-                    <div className="col-sm">
+                    <div className="col-sm" style={{ textAlign: "right" }}>
                       {/* NOTE by specifiying className as button you can make links with <a> tag as a button in bootstrap */}
                       {/* <a href="#" className="btn btn-success">
                         Enroll
                       </a> */}
-                      <button type="button" className="btn btn-success btn-sm m-2">
+                      <button
+                        type="button"
+                        className="btn btn-success btn-sm m-2"
+                        onClick={() => {
+                          this.handleEnroll(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
+                        }}
+                      >
                         Enroll
                       </button>
-                      <button type="button" className="btn btn-primary btn-sm m-2">
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm m-2"
+                        onClick={() => {
+                          this.handleWaitlist(key);
+                        }}
+                      >
                         Waitlist
-                      </button>
-                      <button type="button" className="btn btn-warning btn-sm m-2">
-                        Request permission number
                       </button>
                     </div>
                   </div>
 
+                  <div className="row" style={{ marginLeft: 1 }}>
+                    <p className="card-text mr-4">
+                      <b>Capacity: {this.state.courses[key].Capacity}</b>
+                    </p>
+                    <p className="card-text mx-4">
+                      <b>Capacity Left: {this.state.courses[key].Capacity - this.state.courses[key].CapacityUsed}</b>
+                    </p>
+                    <p className="card-text mx-4">
+                      <b>Waitlist: {this.state.courses[key].Waitlist}</b>
+                    </p>
+                    <p className="card-text mx-4">
+                      <b>Waitlist Left: {this.state.courses[key].Waitlist - this.state.courses[key].WaitlistUsed}</b>
+                    </p>
+                  </div>
                   <p className="card-text">{this.state.courses[key].Description}</p>
-                  <p className="card-text">{this.state.courses[key].Capacity}</p>
-                  <p className="card-text">{this.state.courses[key].Waitlist}</p>
                 </div>
               </div>
               <br />
@@ -173,15 +209,11 @@ class Enroll extends Component {
               {filter}
             </div>
             <br />
-            <br />
-            <div>{coursesSearched}</div>
 
-            <div className="d-flex flex-column mb-4">
-              {/* <div className="personaErrorMessage text-danger">{this.state.personaErrorMessage}</div> */}
-            </div>
-            <div className="text-success">{createRequest.response}</div>
+            <br />
+
+            <div>{coursesSearched}</div>
           </Content>
-          <Footer style={{ background: "#fff" }} />
         </Layout>
       </div>
     );
@@ -189,8 +221,8 @@ class Enroll extends Component {
 }
 
 function mapStateToProps(state) {
-  const { createRequest, loginRequest } = state;
-  return { createRequest, loginRequest };
+  const { loginRequest } = state;
+  return { loginRequest };
 }
 
 export default connect(mapStateToProps)(Enroll);
