@@ -197,11 +197,11 @@ app.post("/profile", function(req, res) {
   console.log(profileData);
 
   db.query(
-    `UPDATE profile SET AboutMe = '${profileData.aboutme}', Gender='${profileData.gender}', ContactNo='${profileData.contactno}', City='${
-      profileData.city
-    }', Country='${profileData.country}', Company='${profileData.company}', School='${profileData.school}', Hometown='${
-      profileData.hometown
-    }', Languages= '${profileData.languages}' WHERE Email = '${profileData.email}'`,
+    `UPDATE profile SET AboutMe = '${profileData.AboutMe}', Gender='${profileData.Gender}', ContactNo='${profileData.ContactNo}', City='${
+      profileData.City
+    }', Country='${profileData.Country}', Company='${profileData.Company}', School='${profileData.School}', Hometown='${
+      profileData.Hometown
+    }', Languages= '${profileData.Languages}' WHERE Email = '${profileData.email}'`,
     err => {
       if (err) throw err;
       console.log("New details added to Profile table");

@@ -26,7 +26,9 @@ class Profile extends Component {
 
   // Edit modal - Toggle the modal by a state property "showModal" - Show a modal if showModal state is true, else dont show
   handleModalClose = () => {
-    this.setState({ showModal: false });
+    const { editRequest } = this.props; // redux state to props
+    console.log("XXXXXXXXXXXXXXXXXXXx", editRequest.response);
+    this.setState({ showModal: false, profile: editRequest.response });
   };
 
   handleModalShow = () => {
@@ -129,8 +131,8 @@ class Profile extends Component {
 }
 
 function mapStateToProps(state) {
-  const { loginRequest } = state;
-  return { loginRequest };
+  const { loginRequest, editRequest } = state;
+  return { loginRequest, editRequest };
 }
 
 export default connect(mapStateToProps)(Profile);
