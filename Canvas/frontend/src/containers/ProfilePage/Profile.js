@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
 
-import { Layout } from "antd";
-import { Button, Modal, Collapse } from "antd";
+import { Layout, Button } from "antd";
+import { Modal } from "react-bootstrap"; // for the edit modal
 
 import Avatar from "./Avatar";
+import Edit from "./Edit";
 
 class Profile extends Component {
-  state = { profile: "" };
+  state = { showModal: false, profile: "" };
 
   async componentDidMount() {
     // Fetching the full name. Also any profile details if submitted previously
@@ -22,6 +23,15 @@ class Profile extends Component {
       console.log(error.response);
     }
   }
+
+  // Edit modal - Toggle the modal by a state property "showModal" - Show a modal if showModal state is true, else dont show
+  handleModalClose = () => {
+    this.setState({ showModal: false });
+  };
+
+  handleModalShow = () => {
+    this.setState({ showModal: true });
+  };
 
   render() {
     const { Header, Content, Footer, Sider } = Layout;
@@ -96,11 +106,21 @@ class Profile extends Component {
               </div>
               <div className="col" style={{ textAlign: "right", position: "auto" }}>
                 {/* Simply textAlign: "right" doesnt work to align button at the right, we also also to set position as auto */}
-                <Button type="primary" size="large" icon="edit" onClick={this.showModal}>
+                <Button type="primary" size="large" icon="edit" onClick={this.handleModalShow}>
                   Edit Profile
                 </Button>
               </div>
             </div>
+
+            {/* Show a modal if showModal state is true, else dont show */}
+            <Modal show={this.state.showModal} onHide={this.handleModalClose}>
+              <Modal.Header closeButton>
+                <Modal.Title className="px-4">Enter details</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Edit />
+              </Modal.Body>
+            </Modal>
           </Content>
         </Layout>
       </div>

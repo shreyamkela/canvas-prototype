@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import { connect } from "react-redux"; // Connects the components to the redux store
 
-import { postRegistrationData } from "../../_actions/user.actions"; // FIXME REMOVE THIS and its call
+import { postRegistrationData } from "../../_actions/user.actions"; // FIXME REMOVE THIS and its call as it was only included for redux homework shim
 
 import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
 

@@ -5,6 +5,7 @@ import courseDataToComponentReducer from "./courseDataToComponent.reducer";
 import currentCourseDataToComponentReducer from "./currentCourseDataToComponent.reducer";
 import announcementCreateRequestReducer from "./announcementCreateRequest.reducer";
 import registrationRequestReducer from "./registrationRequest.reducer.js";
+import editRequestReducer from "./editRequest.reducer.js";
 
 export default combineReducers({
   loginRequest: loginRequestReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
   courseDataToComponent: courseDataToComponentReducer,
   announcementCreateRequest: announcementCreateRequestReducer,
   currentCourseDataToComponent: currentCourseDataToComponentReducer,
-  registrationRequest: registrationRequestReducer
+  registrationRequest: registrationRequestReducer,
+  editRequest: editRequestReducer
 });

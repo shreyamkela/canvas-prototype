@@ -1,12 +1,28 @@
 import axios from "axios";
 import cookie from "react-cookies";
 
-import { REGISTER, LOGIN_REQUEST, CREATE_COURSE, COURSE_DATA_TO_COMPONENT, CURRENT_COURSE_DATA_TO_COMPONENT, ANNOUNCEMENT_CREATE } from "./types";
+import {
+  REGISTER,
+  EDIT,
+  LOGIN_REQUEST,
+  CREATE_COURSE,
+  COURSE_DATA_TO_COMPONENT,
+  CURRENT_COURSE_DATA_TO_COMPONENT,
+  ANNOUNCEMENT_CREATE
+} from "./types";
 
 export const postRegistrationData = data => dispatch => {
   console.log("postRegistrationData called!");
   dispatch({
     type: REGISTER, // Sending type in action dispatches is mandatory
+    payload: data
+  });
+};
+
+export const postEditData = data => dispatch => {
+  console.log("postEditData called!");
+  dispatch({
+    type: EDIT, // Sending type in action dispatches is mandatory
     payload: data
   });
 };
