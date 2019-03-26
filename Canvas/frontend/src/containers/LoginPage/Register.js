@@ -23,7 +23,6 @@ class Register extends Component {
       if (this.state.persona === 0) {
         console.log("Select a Persona: Student or Faculty.");
         this.setState({ message: "Select a Persona: Student or Faculty." });
-        // FIXME use ant design's message.error instead of setting state of message
       }
     } else {
       console.log("Sending Registration Data!");
@@ -52,7 +51,6 @@ class Register extends Component {
         .catch(err => {
           // If bad request 400 status sent from backend - email already taken
           console.log("Email already registered!");
-          // FIXME Modal closes and page reloads even if the email is already registered. Modal should stay put and just display the warning message
           this.setState({ message: "Email already registered!" });
         });
     }

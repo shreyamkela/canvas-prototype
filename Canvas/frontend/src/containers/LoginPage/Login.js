@@ -78,7 +78,7 @@ class Login extends Component {
                     <Form.Label>
                       <font size="3">E-mail</font>
                     </Form.Label>
-                    <Form.Control required type="text" placeholder="Enter email" ref="email" />
+                    <Form.Control required type="email" placeholder="Enter email" ref="email" />
                   </Form.Group>
                 </Form.Row>
                 <Form.Row>
@@ -86,7 +86,7 @@ class Login extends Component {
                     <Form.Label>
                       <font size="3">Password</font>
                     </Form.Label>
-                    <Form.Control required type="text" placeholder="Enter password" ref="password" />
+                    <Form.Control required type="password" placeholder="Enter password" ref="password" />
                   </Form.Group>
                 </Form.Row>
 
