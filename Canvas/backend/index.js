@@ -105,9 +105,9 @@ app.post("/newuser", function(req, res) {
           console.log("New details added to Users table");
         });
       });
-      db.query(`INSERT INTO FullNames (Email, Firstname, Lastname) VALUES ('${email}','${firstname}','${lastname}')`, err => {
+      db.query(`INSERT INTO Profile (Email, Firstname, Lastname) VALUES ('${email}','${firstname}','${lastname}')`, err => {
         if (err) throw err;
-        console.log("New details added to Fullnames table");
+        console.log("New details added to Profile table");
       });
       res.status(200).send("Registration Successful!"); // status should come before send
     } else {
