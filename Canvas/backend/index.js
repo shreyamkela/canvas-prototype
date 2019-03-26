@@ -175,6 +175,21 @@ app.post("/login", function(req, res) {
   });
 });
 
+//Route to handle Get Request Call to load all details of profile
+app.get("/profile", function(req, res) {
+  console.log("Get Profile Data Called!");
+  let profileData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT * FROM profile WHERE Email = '${profileData.email}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      console.log("Profile data for this Email:", results[0]);
+      res.status(200).send(results[0]);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
 //Route to handle Post Request Call to create a new course
 app.post("/createcourse", function(req, res) {
   console.log("Create Course Data Posted!");
@@ -235,7 +250,6 @@ app.get("/getcourses", function(req, res) {
           // Fetch the details of all keys, i.e enrolled courses, in a loop and push them into an array. Return the array at the end
           db.query(`SELECT Id, Name FROM Courses WHERE Id = '${results[key].CourseId}'`, (err, results_1) => {
             if (err) throw err;
-            console.log("XXXXXXXXXXXXXXXXXXXX", results_1[0]);
             allCourses.push(results_1[0]); // results_1 has the data at its 0th index everytime therefore we just push the data into our array and not the index+data
             temp++;
             if (temp === results.length) {
