@@ -53,6 +53,9 @@ class Register extends Component {
           console.log("Email already registered!");
           this.setState({ message: "Email already registered!" });
         });
+
+      event.preventDefault(); // dont do default - default is submitting the data to the database
+      event.stopPropagation(); // dont propogate event to parents
     }
   };
 
