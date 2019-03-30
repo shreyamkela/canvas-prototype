@@ -9,8 +9,6 @@ import Register from "./Register"; // New user modal form
 import canvasImage from "../../_public/images/canvasLogo_light.jpg";
 import { Layout, message } from "antd";
 
-import { postLoginData } from "../../_actions/user.actions";
-
 class Login extends Component {
   state = { showModal: false, validated: false, redirect: false };
 
@@ -48,12 +46,10 @@ class Login extends Component {
           } else if (response.data.includes("Incorrect password")) {
             message.error("Incorrect password!");
           } else {
+            dispatch(response, data);
             this.setState({ redirect: true });
-            data["response"] = response;
-            dispatch(postLoginData(data));
           }
-        })
-        .catch(e => console.log(e));
+        });
     }
     this.setState({ validated: true });
   };
