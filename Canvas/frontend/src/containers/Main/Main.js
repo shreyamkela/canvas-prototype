@@ -35,11 +35,9 @@ class Main extends Component {
   }
 
   render() {
-    console.log("MAIN Called!", loginRequest);
-    const { Header, Content, Footer, Sider } = Layout;
     const { loginRequest } = this.props; // redux state to props
     console.log("MAIN Called!", loginRequest);
-
+    const { Header, Content, Footer, Sider } = Layout;
     // NOTE For this project we are fetching all data from server on login and then populating all the components in our app with that data. Actually we should be rendering from props in each component first then also include api calls in each component so that any new data can be updated and then dispatch this change back to the store.
     let persona = null; // Showing email and persona on the header of main
     if (loginRequest.persona == 1) {
