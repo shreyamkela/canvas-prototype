@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+
 import { Upload, Icon, message } from "antd";
 
 function getBase64(img, callback) {
@@ -64,4 +66,4 @@ class Avatar extends Component {
   }
 }
 
-export default Avatar;
+export default connect(null)(Avatar);

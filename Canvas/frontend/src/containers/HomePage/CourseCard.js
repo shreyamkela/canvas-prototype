@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import { Card, Icon, Badge } from "antd";
 
@@ -49,4 +50,4 @@ class CourseCard extends Component {
   }
 }
 
-export default CourseCard;
+export default connect(null)(CourseCard);

@@ -33,7 +33,7 @@ class Login extends Component {
       //console.log("Sending Login Data!", this.refs.email.value, this.refs.email, this.refs);
       let data = { email: this.refs.email.value, password: this.refs.password.value };
       dispatch(postLoginData(data));
-
+      // FIXME if password is wrong?
       this.setState({ redirect: true });
     }
     this.setState({ validated: true });
@@ -99,7 +99,7 @@ class Login extends Component {
               </Form>
               <br />
               <div className="text-danger" style={{ textAlign: "center" }}>
-                {loginRequest.response}
+                {loginRequest.response.data}
               </div>
               <div className="px-2">
                 Or&nbsp;

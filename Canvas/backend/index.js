@@ -156,11 +156,11 @@ app.post("/login", function(req, res) {
           switch (persona) {
             case 1:
               console.log("Faculty Login Successful!");
-              res.end("Faculty Login Successful!");
+              res.send("Faculty Login Successful!");
               break;
             case 2:
               console.log("Student Login Successful!");
-              res.end("Student Login Successful!");
+              res.send("Student Login Successful!");
               break;
           }
         } else {
