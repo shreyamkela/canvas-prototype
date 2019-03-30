@@ -3,11 +3,11 @@ import { Modal, Button, Form, Col } from "react-bootstrap"; // for the new user 
 import { connect } from "react-redux"; // Connects the components to the redux store
 import { Redirect } from "react-router";
 import cookie from "react-cookies";
+import axios from "axios";
 
 import Register from "./Register"; // New user modal form
 import canvasImage from "../../_public/images/canvasLogo_light.jpg";
-import { postLoginData } from "../../_actions/user.actions";
-import { Layout } from "antd";
+import { Layout, message } from "antd";
 
 class Login extends Component {
   state = { showModal: false, validated: false, redirect: false };
@@ -32,9 +32,24 @@ class Login extends Component {
     } else {
       //console.log("Sending Login Data!", this.refs.email.value, this.refs.email, this.refs);
       let data = { email: this.refs.email.value, password: this.refs.password.value };
-      dispatch(postLoginData(data));
 
-      this.setState({ redirect: true });
+      axios.defaults.withCredentials = true;
+      axios
+        .post("http://localhost:3001/login", {
+          // data is accessible at the backend by req.body.query
+          data
+        })
+        .then(response => {
+          if (response.data.includes("does not exist")) {
+            message.error("Email does not exist!");
+            // FIXME maybe using the this.setState message: "Email does not exist!" would cause the page to not rerender. The page is currently reloading after the message.erro shows which should not happen
+          } else if (response.data.includes("Incorrect password")) {
+            message.error("Incorrect password!");
+          } else {
+            dispatch(response, data);
+            this.setState({ redirect: true });
+          }
+        });
     }
     this.setState({ validated: true });
   };
@@ -98,9 +113,6 @@ class Login extends Component {
                 </div>
               </Form>
               <br />
-              <div className="text-danger" style={{ textAlign: "center" }}>
-                {loginRequest.response}
-              </div>
               <div className="px-2">
                 Or&nbsp;
                 {/* &nbsp; is a space character */}

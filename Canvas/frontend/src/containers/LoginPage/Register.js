@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import { connect } from "react-redux"; // Connects the components to the redux store
 
-import { postRegistrationData } from "../../_actions/user.actions"; // FIXME REMOVE THIS and its call as it was only included for redux homework shim
+import { postRegistrationData } from "../../_actions/user.actions";
 
 import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
 
@@ -54,6 +54,7 @@ class Register extends Component {
           this.setState({ message: "Email already registered!" });
         });
 
+      // Stop page from reloading after the registration is successful
       event.preventDefault(); // dont do default - default is submitting the data to the database
       event.stopPropagation(); // dont propogate event to parents
     }

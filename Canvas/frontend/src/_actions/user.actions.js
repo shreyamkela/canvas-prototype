@@ -1,5 +1,4 @@
 import axios from "axios";
-import cookie from "react-cookies";
 
 import {
   REGISTER,
@@ -27,24 +26,14 @@ export const postEditData = data => dispatch => {
   });
 };
 
-export const postLoginData = data => dispatch => {
+export const postLoginData = (response, data) => dispatch => {
   console.log("postLoginData called!");
   //set the with credentials to true - NOTE withCredentials has to be true if we want to send and receive cookies between express and react
-  axios.defaults.withCredentials = true;
-  axios
-    .post("http://localhost:3001/login", {
-      // data is accessible at the backend by req.body.query
-      data
-    })
-    .then(response =>
-      dispatch({
-        type: LOGIN_REQUEST, // Sending type in action dispatches is mandatory
-        payload: response,
-        email: data.email
-      })
-    );
-
-  console.log("Actions cookie", cookie.load("cookie"));
+  dispatch({
+    type: LOGIN_REQUEST, // Sending type in action dispatches is mandatory
+    payload: response,
+    email: data.email
+  });
 };
 
 export const postCreationData = data => dispatch => {
