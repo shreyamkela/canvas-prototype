@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import cookie from "react-cookies";
-import { Redirect } from "react-router";
 import { connect } from "react-redux"; // Connects the components to the redux store
 
 //import './App.css';

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Route } from "react-router-dom";
 import { connect } from "react-redux"; // Connects the components to the redux store
 import axios from "axios";
+import cookie from "react-cookies";
 
 //import './App.css';
 import Dashboard from "../HomePage/Dashboard";
@@ -10,6 +11,7 @@ import Courses from "../Courses/Courses";
 import Create from "../Courses/Create"; // Create a course
 import SideBar from "../Sidebar/SideBar";
 import Enroll from "../Courses/Enroll";
+import Login from "../LoginPage/Login";
 
 import { courseDataToComponent } from "../../_actions/user.actions";
 
@@ -47,44 +49,49 @@ class Main extends Component {
     } else if (loginRequest.persona == 2) {
       persona = "Student - ";
     }
-    return (
-      <React.Fragment>
-        <Layout>
-          {/* <Header
+
+    if (!cookie.load("cookie")) {
+      return <Login />;
+    } else {
+      return (
+        <React.Fragment>
+          <Layout>
+            {/* <Header
             style={{
               background: "#fff"
             }}
           /> */}
-          <SideBar />
-          {/** All valid routes must be declared here for routing to work */}
-          {/* App Component Has a Child Component called Login*/}
-          <Content>
-            {/* Layout inside layout would make the internal layout towards the right of parent layout i.e horizontally. All the components inside a layout would be displayed vertically from top to bottom */}
-            <Layout>
-              <Header
-                style={{
-                  background: "#fff",
-                  textAlign: "center",
-                  marginLeft: 150,
-                  borderBottom: "1px solid #e9e9e9"
-                }}
-              >
-                <font size="5" color="00CCFF">
-                  {persona}
-                  {loginRequest.email}
-                </font>
-              </Header>
-              <Route exact path="/home" component={Dashboard} />
-              <Route path="/profile" component={Profile} />
-              <Route path="/courses/:id" component={Courses} />
-              {/* FIXME Make create route inside the courses file*/}
-              <Route path="/create" component={Create} /> {/* FIXME Configure create and enroll route inside the courses file*/}
-              <Route path="/enroll" component={Enroll} />
-            </Layout>
-          </Content>
-        </Layout>
-      </React.Fragment>
-    );
+            <SideBar />
+            {/** All valid routes must be declared here for routing to work */}
+            {/* App Component Has a Child Component called Login*/}
+            <Content>
+              {/* Layout inside layout would make the internal layout towards the right of parent layout i.e horizontally. All the components inside a layout would be displayed vertically from top to bottom */}
+              <Layout>
+                <Header
+                  style={{
+                    background: "#fff",
+                    textAlign: "center",
+                    marginLeft: 150,
+                    borderBottom: "1px solid #e9e9e9"
+                  }}
+                >
+                  <font size="5" color="00CCFF">
+                    {persona}
+                    {loginRequest.email}
+                  </font>
+                </Header>
+                <Route exact path="/home" component={Dashboard} />
+                <Route path="/profile" component={Profile} />
+                <Route path="/courses/:id" component={Courses} />
+                {/* FIXME Make create route inside the courses file*/}
+                <Route path="/create" component={Create} /> {/* FIXME Configure create and enroll route inside the courses file*/}
+                <Route path="/enroll" component={Enroll} />
+              </Layout>
+            </Content>
+          </Layout>
+        </React.Fragment>
+      );
+    }
   }
 }
 

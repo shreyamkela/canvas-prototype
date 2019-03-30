@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
 import { Card, Icon, Badge } from "antd";
@@ -7,7 +7,11 @@ import { Card, Icon, Badge } from "antd";
 import cardImage from "../../_public/images/courseCard.jpg";
 
 class CourseCard extends Component {
-  state = { title: "" };
+  state = { title: "", redirect: false };
+
+  handleLinkCLick = () => {
+    this.setState({ redirect: true });
+  };
 
   componentDidMount() {
     //console.log("This Course", this.props.course);
@@ -15,7 +19,7 @@ class CourseCard extends Component {
     let link = `/courses/${this.props.course.Id}`; // Ex: Endpoint for this course is /view/CMPE273
     let courseTitle = (
       // NOTE Dont use <a> for including links in react. As react uses react router to route between pages, therefore, we should only us the Link tag provided by react react. <a> tag can malfunction with react router
-      <Link to={link} style={{ textDecoration: "underline" }}>
+      <Link to={link} style={{ textDecoration: "underline" }} onClick={this.handleLinkCLick}>
         <font size="2">{titleString}</font>
       </Link>
     );
