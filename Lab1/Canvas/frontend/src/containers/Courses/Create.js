@@ -1,8 +1,5 @@
-// Home page is the dashboard page
-
 import React, { Component } from "react";
-import { Redirect } from "react-router";
-import cookie from "react-cookies";
+
 import { connect } from "react-redux";
 
 import { postCreationData } from "../../_actions/user.actions";
@@ -10,8 +7,6 @@ import { postCreationData } from "../../_actions/user.actions";
 import { Typography, Layout } from "antd";
 
 import { Form, Col, InputGroup, Button } from "react-bootstrap"; // for the new user modal
-
-import SideBar from "../Sidebar/SideBar";
 
 class Create extends Component {
   state = {
