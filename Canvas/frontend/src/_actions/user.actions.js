@@ -8,7 +8,8 @@ import {
   CREATE_COURSE,
   COURSE_DATA_TO_COMPONENT,
   CURRENT_COURSE_DATA_TO_COMPONENT,
-  ANNOUNCEMENT_CREATE
+  ANNOUNCEMENT_CREATE,
+  LOGOUT_REQUEST
 } from "./types";
 
 export const postRegistrationData = data => dispatch => {
@@ -97,4 +98,11 @@ export const postAnnouncementData = data => dispatch => {
         payload: response.data
       })
     );
+};
+
+export const logOut = () => dispatch => {
+  console.log("logOut action called!");
+  dispatch({
+    type: LOGOUT_REQUEST // Sending type in action dispatches is mandatory
+  });
 };

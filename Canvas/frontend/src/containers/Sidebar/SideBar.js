@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import cookie from "react-cookies";
 import { connect } from "react-redux"; // Connects the components to the redux store
 
 import canvasImage from "../../_public/images/canvasLogo_dark.jpg";
+import { logOut } from "../../_actions/user.actions";
 
 import { Layout, Menu, Icon, Drawer, Button, Col, Row } from "antd";
 
@@ -32,9 +32,11 @@ class SideBar extends Component {
 
   handleLogOut = () => {
     // FIXME API Call to remove session on the backend
-    // FIXME On logout click, also remove the email and persona saved in redux store loginRequest
-    cookie.remove("cookie");
+    // NOTE On logout click, we remove the whole redux state - https://stackoverflow.com/questions/35622588/how-to-reset-the-state-of-a-redux-store
     console.log("Log Out Clicked!");
+    cookie.remove("cookie");
+    let { dispatch } = this.props;
+    dispatch(logOut());
     window.location.replace("/login");
     this.setState({ logOut: true }); // If somehow page doesnt rerender on logout click, we force rerender it by ssetting state
     // Can use this method for logout. Replace replaces the last pushed link in the history.push so on logout, we remove the previous link so that on logout the user cannot go to the previous page/logged in state using the back button

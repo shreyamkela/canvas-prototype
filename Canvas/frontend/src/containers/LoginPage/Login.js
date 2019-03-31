@@ -7,6 +7,7 @@ import cookie from "react-cookies";
 import Register from "./Register"; // New user modal form
 import canvasImage from "../../_public/images/canvasLogo_light.jpg";
 import { postLoginData } from "../../_actions/user.actions";
+
 import { Layout } from "antd";
 
 class Login extends Component {
