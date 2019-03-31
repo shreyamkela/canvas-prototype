@@ -17,7 +17,7 @@ class App extends Component {
     if (!cookie.load("cookie")) {
       return (
         <React.Fragment>
-          <Route path="/(|login)" component={Login} />
+          <Route path="/" component={Login} />
         </React.Fragment>
       );
     } else {

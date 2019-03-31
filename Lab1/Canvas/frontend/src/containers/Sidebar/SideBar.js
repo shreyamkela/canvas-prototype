@@ -34,7 +34,8 @@ class SideBar extends Component {
     // FIXME API Call to remove session on the backend
     // NOTE On logout click, we remove the whole redux state - https://stackoverflow.com/questions/35622588/how-to-reset-the-state-of-a-redux-store
     console.log("Log Out Clicked!");
-    cookie.remove("cookie");
+    cookie.remove("cookie", { path: "/" }); // NOTE to remove cookie properly path is required - https://github.com/reactivestack/cookies/issues/16
+    //
     let { dispatch } = this.props;
     dispatch(logOut());
     window.location.replace("/login");

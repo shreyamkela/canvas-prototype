@@ -8,6 +8,12 @@ import { Layout } from "antd";
 
 import CourseMenu from "./CourseMenu/CourseMenu";
 import Announcements from "./CourseMenu/Announcements";
+import Assignments from "./CourseMenu/Assignments";
+import People from "./CourseMenu/People";
+import Files from "./CourseMenu/Files";
+import Quizzes from "./CourseMenu/Quizzes";
+import Grades from "./CourseMenu/Grades";
+
 import { currentCourseDataToComponent } from "../../_actions/user.actions";
 
 class Courses extends Component {
@@ -16,7 +22,7 @@ class Courses extends Component {
 
     const { dispatch } = this.props;
     const { id } = this.props.match.params; // Course Id passed through :id while routing to this page
-    const { courseDataToComponent } = this.props; // redux state to propsl
+    const { courseDataToComponent, loginRequest } = this.props; // redux state to propsl
     let allCourses = null;
     let currentCourse = null;
     let courseTitle = null;
@@ -26,6 +32,8 @@ class Courses extends Component {
     let filesUrl = null;
     let peopleUrl = null;
     let quizzesUrl = null;
+    let gradesUrl = null;
+
     let courseUrl = null;
 
     if (courseDataToComponent.courses == undefined) {
@@ -49,10 +57,15 @@ class Courses extends Component {
         filesUrl = `/courses/${allCourses[key].Id}/files`;
         peopleUrl = `/courses/${allCourses[key].Id}/people`;
         quizzesUrl = `/courses/${allCourses[key].Id}/quizzes`;
+        gradesUrl = `/courses/${allCourses[key].Id}/grades`;
         courseUrl = `/courses/${allCourses[key].Id}`;
       }
     }
-
+    let gradesRoute = null;
+    if (loginRequest.persona === 2) {
+      // If student, then include route for grades
+      gradesRoute = <Route path={gradesUrl} component={Grades} />;
+    }
     return (
       <div>
         <Layout style={{ marginLeft: 150 }}>
@@ -72,10 +85,11 @@ class Courses extends Component {
             >
               <div>
                 <Route path={announcementsUrl} component={Announcements} />
-                <Route path={assignmentsUrl} component={Announcements} />
-                <Route path={peopleUrl} component={Announcements} />
-                <Route path={filesUrl} component={Announcements} />
-                <Route path={quizzesUrl} component={Announcements} />
+                <Route path={assignmentsUrl} component={Assignments} />
+                <Route path={peopleUrl} component={People} />
+                <Route path={filesUrl} component={Files} />
+                <Route path={quizzesUrl} component={Quizzes} />
+                {gradesRoute}
               </div>
             </Content>
           </Layout>
@@ -86,8 +100,8 @@ class Courses extends Component {
 }
 
 function mapStateToProps(state) {
-  const { courseDataToComponent } = state;
-  return { courseDataToComponent };
+  const { courseDataToComponent, loginRequest } = state;
+  return { courseDataToComponent, loginRequest };
 }
 
 export default connect(mapStateToProps)(Courses);

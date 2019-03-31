@@ -8,13 +8,30 @@ class CourseMenu extends Component {
   render() {
     const { Sider } = Layout;
     const { courseurl } = this.props;
+    const { loginRequest } = this.props;
 
     const announcementsUrl = `${courseurl}/announcements`;
     const assignmentsUrl = `${courseurl}/assignments`;
     const filesUrl = `${courseurl}/files`;
     const peopleUrl = `${courseurl}/people`;
     const quizzesUrl = `${courseurl}/quizzes`;
+    const gradesUrl = `${courseurl}/grades`;
 
+    let gradesItem = null;
+    console.log("AAAAAAAAAAAAAAA", loginRequest.persona);
+    if (loginRequest.persona === 2) {
+      // If student, then include route for grades
+      gradesItem = (
+        <Menu.Item key="6">
+          <span className="nav-text">
+            <Link to={gradesUrl}>
+              {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
+              <font size="3">Grades</font>
+            </Link>
+          </span>
+        </Menu.Item>
+      );
+    }
     return (
       <div>
         <Sider
@@ -45,6 +62,7 @@ class CourseMenu extends Component {
                 </Link>
               </span>
             </Menu.Item>
+            {gradesItem}
             <Menu.Item key="3">
               <span className="nav-text">
                 <Link to={peopleUrl}>
@@ -76,4 +94,9 @@ class CourseMenu extends Component {
   }
 }
 
-export default connect(null)(CourseMenu);
+function mapStateToProps(state) {
+  const { loginRequest } = state;
+  return { loginRequest };
+}
+
+export default connect(mapStateToProps)(CourseMenu);
