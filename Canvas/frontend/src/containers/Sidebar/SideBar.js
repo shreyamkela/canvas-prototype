@@ -9,7 +9,7 @@ import canvasImage from "../../_public/images/canvasLogo_dark.jpg";
 import { Layout, Menu, Icon, Drawer, Button, Col, Row } from "antd";
 
 class SideBar extends Component {
-  state = { accountDrawerVisible: false, coursesDrawerVisible: false };
+  state = { accountDrawerVisible: false, coursesDrawerVisible: false, logOut: false };
 
   showAccountDrawer = () => {
     this.setState({
@@ -35,7 +35,8 @@ class SideBar extends Component {
     // FIXME On logout click, also remove the email and persona saved in redux store loginRequest
     cookie.remove("cookie");
     console.log("Log Out Clicked!");
-    window.location.replace("/");
+    window.location.replace("/login");
+    this.setState({ logOut: true }); // If somehow page doesnt rerender on logout click, we force rerender it by ssetting state
     // Can use this method for logout. Replace replaces the last pushed link in the history.push so on logout, we remove the previous link so that on logout the user cannot go to the previous page/logged in state using the back button
     // NOTE this method is not ideal for normal routing. For normal routing to pages, we use history.push() or redirect or link. But history.push is preferred
   };

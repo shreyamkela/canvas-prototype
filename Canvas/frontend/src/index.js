@@ -2,17 +2,30 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route } from "react-router-dom";
 import { Provider } from "react-redux"; // Glues react and redux together
-
-import store from "./_helpers/store";
-
-import * as serviceWorker from "./serviceWorker";
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import logger from "redux-logger";
+import { composeWithDevTools } from "redux-devtools-extension";
 
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "antd/dist/antd.css";
 
 import App from "./containers/App/App"; // index.js inside App folder in containers folder exports the default method in App.js. Now import App from "./containers/App" statement first looks for index.js inside the App folder and it will see that App.js is exported through index.js of that folder
-import Login from "./containers/LoginPage/Login";
+import rootReducer from "./_reducers";
+
+import * as serviceWorker from "./serviceWorker";
+import { loadState, saveState } from "./_helpers/localStorage";
+
+const persistedState = loadState(); // To persist state on page refresh/rerender - https://egghead.io/lessons/javascript-redux-persisting-the-state-to-the-local-storage
+const middleware = [thunk, logger];
+
+const store = createStore(rootReducer, persistedState, composeWithDevTools(applyMiddleware(...middleware)));
+
+store.subscribe(() => {
+  // To persist state on page refresh/rerender
+  saveState(store.getState());
+});
 
 ReactDOM.render(
   <Provider store={store}>
