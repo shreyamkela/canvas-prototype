@@ -347,7 +347,7 @@ app.get("/searchcourses", function(req, res) {
       }
     });
   } else if (searchByQuery === "Term" || searchByQuery === "Name") {
-    db.query(`SELECT Id, Name, CapacityUsed, WaitlistUsed, Term FROM Courses`, (err, results) => {
+    db.query(`SELECT Id, Name, Description, Capacity, Waitlist, CapacityUsed, WaitlistUsed, Term FROM Courses`, (err, results) => {
       if (err) throw err;
       if (results[0] !== undefined) {
         for (var key in results) {
