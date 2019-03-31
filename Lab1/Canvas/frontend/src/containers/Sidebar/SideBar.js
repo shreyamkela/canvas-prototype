@@ -38,7 +38,7 @@ class SideBar extends Component {
     //
     let { dispatch } = this.props;
     dispatch(logOut());
-    window.location.replace("/login");
+    // window.location.replace("/login"); // NOTE can use this to change route
     this.setState({ logOut: true }); // If somehow page doesnt rerender on logout click, we force rerender it by ssetting state
     // Can use this method for logout. Replace replaces the last pushed link in the history.push so on logout, we remove the previous link so that on logout the user cannot go to the previous page/logged in state using the back button
     // NOTE this method is not ideal for normal routing. For normal routing to pages, we use history.push() or redirect or link. But history.push is preferred

@@ -12,6 +12,14 @@ class Register extends Component {
     message: ""
   };
 
+  handleToggle = event => {
+    if (event.target.value === "1") {
+      this.setState({ persona: 2, message: "" });
+    } else if (event.target.value === "2") {
+      this.setState({ persona: 1, message: "" });
+    }
+  };
+
   handleSubmit = event => {
     console.log("Register Clicked!");
     const form = event.currentTarget;
@@ -96,26 +104,10 @@ class Register extends Component {
           <br />
           <div className="d-flex flex-column mb-4">
             <ButtonGroup toggle className="mt-3">
-              <ToggleButton
-                variant="outline-primary"
-                type="radio"
-                name="radio"
-                value="1"
-                onClick={() => {
-                  this.setState({ persona: 2, message: "" });
-                }}
-              >
+              <ToggleButton variant="outline-primary" type="radio" name="radio" value="1" onClick={this.handleToggle}>
                 Student
               </ToggleButton>
-              <ToggleButton
-                variant="outline-primary"
-                type="radio"
-                name="radio"
-                value="2"
-                onClick={() => {
-                  this.setState({ persona: 1, message: "" });
-                }}
-              >
+              <ToggleButton variant="outline-primary" type="radio" name="radio" value="2" onClick={this.handleToggle}>
                 Faculty
               </ToggleButton>
             </ButtonGroup>
