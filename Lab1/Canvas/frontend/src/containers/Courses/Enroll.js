@@ -205,7 +205,7 @@ class Enroll extends Component {
     return (
       <div>
         {/* FIXME Make the create page a modal */}
-        <Layout style={{ marginLeft: 150 }}>
+        <Layout style={{ marginLeft: 150, minHeight: 560 }}>
           <Content
             style={{
               background: "#fff",

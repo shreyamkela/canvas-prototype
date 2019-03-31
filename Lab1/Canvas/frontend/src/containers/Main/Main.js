@@ -53,6 +53,19 @@ class Main extends Component {
     if (!cookie.load("cookie")) {
       return <Login />;
     } else {
+      let pageHeading = null;
+      if (window.location.pathname.includes("dashboard") || window.location.pathname.includes("home")) {
+        pageHeading = "Dashboard";
+      } else if (window.location.pathname.includes("profile")) {
+        pageHeading = "Profile";
+      } else if (
+        window.location.pathname.includes("create") ||
+        window.location.pathname.includes("enroll") ||
+        window.location.pathname.includes("courses")
+      ) {
+        pageHeading = "Courses";
+      }
+
       return (
         <React.Fragment>
           <Layout>
@@ -64,22 +77,23 @@ class Main extends Component {
             <SideBar />
             {/** All valid routes must be declared here for routing to work */}
             {/* App Component Has a Child Component called Login*/}
+            <header
+              style={{
+                background: "#fff",
+                textAlign: "left",
+                marginLeft: 150,
+                borderBottom: "1px solid #e9e9e9"
+              }}
+            >
+              <div className="px-4 py-2">
+                <font size="5" color="grey">
+                  {pageHeading}
+                </font>
+              </div>
+            </header>
             <Content>
               {/* Layout inside layout would make the internal layout towards the right of parent layout i.e horizontally. All the components inside a layout would be displayed vertically from top to bottom */}
               <Layout>
-                <Header
-                  style={{
-                    background: "#fff",
-                    textAlign: "center",
-                    marginLeft: 150,
-                    borderBottom: "1px solid #e9e9e9"
-                  }}
-                >
-                  <font size="5" color="00CCFF">
-                    {persona}
-                    {loginRequest.email}
-                  </font>
-                </Header>
                 <Route exact path="/home" component={Dashboard} />
                 <Route path="/profile" component={Profile} />
                 <Route path="/courses/:id" component={Courses} />
@@ -88,6 +102,20 @@ class Main extends Component {
                 <Route path="/enroll" component={Enroll} />
               </Layout>
             </Content>
+            <footer
+              style={{
+                background: "#fff",
+                textAlign: "center",
+                marginLeft: 150,
+                borderTop: "1px solid #e9e9e9"
+              }}
+            >
+              {/* FIXME this footer div is outside the screen, make it inside and auto */}
+              <font size="5" color="00CCFF">
+                {persona}
+                {loginRequest.email}
+              </font>
+            </footer>
           </Layout>
         </React.Fragment>
       );

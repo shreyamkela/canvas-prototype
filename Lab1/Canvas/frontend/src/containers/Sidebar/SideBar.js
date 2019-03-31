@@ -104,7 +104,7 @@ class SideBar extends Component {
             className="shadow"
             style={{
               overflow: "auto",
-              height: "100vh",
+              height: "110vh",
               position: "fixed",
               left: 0
             }}
@@ -155,7 +155,7 @@ class SideBar extends Component {
           {/* FIXME Move the drawer after the sider */}
 
           <Drawer
-            title="Account"
+            title={loginRequest.email}
             placement="left"
             style={{ textAlign: "center" }}
             width={300}

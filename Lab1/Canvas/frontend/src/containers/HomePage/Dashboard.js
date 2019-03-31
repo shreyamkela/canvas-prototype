@@ -67,7 +67,7 @@ class Dashboard extends Component {
     const { Header, Content, Footer, Sider } = Layout;
     return (
       <div>
-        <Layout style={{ marginLeft: 150 }}>
+        <Layout style={{ marginLeft: 150, minHeight: 560 }}>
           {/* <Header style={{ background: "#fff" }} /> */}
           <Content
             style={{
