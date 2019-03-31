@@ -383,14 +383,11 @@ app.get("/announcement", function(req, res) {
   console.log("Get Announcement Data Called! Announcement Data:", req.query);
   let announcementData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
 
-  db.query(
-    `SELECT Title, Description FROM Announcements WHERE CourseId = '${announcementData.courseId}' AND Email = '${announcementData.email}'`,
-    (err, results) => {
-      if (err) throw err;
-      console.log("Announcements for this Email and CourseId:", results);
-      res.send(results);
-    }
-  );
+  db.query(`SELECT Title, Description FROM Announcements WHERE CourseId = '${announcementData.courseId}'`, (err, results) => {
+    if (err) throw err;
+    console.log("Announcements for this CourseId:", results);
+    res.send(results);
+  });
 });
 
 //Route to handle Post Request Call to create a new announcement

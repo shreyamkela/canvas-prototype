@@ -12,6 +12,8 @@ class Announcements extends Component {
   state = { visible: false, validated: false, redirect: false, message: "", announcements: "" };
 
   async componentDidMount() {
+    console.log("BBBBBBBBBBBBBBBb");
+
     const { currentCourseDataToComponent, loginRequest } = this.props; // redux state to props
     const data = { email: loginRequest.email, courseId: currentCourseDataToComponent.currentCourse.Id };
 
@@ -72,6 +74,7 @@ class Announcements extends Component {
 
   render() {
     const { validated } = this.state; // form validations
+    const { loginRequest } = this.props; // form validations
 
     let redirectVal = null;
     let redirectLink = `${window.location.pathname}`;
@@ -84,11 +87,13 @@ class Announcements extends Component {
     let allAnnouncements = this.state.announcements;
     let announcementPresent = null;
     const Panel = Collapse.Panel;
-    if (allAnnouncements === "") {
+    if (allAnnouncements === "" || allAnnouncements.length === 0) {
       announcementPresent = (
-        <font className="font-weight-bold" size="3">
-          No announcement available.{/**If no courses present */}
-        </font>
+        <div className="px-4 my-4" style={{ textAlign: "center" }}>
+          <font className="font-weight-bold" size="3">
+            No announcement available.{/**If no courses present */}
+          </font>
+        </div>
       );
     } else {
       //Announcements present
@@ -108,13 +113,23 @@ class Announcements extends Component {
         </div>
       );
     }
+    let announcementButton = null;
+    if (loginRequest.persona == "1") {
+      // If persona is faculty then only show the button
+      announcementButton = (
+        <Button type="primary" shape="round" size="large" icon="plus" onClick={this.showModal}>
+          Announcement
+        </Button>
+      );
+    }
+
+    console.log("AAAAAAAAAAAAaa", this.state.announcements);
     return (
       <React.Fragment>
         {redirectVal}
         <div style={{ textAlign: "right", marginRight: 20 }}>
-          <Button type="primary" shape="round" size="large" icon="plus" onClick={this.showModal}>
-            Announcement
-          </Button>
+          <div>{announcementButton}</div>
+
           <div>{announcementPresent}</div>
           <Modal title="Make an announcement:" visible={this.state.visible} onOk={e => this.handleOk(e)} onCancel={this.handleCancel}>
             <Form noValidate validated={validated}>

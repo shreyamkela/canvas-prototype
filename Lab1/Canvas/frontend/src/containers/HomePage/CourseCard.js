@@ -10,6 +10,7 @@ class CourseCard extends Component {
   state = { title: "", redirect: false };
 
   handleLinkCLick = () => {
+    // NOTE We use Link to route to the course page but have also used handle link click listener - This is because we have to manually set the state so as to tell react to rerender and route to the courses page, otherwise on clicking the link, the url changes but page does not
     this.setState({ redirect: true });
   };
 
