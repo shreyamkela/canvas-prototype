@@ -12,8 +12,6 @@ class Announcements extends Component {
   state = { visible: false, validated: false, redirect: false, message: "", announcements: "" };
 
   async componentDidMount() {
-    console.log("BBBBBBBBBBBBBBBb");
-
     const { currentCourseDataToComponent, loginRequest } = this.props; // redux state to props
     const data = { email: loginRequest.email, courseId: currentCourseDataToComponent.currentCourse.Id };
 
@@ -46,7 +44,12 @@ class Announcements extends Component {
         email: loginRequest.email,
         courseId: currentCourseDataToComponent.currentCourse.Id
       };
+      let previousAnnouncementsData = this.state.announcements;
+      let previousAnnouncementsDataLength = Object.keys(previousAnnouncementsData).length;
+      previousAnnouncementsData[previousAnnouncementsDataLength] = { Title: `${this.refs.title.value}`, Description: `${this.refs.desc.value}` };
       dispatch(postAnnouncementData(data));
+      // this.setState({ redirect: true, message: `${announcementCreateRequest.response}`, visible: false }); // Cannot keep visible as false as if we turn visible as false after the announcement is created, the modal closes but next time when we add announcment, the success message and validation green colour are already visible on the modal without any typing.
+      // To solve this - maybe keepr modal as a different component so that is will be rerendered every time?
       this.setState({ redirect: true, message: `${announcementCreateRequest.response}` }); // Update creation message
     }
     this.setState({ validated: true });
@@ -122,8 +125,7 @@ class Announcements extends Component {
         </Button>
       );
     }
-
-    console.log("AAAAAAAAAAAAaa", this.state.announcements);
+    // FIXME when an announcement has been added, the page instantly show the new announcement - Do this by updating the announcement list rendered, when a new announcement is sent to db
     return (
       <React.Fragment>
         {redirectVal}
