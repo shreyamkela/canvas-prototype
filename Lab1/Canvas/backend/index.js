@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const mysql = require("mysql");
 const bcrypt = require("bcrypt");
+const multer = require("multer");
 
 const app = express();
 const saltRounds = 10; // for bcrypt
@@ -80,7 +81,35 @@ db.connect(err => {
   console.log("MySql Connected...");
 });
 
-// FIXME Add get routes in all as well?
+// ANCHOR
+// multer file upload
+var storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, `public/${req.folderName}`);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + "-" + Date.now());
+  }
+});
+var upload = multer({ storage: storage });
+
+// ANCHOR
+// Insert file link into the db
+var insertDocuments = function(db, file, courseId, email, callback) {
+  console.log("Insert file link called!");
+
+  db.query(
+    `INSERT INTO Files (Email, CourseId, Path, Folder) VALUES ('${email}', '${courseId}', 'public/${file.folder}/${file.filePath}', '${
+      file.folder
+    }'  )`,
+    err => {
+      if (err) throw err;
+      console.log("New details added to Files table");
+      res.send("Addition Successful!");
+      callback(result);
+    }
+  );
+};
 
 //Route to handle Post Request Call to add a new user
 app.post("/newuser", function(req, res) {
@@ -409,25 +438,6 @@ app.post("/announcement", function(req, res) {
   );
 });
 
-//Route to handle Post Request Call to create a new assignment
-app.post("/assignment", function(req, res) {
-  console.log("Create Assignment Data Posted!");
-  // let announcementData = req.body.data;
-  // // let title = announcementData.title;
-  // // console.log("Title: ", title);
-
-  // db.query(
-  //   `INSERT INTO Announcements (Title, Description, Email, CourseId) VALUES ('${announcementData.title}','${announcementData.desc}','${
-  //     announcementData.email
-  //   }','${announcementData.courseId}')`,
-  //   err => {
-  //     if (err) throw err;
-  //     console.log("New details added to Announcement table");
-  //     res.send("Creation Successful!");
-  //   }
-  // );
-});
-
 //Route to handle Post Request Call to enroll into a course and increment the capacity used
 app.post("/enroll", function(req, res) {
   console.log("Enrolling into a course!");
@@ -544,6 +554,365 @@ app.post("/waitlist", function(req, res) {
       }
     });
   }
+});
+
+// ANCHOR //Route to handle Post Request Call to drop a course by a student
+app.post("/dropcourse", function(req, res) {
+  console.log("Drop a course data posted!");
+  // ANCHOR
+  let courseData = req.body.data;
+  // let title = courseData.title;
+  // console.log("Title: ", title);
+
+  db.query(`DELETE FROM courses WHERE Email = '${courseData.email}'`, err => {
+    if (err) throw err;
+    res.send("Delete Successful!");
+  });
+});
+
+//Route to handle Get Request Call to get the profile picture
+app.get("/profileimage", function(req, res) {
+  console.log("Get profile image!");
+  // ANCHOR
+  let profileData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT Path FROM Files WHERE Email = '${profileData.email}' AND Folder = '${profileData.folder}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      console.log("Profile image sent");
+      res.status(200).sendFile(__dirname + `${results[0].Path}`);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
+//Route to handle Post Request Call to post/upload the profile picture
+app.post("/profileimage", function(req, res) {
+  console.log("Post/Upload profile image!");
+  // ANCHOR
+  let profileData = req.body.data;
+  // let title = profileData.title;
+  // console.log("Title: ", title);
+
+  let file = {
+    folder: assignmentData.folder,
+    filePath: assignmentData.filename,
+    document: assignmentData.document
+  };
+
+  db.query(`INSERT INTO Profile (Path) VALUES ('${file.filePath}')`, err => {
+    if (err) throw err;
+    console.log("New details added to profile table");
+
+    // Insert document using multer
+    insertDocuments(db, file, profileData.courseId, profileData.email, () => {
+      res.send("Upload Successful!");
+    });
+  });
+});
+
+//Route to handle Get Request Call show all students that are on the waitlist and require permission numbers, for a particular course
+app.get("/permissionnumber", function(req, res) {
+  console.log("Get waitlist/permission number data!");
+  // ANCHOR
+  let waitlistData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT * FROM waitlist WHERE CourseId = '${waitlistData.courseId}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      console.log("waitlist data for this course:", results[0]);
+      res.status(200).send(results[0]);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
+//Route to handle Post Request Call to provide permission number to select students that are on the waitlist, for a particular course
+//When a student a selected for permission number, we enroll them in the course. No extra functionality specified in the problem statement.
+app.post("/permissionnumber", function(req, res) {
+  console.log("Post permission number data!");
+  // ANCHOR
+  let waitlistData = req.body.data;
+  // let title = waitlistData.title;
+  // console.log("Title: ", title);
+
+  db.query(`INSERT INTO courseEnrolments (Email, CourseId) VALUES ('${waitlistData.email}','${waitlistData.courseId}')`, err => {
+    if (err) throw err;
+    console.log("New details added to enrolled table");
+    res.send("Addition Successful!");
+  });
+});
+
+//Route to handle Get Request Call to show assignments created in a particular course. If persona is student, show whether an assignment is submitted or not. If the persona is faculty, show all the assignments created.
+app.get("/allassignments", function(req, res) {
+  console.log("Get All Assignments Data Called!");
+  // ANCHOR
+  let assignmentData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT * FROM assignments WHERE CourseId = '${assignmentData.courseId}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      //console.log("assignments data for this course:", results[0]);
+      for (key in results) {
+        res.status(200).sendFile(__dirname + `${results[key].Path}`);
+      }
+      // res.status(200).send(results[0]);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
+//Route to handle Get Request Call to show assignment submissions according to persona. If the persona is a student, this request returns all submissions for a particular assignment in a particular course, and if the persona is of a faculty, this request returns only the latest submissions for all students for a particular assignment, in a particular course
+app.get("/assignment", function(req, res) {
+  console.log("Get Assignment Data Called!");
+  // ANCHOR
+  let assignmentData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT * FROM assignments WHERE Email = '${assignmentData.email}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      for (key in results) {
+        res.status(200).sendFile(__dirname + `${results[key].Path}`);
+      }
+      // res.status(200).send(results[0]);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
+//Route to handle Post Request Call to create a new assignment if the persona is of a faculty, and submit an assignment, if the persona is of a student. We dont override the the previous submissions
+app.post("/assignment", function(req, res) {
+  console.log("Create/Submit Assignment Data Posted!");
+  // ANCHOR
+  let assignmentData = req.body.data;
+
+  db.query(
+    `INSERT INTO assignments (Name, Description, Email, CourseId, Path, DueBy, Points) VALUES ('${assignmentData.name}','${assignmentData.desc}','${
+      assignmentData.email
+    }','${assignmentData.courseId}', '${assignmentData.filePath}', '${assignmentData.dueBy}, '${assignmentData.points}'')`,
+    err => {
+      if (err) throw err;
+      console.log("New details added to assignment table");
+      let file = {
+        folder: assignmentData.folder,
+        filePath: assignmentData.filename,
+        document: assignmentData.document
+      };
+      // FIXME Store assignment links in a table
+      // Insert document using multer
+      insertDocuments(db, file, assignmentData.courseId, assignmentData.email, () => {
+        res.send("Creation Successful!");
+      });
+    }
+  );
+});
+
+//Route to handle Get Request Call to show quizzes created in a particular course. If persona is student, show whether an quiz is submitted or not. If the persona is faculty, show all the quizzes created.
+app.get("/allquizzes", function(req, res) {
+  console.log("Get All Quizzes Data Called!");
+  // ANCHOR
+  let quizData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT * FROM quiz WHERE CourseId = '${quizData.courseId}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      console.log("Quiz data for this course id:", results[0]);
+      res.status(200).send(results[0]);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
+//Route to handle Get Request Call to show quiz submissions according to persona. If the persona is a student, this request returns the submission for a particular quiz in a particular course, and if the persona is of a faculty, this request returns only the submissions for all students for a particular quiz, in a particular course
+app.get("/quiz", function(req, res) {
+  console.log("Get Quiz Data Called!");
+  // ANCHOR
+  let quizData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT * FROM userquiz WHERE Email = '${quizData.email}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      console.log("User quiz data for this Email:", results[0]);
+      res.status(200).send(results[0]);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
+//Route to handle Get Request Call to show questions and options to a student for a particular quiz.
+app.get("/takequiz", function(req, res) {
+  console.log("Take a Quiz get data called!");
+
+  // ANCHOR
+  let quizData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT * FROM quiz WHERE QuizId = '${quizData.id}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      console.log("Quiz data for this quiz id:", results[0]);
+      res.status(200).send(results[0]);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
+//Route to handle Post Request Call to create a new quiz if the persona is of a faculty, and submit an quiz, if the persona is of a student.
+app.post("/quiz", function(req, res) {
+  console.log("Create/Submit Quiz Data Posted!");
+  // ANCHOR
+  let quizData = req.body.data;
+  if (quizData.persona == 2) {
+    db.query(`INSERT INTO userquiz (Email, CourseId, Options) VALUES ('${quizData.email}','${quizData.courseId}', '${quizData.options}')`, err => {
+      if (err) throw err;
+      console.log("New details added to user quiz table");
+      res.send("Submission Successful!");
+    });
+  } else if (quizData.persona == 2) {
+    db.query(
+      `INSERT INTO quiz (Email, CourseId, Questions, Options, Answers) VALUES ('${quizData.email}','${quizData.courseId}','${quizData.questions}', '${
+        quizData.options
+      }'),'${quizData.answers}'`,
+      err => {
+        if (err) throw err;
+        console.log("New details added to quiz table");
+        res.send("Creation Successful!");
+      }
+    );
+  }
+});
+
+//Route to handle Get Request Call to get all grades for a particular course, for a student
+app.get("/allgrades", function(req, res) {
+  console.log("Get all grades for this course called!");
+
+  // ANCHOR
+  let gradeData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT * FROM grade WHERE Email = '${gradeData.email}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      console.log("Grade data for this Email:", results[0]);
+      res.status(200).send(results[0]);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
+//Route to handle Get Request Call to show grade for an assignment or a quiz of a student, for a particular course
+app.get("/grade", function(req, res) {
+  console.log("Get an assignment/quiz grade data called!");
+
+  // ANCHOR
+  let gradeData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT * FROM grade WHERE Email = '${gradeData.email}' AND SubmissionType = '${gradeData.type}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      console.log("Grade data of assignment/quiz for this Email:", results[0]);
+      res.status(200).send(results[0]);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
+//Route to handle Post Request Call to grade an assignment or a quiz or a particular student, by a faculty
+app.post("/grade", function(req, res) {
+  console.log("Grade an assignment/quiz data posted!");
+  // ANCHOR
+  let gradeData = req.body.data;
+  // let title = gradeData.title;
+  // console.log("Title: ", title);
+
+  db.query(
+    `INSERT INTO grade (Email, CourseId, StduentEmail, Grade) VALUES ('${gradeData.email}','${gradeData.courseId}','${gradeData.studentEmail}','${
+      gradeData.grade
+    }')`,
+    err => {
+      if (err) throw err;
+      console.log("New details added to grade table");
+      res.send("Grading Successful!");
+    }
+  );
+});
+
+//Route to handle Get Request Call to show all uploaded files for a particular course, irrespective of persona
+app.get("/files", function(req, res) {
+  console.log("Get all files data called!");
+
+  // ANCHOR
+  let filesData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT * FROM files WHERE CourseId = '${filesData.courseId}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      for (key in results) {
+        res.status(200).sendFile(__dirname + `${results[key].Path}`);
+      }
+      // res.status(200).send(results[0]);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
+//Route to handle Post Request Call to upload a file for a particular course, by a faculty
+app.post("/files", function(req, res) {
+  console.log("Post a file data posted!");
+  // ANCHOR
+  let filesData = req.body.data;
+  // let title = filesData.title;
+  // console.log("Title: ", title);
+
+  db.query(
+    `INSERT INTO files (Title, Description, Email, CourseId, Path) VALUES ('${filesData.title}','${filesData.desc}','${filesData.email}','${
+      filesData.courseId
+    }', '${filesData.filePath}')`,
+    err => {
+      if (err) throw err;
+      console.log("New details added to files table");
+      let file = {
+        folder: filesData.folder,
+        filePath: filesData.filename,
+        document: filesData.document
+      };
+      // FIXME Store files links in a table
+      // Insert document using multer
+      insertDocuments(db, file, filesData.courseId, filesData.email, () => {
+        res.send("Upload Successful!");
+      });
+    }
+  );
+});
+
+//Route to handle Get Request Call to show all people registered for a particular course. Personas can also be save in people table and therefore, we can send faculty name as a seperate key in the json response so that it can be shown on the frontend with a faculty tag.
+app.get("/people", function(req, res) {
+  console.log("Get all people data called!");
+
+  // ANCHOR
+  let peopleData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  db.query(`SELECT * FROM courseEnrolments WHERE CourseId = '${peopleData.courseId}'`, (err, results) => {
+    if (err) throw err;
+    if (results[0] !== undefined) {
+      console.log("People data for this course id:", results[0]);
+      res.status(200).send(results[0]);
+    } else {
+      res.status(400).send();
+    }
+  });
+});
+
+//Route to handle Post Request Call to remove a student from a course, by a faculty
+app.post("/people", function(req, res) {
+  console.log("Remove a student from people data posted!");
+  // ANCHOR
+  let peopleData = req.body.data;
+  // let title = peopleData.title;
+  // console.log("Title: ", title);
+
+  db.query(`DELETE FROM courseEnrolments WHERE Email = '${peopleData.email}' AND CourseId = '${peopleData.courseId}'`, err => {
+    if (err) throw err;
+    console.log("Removed this course for the student in courseEnrolments table");
+    res.send("Removal Successful!");
+  });
 });
 
 //start your server on port 3001
