@@ -43,8 +43,7 @@ class Files extends Component {
       } catch (error) {
         console.log(error.response);
       }
-      // dispatch(postAssignmentData(data));
-      //this.setState({ redirect: true, message: `${assignmentCreateRequest.response}` }); // Update creation message
+
       // ANCHOR 2
       this.setState({ redirect: true, message: `Upload successful!` }); // Update creation message
     }
@@ -78,14 +77,10 @@ class Files extends Component {
               <tr>
                 <td>{response.data[key].name}</td>
                 <td>
-                  <Link to="#">{response.data[key].document}</Link>
+                  <Link to={response.data[key].document}>Download</Link>
                 </td>
               </tr>
             ))}
-            {/* <tr>
-              <th>Overall</th>
-              <th>{response.data.total}</th>
-            </tr> */}
           </table>
         </React.Fragment>
       );
@@ -131,7 +126,7 @@ class Files extends Component {
         <div style={{ textAlign: "right", marginRight: 20 }}>
           <div>{filesButton}</div>
           <div>{this.state.filesPresent}</div>
-          <Modal title="Upload an assignment:" visible={this.state.visible} onOk={e => this.handleOk(e)} onCancel={this.handleCancel}>
+          <Modal title="Upload an file:" visible={this.state.visible} onOk={e => this.handleOk(e)} onCancel={this.handleCancel}>
             <Form noValidate validated={validated}>
               <Form.Group as={Col} controlId="validationTitle">
                 <Form.Label>Title</Form.Label>
