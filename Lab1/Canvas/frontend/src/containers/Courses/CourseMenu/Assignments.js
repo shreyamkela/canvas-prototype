@@ -1,12 +1,26 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"; // Connects the components to the redux store
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { Document, Page } from "react-pdf";
 
 import { Button, Modal, Upload, Icon, message } from "antd";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
 
 class Assignment extends Component {
-  state = { visible: false, validated: false, redirect: false, message: "", assignments: "", viewSubmissions: "", fileList: "", document: "" };
+  state = {
+    visible: false,
+    validated: false,
+    redirect: false,
+    message: "",
+    assignments: "",
+    viewSubmissions: "",
+    fileList: "",
+    document: "",
+    numPages: null,
+    pageNumber: 1,
+    viewDocument: ""
+  };
 
   showModal = () => {
     this.setState({
@@ -14,9 +28,8 @@ class Assignment extends Component {
     });
   };
 
-  handleOk = e => {
-    // const { announcementCreateRequest, currentCourseDataToComponent, loginRequest } = this.props; // redux state to props
-    let { dispatch } = this.props;
+  handleOk = async e => {
+    let { dispatch, loginRequest, currentCourseDataToComponent } = this.props;
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.preventDefault(); // dont do default - default is submitting the data to the database
@@ -28,10 +41,18 @@ class Assignment extends Component {
         desc: this.refs.desc.value,
         title: this.refs.title.value,
         email: loginRequest.email,
-        courseId: currentCourseDataToComponent.currentCourse.Id
+        courseId: currentCourseDataToComponent.currentCourse.Id,
+        dueBy: this.refs.dueBy.value,
+        points: this.refs.points.value
       };
-      dispatch(postAssignmentData(data));
-      this.setState({ redirect: true, message: `${assignmentCreateRequest.response}` }); // Update creation message
+      try {
+        let response = await axios.post("http://localhost:3001/assignment", { data });
+        this.setState({ visible: false });
+      } catch (error) {
+        console.log(error.response);
+      }
+      // dispatch(postAssignmentData(data));
+      //this.setState({ redirect: true, message: `${assignmentCreateRequest.response}` }); // Update creation message
       // ANCHOR 2
       this.setState({ redirect: true, message: `Creation successful!` }); // Update creation message
     }
@@ -47,6 +68,7 @@ class Assignment extends Component {
 
   // ANCHOR 1
   handleViewSubmissions = async key => {
+    const { loginRequest, currentCourseDataToComponent } = this.props;
     const data = {
       email: loginRequest.email,
       persona: loginRequest.persona,
@@ -63,6 +85,8 @@ class Assignment extends Component {
   };
 
   handleSubmit = async key => {
+    const { loginRequest, currentCourseDataToComponent } = this.props;
+
     const data = {
       email: loginRequest.email,
       courseId: currentCourseDataToComponent.currentCourse.Id,
@@ -72,6 +96,53 @@ class Assignment extends Component {
     try {
       let response = await axios.get("http://localhost:3001/assignment", { params: data });
       this.setState({ viewSubmissions: response.data });
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  onDocumentLoadSuccess = ({ numPages }) => {
+    this.setState({ numPages });
+  };
+
+  handleViewDocument = key => {
+    const { pageNumber, numPages } = this.state;
+
+    let viewDocument = (
+      <div>
+        <Document file={this.viewSubmissions[key]} onLoadSuccess={this.onDocumentLoadSuccess}>
+          <Page pageNumber={pageNumber} />
+        </Document>
+        <p>
+          Page {pageNumber} of {numPages}
+        </p>
+        <div style={{ width: 300, height: "110vh", position: "fixed", right: 0 }}>
+          <div className="p-4">
+            <h4>Grade</h4>
+            <input type="number" value="Enter grade" />
+            <Button className="shadow" type="primary" onClick={this.handleGradeSubmit}>
+              Submit
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+    this.setState({ viewDocument });
+  };
+
+  handleGradeSubmit = async e => {
+    const { loginRequest, currentCourseDataToComponent } = this.props;
+
+    const data = {
+      email: loginRequest.email,
+      courseId: currentCourseDataToComponent.currentCourse.Id,
+      name: this.state.assignments[e.target.id],
+      grade: e.target.value,
+      type: 1
+    };
+
+    try {
+      let response = await axios.post("http://localhost:3001/grade", { data });
     } catch (error) {
       console.log(error.response);
     }
@@ -96,6 +167,8 @@ class Assignment extends Component {
     const { validated } = this.state; // form validations
     const { loginRequest } = this.props;
 
+    // ANCHOR 1
+
     let submitButton = null;
     if (loginRequest.persona == 2) {
       submitButton = (
@@ -103,7 +176,8 @@ class Assignment extends Component {
           type="button"
           className="btn btn-success btn-sm m-2"
           onClick={() => {
-            this.handleSubmit(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
+            this.handleSubmit();
+            // this.handleSubmit(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
           }}
         >
           Submit
@@ -112,18 +186,20 @@ class Assignment extends Component {
     }
 
     let allSubmissions = null;
-    if (loginRequest.persona == 2) {
-      allSubmissions = (
-        <React.Fragment>
-          {Object.keys(this.state.assignments).map(key => (
-            <div>{this.state.viewSubmissions[key].link}</div>
-          ))}
-        </React.Fragment>
-      );
-    }
 
+    allSubmissions = (
+      <React.Fragment>
+        {Object.keys(this.state.assignments).map(key => (
+          <Link to="#" onCLick={this.handleViewDocument(key)}>
+            <font size="4">{this.state.viewSubmissions[key].name}</font>
+          </Link>
+        ))}
+      </React.Fragment>
+    );
+
+    // ANCHOR 2
     let assignmentPresent = null;
-    // ANCHOR
+    // ANCHOR 1
     if (this.state.assignments === "noAssignments") {
       assignmentPresent = (
         <font className="font-weight-bold" size="3">
@@ -177,7 +253,7 @@ class Assignment extends Component {
           ))}
         </React.Fragment>
       );
-      // ANCHOR
+      // ANCHOR 2
 
       let assignmentButton = null;
       if (loginRequest.persona == "1") {
@@ -212,7 +288,6 @@ class Assignment extends Component {
             <div>{assignmentPresent}</div>
             <Modal title="Upload an assignment:" visible={this.state.visible} onOk={e => this.handleOk(e)} onCancel={this.handleCancel}>
               <Form noValidate validated={validated}>
-                {/* FIXME Fix the size of the text boxes. Also, description feild should be a text area */}
                 <Form.Group as={Col} controlId="validationTitle">
                   <Form.Label>Title</Form.Label>
                   <Form.Control required type="text" placeholder="Enter Title" ref="title" />
@@ -220,6 +295,14 @@ class Assignment extends Component {
                 <Form.Group as={Col} controlId="validationDescription">
                   <Form.Label>Description</Form.Label>
                   <Form.Control required as="textarea" rows="3" placeholder="Enter Description" ref="desc" />
+                </Form.Group>
+                <Form.Group as={Col} controlId="validationDueBy">
+                  <Form.Label>Due By</Form.Label>
+                  <Form.Control required as="date" placeholder="Enter Date" ref="dueBy" />
+                </Form.Group>
+                <Form.Group as={Col} controlId="validationPoints">
+                  <Form.Label>Points</Form.Label>
+                  <Form.Control required as="number" placeholder="Enter Points" ref="points" />
                 </Form.Group>
               </Form>
               <Upload {...props}>
@@ -237,8 +320,8 @@ class Assignment extends Component {
 }
 
 function mapStateToProps(state) {
-  const { loginRequest } = state;
-  return { loginRequest };
+  const { loginRequest, currentCourseDataToComponent } = state;
+  return { loginRequest, currentCourseDataToComponent };
 }
 
 export default connect(mapStateToProps)(Assignment);

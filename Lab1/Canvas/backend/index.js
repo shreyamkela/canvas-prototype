@@ -667,17 +667,48 @@ app.get("/assignment", function(req, res) {
   console.log("Get Assignment Data Called!");
   // ANCHOR
   let assignmentData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
-  db.query(`SELECT * FROM assignments WHERE Email = '${assignmentData.email}'`, (err, results) => {
-    if (err) throw err;
-    if (results[0] !== undefined) {
-      for (key in results) {
-        res.status(200).sendFile(__dirname + `${results[key].Path}`);
+  if (assignmentData.persona == 2) {
+    db.query(
+      `SELECT * FROM assignments WHERE Email = '${assignmentData.email}' AND CourseId = '${assignmentData.courseId}' AND Name = '${
+        assignmentData.name
+      }'`,
+      (err, results) => {
+        if (err) throw err;
+        if (results[0] !== undefined) {
+          for (key in results) {
+            res.status(200).sendFile(__dirname + `${results[key].Path}`);
+          }
+          // res.status(200).send(results[0]);
+        } else {
+          res.status(400).send();
+        }
       }
-      // res.status(200).send(results[0]);
-    } else {
-      res.status(400).send();
-    }
-  });
+    );
+  } else if (assignmentData.persona == 1) {
+    db.query(`SELECT * FROM courseEnrolments CourseId = '${assignmentData.courseId}'`, (err, results) => {
+      if (err) throw err;
+      if (results[0] !== undefined) {
+        for (key in results) {
+          db.query(
+            `SELECT * FROM assignments WHERE Date in (SELECT Email, CourseId, Name, MAX(Date) FROM assignments WHERE Email = '${
+              results[key].email
+            }' AND CourseId = '${results[key].courseId}' AND Name = '${results[key].name}' GROUP BY Email)`,
+            (err, results_1) => {
+              if (results_1[0] !== undefined) {
+                res.status(200).sendFile(__dirname + `${results_1[0].Path}`);
+              } else {
+                res.status(400).send();
+              }
+            }
+          );
+          //res.status(200).sendFile(__dirname + `${results[key].Path}`);
+        }
+        // res.status(200).send(results[0]);
+      } else {
+        res.status(400).send();
+      }
+    });
+  }
 });
 
 //Route to handle Post Request Call to create a new assignment if the persona is of a faculty, and submit an assignment, if the persona is of a student. We dont override the the previous submissions
@@ -728,15 +759,30 @@ app.get("/quiz", function(req, res) {
   console.log("Get Quiz Data Called!");
   // ANCHOR
   let quizData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
-  db.query(`SELECT * FROM userquiz WHERE Email = '${quizData.email}'`, (err, results) => {
-    if (err) throw err;
-    if (results[0] !== undefined) {
-      console.log("User quiz data for this Email:", results[0]);
-      res.status(200).send(results[0]);
-    } else {
-      res.status(400).send();
-    }
-  });
+  if (quizData.persona == 2) {
+    db.query(
+      `SELECT * FROM userquiz WHERE Email = '${quizData.email}' AND CourseId = '${quizData.courseId}' AND Name = '${quizData.name}'`,
+      (err, results) => {
+        if (err) throw err;
+        if (results[0] !== undefined) {
+          console.log("User quiz data for this Email:", results[0]);
+          res.status(200).send(results[0]);
+        } else {
+          res.status(400).send();
+        }
+      }
+    );
+  } else {
+    db.query(`SELECT * FROM userquiz CourseId = '${quizData.courseId}' AND Name = '${quizData.name}'`, (err, results) => {
+      if (err) throw err;
+      if (results[0] !== undefined) {
+        console.log("All students quiz data for this course and quiz:", results);
+        res.status(200).send(results[0]);
+      } else {
+        res.status(400).send();
+      }
+    });
+  }
 });
 
 //Route to handle Get Request Call to show questions and options to a student for a particular quiz.
@@ -745,10 +791,10 @@ app.get("/takequiz", function(req, res) {
 
   // ANCHOR
   let quizData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
-  db.query(`SELECT * FROM quiz WHERE QuizId = '${quizData.id}'`, (err, results) => {
+  db.query(`SELECT * FROM quiz WHERE Name = '${quizData.name}'`, (err, results) => {
     if (err) throw err;
     if (results[0] !== undefined) {
-      console.log("Quiz data for this quiz id:", results[0]);
+      console.log("Quiz data for this quiz name:", results[0]);
       res.status(200).send(results[0]);
     } else {
       res.status(400).send();
@@ -762,12 +808,17 @@ app.post("/quiz", function(req, res) {
   // ANCHOR
   let quizData = req.body.data;
   if (quizData.persona == 2) {
-    db.query(`INSERT INTO userquiz (Email, CourseId, Options) VALUES ('${quizData.email}','${quizData.courseId}', '${quizData.options}')`, err => {
-      if (err) throw err;
-      console.log("New details added to user quiz table");
-      res.send("Submission Successful!");
-    });
-  } else if (quizData.persona == 2) {
+    db.query(
+      `INSERT INTO userquiz (Email, CourseId, Options, Name) VALUES ('${quizData.email}','${quizData.courseId}', '${quizData.options}', '${
+        quizData.name
+      }')`,
+      err => {
+        if (err) throw err;
+        console.log("New details added to user quiz table");
+        res.send("Submission Successful!");
+      }
+    );
+  } else if (quizData.persona == 1) {
     db.query(
       `INSERT INTO quiz (Email, CourseId, Questions, Options, Answers) VALUES ('${quizData.email}','${quizData.courseId}','${quizData.questions}', '${
         quizData.options
@@ -804,10 +855,10 @@ app.get("/grade", function(req, res) {
 
   // ANCHOR
   let gradeData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
-  db.query(`SELECT * FROM grade WHERE Email = '${gradeData.email}' AND SubmissionType = '${gradeData.type}'`, (err, results) => {
+  db.query(`SELECT * FROM grade WHERE Email = '${gradeData.email}' AND CourseId = '${gradeData.courseId}'`, (err, results) => {
     if (err) throw err;
     if (results[0] !== undefined) {
-      console.log("Grade data of assignment/quiz for this Email:", results[0]);
+      console.log("Grade data for this Email and Course Id:", results[0]);
       res.status(200).send(results[0]);
     } else {
       res.status(400).send();
@@ -820,13 +871,12 @@ app.post("/grade", function(req, res) {
   console.log("Grade an assignment/quiz data posted!");
   // ANCHOR
   let gradeData = req.body.data;
-  // let title = gradeData.title;
-  // console.log("Title: ", title);
 
+  // gradeData.type defines whether the submission is an assignment or a quiz
   db.query(
-    `INSERT INTO grade (Email, CourseId, StduentEmail, Grade) VALUES ('${gradeData.email}','${gradeData.courseId}','${gradeData.studentEmail}','${
-      gradeData.grade
-    }')`,
+    `INSERT INTO grade (Email, CourseId, StduentEmail, Grade, Name, Type) VALUES ('${gradeData.email}','${gradeData.courseId}','${
+      gradeData.studentEmail
+    }','${gradeData.grade}', '${gradeData.name}', '${gradeData.type}')`,
     err => {
       if (err) throw err;
       console.log("New details added to grade table");
@@ -863,9 +913,9 @@ app.post("/files", function(req, res) {
   // console.log("Title: ", title);
 
   db.query(
-    `INSERT INTO files (Title, Description, Email, CourseId, Path) VALUES ('${filesData.title}','${filesData.desc}','${filesData.email}','${
-      filesData.courseId
-    }', '${filesData.filePath}')`,
+    `INSERT INTO files (Title, Email, CourseId, Path) VALUES ('${filesData.title}',${filesData.email}','${filesData.courseId}', '${
+      filesData.filePath
+    }')`,
     err => {
       if (err) throw err;
       console.log("New details added to files table");
