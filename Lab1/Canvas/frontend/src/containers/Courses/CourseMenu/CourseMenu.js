@@ -18,7 +18,6 @@ class CourseMenu extends Component {
     const gradesUrl = `${courseurl}/grades`;
 
     let gradesItem = null;
-    console.log("AAAAAAAAAAAAAAA", loginRequest.persona);
     if (loginRequest.persona === 2) {
       // If student, then include route for grades
       gradesItem = (
