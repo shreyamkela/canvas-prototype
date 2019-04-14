@@ -19,7 +19,7 @@ router.get("/", function(req, res) {
         if (user) {
           console.log("Assignments detail: ", user);
           for (key in user) {
-            res.status(200).sendFile(__dirname + `${results[key].Path}`);
+            res.status(200).sendFile(__dirname + `${user[key].Path}`);
           }
         } else {
           res.status(400).send();
