@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
-import { Layout, List, message, Spin, Cascader } from "antd";
 import InfiniteScroll from "react-infinite-scroller";
+
+import { Layout, List, message, Spin, Cascader, Button, Modal, Collapse } from "antd";
+import { Form, Col } from "react-bootstrap"; // for the new user modal
+
+import API from "../../_helpers/API";
 
 class Inbox extends Component {
   state = {
@@ -46,7 +49,7 @@ class Inbox extends Component {
     const data = { email: loginRequest.email };
     try {
       let response = await API.get("messages", { params: data });
-      messages = messages.concat(res.results);
+      messages = messages.concat(response.data);
       this.setState({ data: response.data, loading: false });
     } catch (error) {
       console.log(error.response);
@@ -118,6 +121,8 @@ class Inbox extends Component {
 
   render() {
     const { Header, Content, Footer } = Layout;
+    const { validated } = this.state; // form validations
+
     const allRecipents = null;
     Object.keys(this.state.allRecipents).map(key => {
       allRecipents = { value: key.courseName, label: key.courseName, children: key.users };
@@ -185,7 +190,7 @@ class Inbox extends Component {
               <Form.Label>Message</Form.Label>
               <Form.Control required as="textarea" rows="3" placeholder="Enter Message" ref="message" />
             </Form.Group>
-            <Cascader options={allRecipents} onChange={onChange} placeholder="Please select" />
+            <Cascader options={allRecipents} onChange={this.onChange} placeholder="Please select" />
           </Form>
           <div className="text-success">{this.state.alert}</div>
         </Modal>
