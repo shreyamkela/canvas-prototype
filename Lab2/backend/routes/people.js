@@ -8,15 +8,24 @@ router.get("/", function(req, res) {
 
   // ANCHOR
   let peopleData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
-  db.query(`SELECT * FROM courseEnrolments WHERE CourseId = '${peopleData.courseId}'`, (err, results) => {
-    if (err) throw err;
-    if (results[0] !== undefined) {
-      console.log("People data for this course id:", results[0]);
-      res.status(200).send(results[0]);
-    } else {
-      res.status(400).send();
+
+  Model.courseDetails.findOne(
+    {
+      courseId: peopleData.courseId
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch course", err);
+      } else {
+        if (user) {
+          console.log("People detail: ", user);
+          res.status(200).send(user.people);
+        } else {
+          res.status(400).send();
+        }
+      }
     }
-  });
+  );
 });
 
 //Route to handle Post Request Call to remove a student from a course, by a faculty
@@ -27,11 +36,32 @@ router.post("/", function(req, res) {
   // let title = peopleData.title;
   // console.log("Title: ", title);
 
-  db.query(`DELETE FROM courseEnrolments WHERE Email = '${peopleData.email}' AND CourseId = '${peopleData.courseId}'`, err => {
-    if (err) throw err;
-    console.log("Removed this course for the student in courseEnrolments table");
-    res.send("Removal Successful!");
-  });
+  Model.userDetails.findOne(
+    {
+      email: peopleData.email
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch user", err);
+      } else {
+        if (user) {
+          user.enrolledcourses.remove(peopleData.courseId);
+          user.save().then(
+            doc => {
+              console.log("Course removed from this user", doc);
+              res.send("Removal Successful!");
+            },
+            err => {
+              console.log("Unable to save remove course.", err);
+              res.status(400).send();
+            }
+          );
+        } else {
+          res.status(400).send();
+        }
+      }
+    }
+  );
 });
 
 module.exports = router;
