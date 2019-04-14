@@ -33,7 +33,7 @@ router.post("/", function(req, res) {
           res.status(400).send("Email already registered!"); // Bad request - Catch this error at frontend axios
         } else {
           // Hashing the password
-          const hashedPassword = bcrypt.hashSync(password);
+          const hashedPassword = bcrypt.hashSync(password, saltRounds);
           var user = new Model.userDetails({
             profileId: id,
             email: email,
@@ -62,6 +62,12 @@ router.post("/", function(req, res) {
         user.save().then(
           doc => {
             console.log("User saved successfully.", doc);
+            // TODO
+            // db.query(`INSERT INTO Profile (Email, Firstname, Lastname) VALUES ('${email}','${firstname}','${lastname}')`, err => {
+            //   if (err) throw err;
+            //   console.log("New details added to Profile table");
+            // });
+
             res.status(200).send("Registration Successful!"); // status should come before send
           },
           err => {
