@@ -8,15 +8,23 @@ router.get("/", function(req, res) {
 
   // ANCHOR
   let gradeData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
-  db.query(`SELECT * FROM grade WHERE Email = '${gradeData.email}' AND CourseId = '${gradeData.courseId}'`, (err, results) => {
-    if (err) throw err;
-    if (results[0] !== undefined) {
-      console.log("Grade data for this Email and Course Id:", results[0]);
-      res.status(200).send(results[0]);
-    } else {
-      res.status(400).send();
+  Model.userDetails.findOne(
+    {
+      email: gradeData.email
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch user", err);
+      } else {
+        if (user) {
+          console.log("Grades detail: ", user);
+          res.status(200).send(user.grades);
+        } else {
+          res.status(400).send();
+        }
+      }
     }
-  });
+  );
 });
 
 //Route to handle Post Request Call to grade an assignment or a quiz or a particular student, by a faculty
@@ -26,14 +34,31 @@ router.post("/", function(req, res) {
   let gradeData = req.body.data;
 
   // gradeData.type defines whether the submission is an assignment or a quiz
-  db.query(
-    `INSERT INTO grade (Email, CourseId, StduentEmail, Grade, Name, Type) VALUES ('${gradeData.email}','${gradeData.courseId}','${
-      gradeData.studentEmail
-    }','${gradeData.grade}', '${gradeData.name}', '${gradeData.type}')`,
-    err => {
-      if (err) throw err;
-      console.log("New details added to grade table");
-      res.send("Grading Successful!");
+
+  Model.userDetails.findOne(
+    {
+      email: gradeData.email
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch user", err);
+      } else {
+        if (user) {
+          user.grades.push(gradeData.grade);
+          user.save().then(
+            doc => {
+              console.log("New details added to this user grade", doc);
+              res.send("Addition Successful!");
+            },
+            err => {
+              console.log("Unable to save grade details.", err);
+              res.status(400).send();
+            }
+          );
+        } else {
+          res.status(400).send();
+        }
+      }
     }
   );
 });
