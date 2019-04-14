@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"; // Connects the components to the redux store
 import { Redirect } from "react-router";
-import axios from "axios";
 
 import { Button, Modal, Collapse } from "antd";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
 
 import { postAnnouncementData } from "../../../_actions/user.actions";
+import API from "../../../_helpers/API";
 
 class Announcements extends Component {
   state = { visible: false, validated: false, redirect: false, message: "", announcements: "" };
@@ -16,7 +16,7 @@ class Announcements extends Component {
     const data = { email: loginRequest.email, courseId: currentCourseDataToComponent.currentCourse.Id };
 
     try {
-      let response = await axios.get("http://localhost:3001/announcement", { params: data });
+      let response = await API.get("announcement", { params: data });
       this.setState({ announcements: response.data });
     } catch (error) {
       console.log(error.response);

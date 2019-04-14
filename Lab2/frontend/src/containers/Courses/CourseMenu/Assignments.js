@@ -6,6 +6,7 @@ import { Document, Page } from "react-pdf";
 
 import { Button, Modal, Upload, Icon, message } from "antd";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
+import API from "../../../_helpers/API";
 
 class Assignment extends Component {
   state = {
@@ -46,7 +47,7 @@ class Assignment extends Component {
         points: this.refs.points.value
       };
       try {
-        let response = await axios.post("http://localhost:3001/assignment", { data });
+        let response = await API.post("assignment", { data });
         this.setState({ visible: false });
       } catch (error) {
         console.log(error.response);
@@ -77,7 +78,7 @@ class Assignment extends Component {
     };
 
     try {
-      let response = await axios.get("http://localhost:3001/assignment", { params: data });
+      let response = await API.get("assignment", { params: data });
       this.setState({ viewSubmissions: response.data });
     } catch (error) {
       console.log(error.response);
@@ -94,7 +95,7 @@ class Assignment extends Component {
     };
 
     try {
-      let response = await axios.get("http://localhost:3001/assignment", { params: data });
+      let response = await API.get("assignment", { params: data });
       this.setState({ viewSubmissions: response.data });
     } catch (error) {
       console.log(error.response);
@@ -142,7 +143,7 @@ class Assignment extends Component {
     };
 
     try {
-      let response = await axios.post("http://localhost:3001/grade", { data });
+      let response = await API.post("grade", { data });
     } catch (error) {
       console.log(error.response);
     }

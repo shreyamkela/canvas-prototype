@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 import { Button, Modal, Upload, Icon, message } from "antd";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
+import API from "../../../_helpers/API";
 
 class Files extends Component {
   // ANCHOR 1
@@ -38,7 +39,7 @@ class Files extends Component {
         path: `${currentCourseDataToComponent.currentCourse.Id}`
       };
       try {
-        let response = await axios.post("http://localhost:3001/files", { data });
+        let response = await API.post("files", { data });
         this.setState({ visible: false });
       } catch (error) {
         console.log(error.response);
@@ -64,7 +65,7 @@ class Files extends Component {
     };
 
     try {
-      let response = await axios.get("http://localhost:3001/files", { params: data });
+      let response = await API.get("files", { params: data });
       let allFiles = (
         <React.Fragment>
           <table>

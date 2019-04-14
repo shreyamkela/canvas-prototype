@@ -5,6 +5,7 @@ import { connect } from "react-redux"; // Connects the components to the redux s
 import { postEditData } from "../../_actions/user.actions"; // FIXME REMOVE THIS and its call as it was only included for redux homework shim
 
 import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
+import API from "../../_helpers/API";
 
 class Edit extends Component {
   state = {
@@ -36,11 +37,10 @@ class Edit extends Component {
     const { dispatch } = this.props;
     dispatch(postEditData(data));
     //
-    axios
-      .post("http://localhost:3001/profile", {
-        // data is accessible at the backend by req.body.query
-        data
-      })
+    API.post("profile", {
+      // data is accessible at the backend by req.body.query
+      data
+    })
       .then(response => {
         console.log("Edit successful!");
         // message.success(response.data); // cant use antd message as this message would be shown on profile page which is darkened when the modal is open

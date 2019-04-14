@@ -1,7 +1,7 @@
 // Only visible to the student
 import React, { Component } from "react";
 import { connect } from "react-redux"; // Connects the components to the redux store
-import axios from "axios";
+import API from "../../../_helpers/API";
 
 class Grades extends Component {
   // ANCHOR 1
@@ -17,7 +17,7 @@ class Grades extends Component {
     };
 
     try {
-      let response = await axios.get("http://localhost:3001/grade", { params: data });
+      let response = await API.get("grade", { params: data });
       let allGrades = (
         <React.Fragment>
           <table>

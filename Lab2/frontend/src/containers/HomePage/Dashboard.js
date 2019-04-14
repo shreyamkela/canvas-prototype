@@ -8,6 +8,7 @@ import { Layout, Row, Col } from "antd";
 
 import CourseCard from "./CourseCard";
 import { courseDataToComponent } from "../../_actions/user.actions";
+import API from "../../_helpers/API";
 
 class Dashboard extends Component {
   state = { courses: "" };
@@ -16,7 +17,7 @@ class Dashboard extends Component {
     const { loginRequest } = this.props;
     const data = { email: loginRequest.email, persona: loginRequest.persona };
     try {
-      let response = await axios.get("http://localhost:3001/getcourses", { params: data });
+      let response = await API.get("getcourses", { params: data });
       // you can access your data here
       //console.log("courses response:", response.data);
 

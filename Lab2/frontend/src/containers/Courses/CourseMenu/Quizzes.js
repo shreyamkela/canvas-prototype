@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"; // Connects the components to the redux store
-import axios from "axios";
+import API from "../../../_helpers/API";
 import { Link } from "react-router-dom";
 
 import { Button, Modal, Upload, Icon, message } from "antd";
@@ -65,7 +65,7 @@ class Quizzes extends Component {
     };
 
     try {
-      let response = await axios.get("http://localhost:3001/takequiz", { params: data });
+      let response = await API.get("takequiz", { params: data });
       this.setState({ takeQuiz: response.data });
     } catch (error) {
       console.log(error.response);
@@ -83,7 +83,7 @@ class Quizzes extends Component {
     };
 
     try {
-      let response = await axios.post("http://localhost:3001/quiz", { data });
+      let response = await API.post("quiz", { data });
       this.setState({ takeQuiz: "" });
     } catch (error) {
       console.log(error.response);
@@ -122,7 +122,7 @@ class Quizzes extends Component {
     };
 
     try {
-      let response = await axios.get("http://localhost:3001/quiz", { params: data });
+      let response = await API.get("quiz", { params: data });
       this.setState({ viewSubmissions: response.data });
     } catch (error) {
       console.log(error.response);
@@ -145,7 +145,7 @@ class Quizzes extends Component {
     };
 
     try {
-      let response = await axios.post("http://localhost:3001/grade", { data });
+      let response = await API.post("grade", { data });
     } catch (error) {
       console.log(error.response);
     }

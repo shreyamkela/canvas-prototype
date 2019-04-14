@@ -7,6 +7,7 @@ import { Modal } from "react-bootstrap"; // for the edit modal
 
 import Avatar from "./Avatar";
 import Edit from "./Edit";
+import API from "../../_helpers/API";
 
 class Profile extends Component {
   state = { showModal: false, profile: "" };
@@ -16,7 +17,7 @@ class Profile extends Component {
     const { loginRequest } = this.props; // redux state to props
     const data = { email: loginRequest.email };
     try {
-      let response = await axios.get("http://localhost:3001/profile", { params: data });
+      let response = await API.get("profile", { params: data });
       console.log("Profile data response:", response);
       this.setState({ profile: response.data });
     } catch (error) {

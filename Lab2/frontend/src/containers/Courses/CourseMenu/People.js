@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"; // Connects the components to the redux store
-import axios from "axios";
+import API from "../../../_helpers/API";
 
 class People extends Component {
   // ANCHOR 1
@@ -16,7 +16,7 @@ class People extends Component {
     };
 
     try {
-      await axios.post("http://localhost:3001/people", { data });
+      await API.post("people", { data });
     } catch (error) {
       console.log(error.response);
     }
@@ -29,7 +29,7 @@ class People extends Component {
     };
 
     try {
-      let response = await axios.get("http://localhost:3001/people", { params: data });
+      let response = await API.get("people", { params: data });
 
       let allPeople = (
         <React.Fragment>

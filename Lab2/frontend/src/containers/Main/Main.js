@@ -17,6 +17,7 @@ import Inbox from "../Inbox/Inbox";
 import { courseDataToComponent } from "../../_actions/user.actions";
 
 import { Layout } from "antd";
+import API from "../../_helpers/API";
 
 class Main extends Component {
   async componentDidMount() {
@@ -24,7 +25,7 @@ class Main extends Component {
 
     const data = { email: loginRequest.email, persona: loginRequest.persona };
     try {
-      let response = await axios.get("http://localhost:3001/getcourses", { params: data });
+      let response = await API.get("getcourses", { params: data });
       // you can access your data here
       //console.log("courses response:", response.data);
 

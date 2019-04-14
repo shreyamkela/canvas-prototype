@@ -5,6 +5,7 @@ import { connect } from "react-redux"; // Connects the components to the redux s
 import { postRegistrationData } from "../../_actions/user.actions"; // FIXME REMOVE THIS and its call as it was only included for redux homework shim
 
 import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
+import API from "../../_helpers/API";
 
 class Register extends Component {
   state = {
@@ -46,11 +47,10 @@ class Register extends Component {
       const { dispatch } = this.props;
       dispatch(postRegistrationData(data));
       //
-      axios
-        .post("http://localhost:3001/newuser", {
-          // data is accessible at the backend by req.body.query
-          data
-        })
+      API.post("newuser", {
+        // data is accessible at the backend by req.body.query
+        data
+      })
         .then(response => {
           console.log("Registration successful!");
 

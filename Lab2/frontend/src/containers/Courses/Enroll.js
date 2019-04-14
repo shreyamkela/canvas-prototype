@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import axios from "axios";
 
 import { Typography, Layout, Input, Radio, message } from "antd";
+import API from "../../_helpers/API";
 
 class Enroll extends Component {
   state = {
@@ -24,7 +25,7 @@ class Enroll extends Component {
       const data = { searchValue: searchValue, filterRadioValue: this.state.filterRadioValue, searchByRadioValue: this.state.searchByRadioValue };
 
       try {
-        let response = await axios.get("http://localhost:3001/searchcourses", { params: data });
+        let response = await API.get("searchcourses", { params: data });
         this.setState({ courses: response.data });
       } catch (error) {
         console.log(error.response);
@@ -60,7 +61,7 @@ class Enroll extends Component {
       const { loginRequest } = this.props;
       const data = { courseId: this.state.courses[key].Id, email: loginRequest.email };
       try {
-        let response = await axios.post("http://localhost:3001/enroll", { data });
+        let response = await API.post("enroll", { data });
         message.success(response.data);
         // Change the count of the capacity used - NOTE Here we are not fetching the courses data again, after the update. We are updating the frontend without requesting any new data from the backend as we know that the database would have been already updated so we can change the count.
         // If the database would not have been updated then then this setState wont run as there must be an error at backend which will be caught by the catch below
@@ -90,7 +91,7 @@ class Enroll extends Component {
       const { loginRequest } = this.props;
       const data = { courseId: this.state.courses[key].Id, email: loginRequest.email };
       try {
-        let response = await axios.post("http://localhost:3001/waitlist", { data });
+        let response = await API.post("waitlist", { data });
         message.success(response.data);
         // Change the count of the waitlist used - NOTE Here we are not fetching the courses data again, after the update. We are updating the frontend without requesting any new data from the backend as we know that the database would have been already updated so we can change the count.
         // If the database would not have been updated then then this setState wont run as there must be an error at backend which will be caught by the catch below
