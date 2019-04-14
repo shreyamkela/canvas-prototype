@@ -1,7 +1,7 @@
 //Route to handle Post Request Call to drop a course by a student
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const Model = require("../database/connection");
 
 router.post("/", function(req, res) {
   console.log("Drop a course data posted!");

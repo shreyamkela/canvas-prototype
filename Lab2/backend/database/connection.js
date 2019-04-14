@@ -29,7 +29,7 @@ var userDetails = mongoose.model("userDetails", {
   enrolledCourses: Array,
   waitlistedCourses: Array,
   permissionNumbers: Array,
-  grades: Array,
+  grades: JSON,
   messages: Array
 });
 
@@ -46,15 +46,23 @@ var courseDetails = mongoose.model("courseDetails", {
   term: String,
   capacityUsed: Number,
   waitlistUsed: Number,
-  announcements: Array,
-  files: Array,
-  assignments: Array,
-  quizzes: Array,
+  announcements: JSON,
+  files: JSON,
+  assignments: JSON,
+  quizzes: JSON,
   enrolledStudents: Array,
   waitlistedStudents: Array
 });
 
+var messageDetails = mongoose.model("messageDetails", {
+  senderId: String,
+  recipentId: String,
+  messageId: String,
+  message: JSON
+});
+
 module.exports = {
   userDetails,
-  courseDetails
+  courseDetails,
+  messageDetails
 };

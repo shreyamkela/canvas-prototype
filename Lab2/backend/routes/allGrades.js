@@ -18,7 +18,7 @@ router.get("/", function(req, res) {
       } else {
         if (user) {
           console.log("Grades detail: ", user);
-          res.status(200).send(user);
+          res.status(200).send(user.grades);
         } else {
           res.status(400).send();
         }

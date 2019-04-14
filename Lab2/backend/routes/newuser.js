@@ -63,7 +63,7 @@ router.post("/", function(req, res) {
           doc => {
             console.log("User saved successfully.", doc);
             // TODO
-            // db.query(`INSERT INTO Profile (Email, Firstname, Lastname) VALUES ('${email}','${firstname}','${lastname}')`, err => {
+            // Model.query(`INSERT INTO Profile (Email, Firstname, Lastname) VALUES ('${email}','${firstname}','${lastname}')`, err => {
             //   if (err) throw err;
             //   console.log("New details added to Profile table");
             // });

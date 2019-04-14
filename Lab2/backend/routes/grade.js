@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to show grade for an assignment or a quiz of a student, for a particular course
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const Model = require("../database/connection");
 
 router.get("/", function(req, res) {
   console.log("Get an assignment/quiz grade data called!");

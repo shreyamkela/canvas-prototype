@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to get the profile picture
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const Model = require("../database/connection");
 const insertDocuments = require("../uploads/_helpers/insertDocuments");
 
 router.get("/", function(req, res) {
@@ -38,7 +38,7 @@ router.post("/", function(req, res) {
     console.log("New details added to profile table");
 
     // Insert document using multer
-    insertDocuments(db, file, profileData.courseId, profileData.email, () => {
+    insertDocuments(Model, file, profileData.courseId, profileData.email, () => {
       res.send("Upload Successful!");
     });
   });

@@ -14,7 +14,7 @@ const upload = multer({ storage: storage });
 
 // ANCHOR
 // Insert file link into the db
-module.exports = insertDocuments = function(db, file, courseId, email, callback) {
+module.exports = insertDocuments = function(Model, file, courseId, email, callback) {
   console.log("Insert file link called!");
 
   db.query(

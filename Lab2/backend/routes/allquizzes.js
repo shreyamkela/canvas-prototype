@@ -18,7 +18,7 @@ router.get("/", function(req, res) {
       } else {
         if (user) {
           console.log("All quiz details for this courseId: ", user);
-          res.status(200).send(user);
+          res.status(200).send(user.quizzes);
         } else {
           res.status(400).send();
         }

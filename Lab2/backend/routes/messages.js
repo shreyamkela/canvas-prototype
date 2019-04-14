@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to show all messages, for a user
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const Model = require("../database/connection");
 
 router.get("/", function(req, res) {
   console.log("Get messages data called!");

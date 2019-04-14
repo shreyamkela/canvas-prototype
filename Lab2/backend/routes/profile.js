@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to load all details of profile
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const Model = require("../database/connection");
 
 router.get("/", function(req, res) {
   console.log("Get Profile Data Called!");

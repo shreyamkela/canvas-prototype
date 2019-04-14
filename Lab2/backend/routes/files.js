@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to show all uploaded files for a particular course, irrespective of persona
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const Model = require("../database/connection");
 const insertDocuments = require("../uploads/_helpers/insertDocuments");
 
 router.get("/", function(req, res) {
