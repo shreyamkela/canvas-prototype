@@ -9,17 +9,26 @@ router.get("/", function(req, res) {
 
   // ANCHOR
   let filesData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
-  db.query(`SELECT * FROM files WHERE CourseId = '${filesData.courseId}'`, (err, results) => {
-    if (err) throw err;
-    if (results[0] !== undefined) {
-      for (key in results) {
-        res.status(200).sendFile(__dirname + `${results[key].Path}`);
+
+  Model.courseDetails.findOne(
+    {
+      courseId: filesData.courseId
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch course", err);
+      } else {
+        if (user) {
+          console.log("Announcements detail: ", user);
+          for (key in results) {
+            res.status(200).sendFile(__dirname + `${user[key].files.Path}`);
+          }
+        } else {
+          res.status(400).send();
+        }
       }
-      // res.status(200).send(results[0]);
-    } else {
-      res.status(400).send();
     }
-  });
+  );
 });
 
 //Route to handle Post Request Call to upload a file for a particular course, by a faculty
@@ -30,23 +39,39 @@ router.post("/", function(req, res) {
   // let title = filesData.title;
   // console.log("Title: ", title);
 
-  db.query(
-    `INSERT INTO files (Title, Email, CourseId, Path) VALUES ('${filesData.title}',${filesData.email}','${filesData.courseId}', '${
-      filesData.filePath
-    }')`,
-    err => {
-      if (err) throw err;
-      console.log("New details added to files table");
-      let file = {
-        folder: filesData.folder,
-        filePath: filesData.filename,
-        document: filesData.document
-      };
-      // FIXME Store files links in a table
-      // Insert document using multer
-      insertDocuments(db, file, filesData.courseId, filesData.email, () => {
-        res.send("Upload Successful!");
-      });
+  Model.courseDetails.findOne(
+    {
+      courseId: filesData.courseId
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch course", err);
+      } else {
+        if (user) {
+          user.files.push(filesData);
+          user.save().then(
+            doc => {
+              console.log("New details added to this course files", doc);
+              let file = {
+                folder: filesData.folder,
+                filePath: filesData.filename,
+                document: filesData.document
+              };
+              // FIXME Store assignment links in a table
+              // Insert document using multer
+              insertDocuments(Model, file, filesData.courseId, filesData.email, () => {
+                res.send("Creation Successful!");
+              });
+            },
+            err => {
+              console.log("Unable to save file details.", err);
+              res.status(400).send();
+            }
+          );
+        } else {
+          res.status(400).send();
+        }
+      }
     }
   );
 });

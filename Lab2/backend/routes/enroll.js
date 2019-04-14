@@ -15,49 +15,35 @@ router.post("/", function(req, res) {
     // Then we check whether this course is already enrolled
     // Then we check whether this course is already waitlisted
     // Then we insert
-    db.query(`SELECT * FROM courseenrolments WHERE CourseId = '${enrollData.courseId}'`, (err, results) => {
-      if (err) throw err;
-      console.log(results);
-      for (var key in results) {
-        if (results[key].StudentEmail == enrollData.email) {
-          // If already enrolled then throw error
-          console.log("Course already enrolled for this email!");
-          alreadyEnrolled = true;
-          res.status(400).end("Course already enrolled!"); // res.end will end the response here and dont go futher in this post request? But this doesnt work here why? return res.end also doesnt work if a db.query is after this db.query
-          break;
+
+    Model.userDetails.findOne(
+      {
+        email: enrollData.email
+      },
+      (err, user) => {
+        if (err) {
+          console.log("Unable to fetch user", err);
+        } else {
+          if (user) {
+            console.log("Course already enrolled for this email!");
+            alreadyEnrolled = true;
+            res.status(400).end("Course already enrolled!"); // res.end will end the response here and dont go futher in this post request? But this doesnt work here why? return res.end also doesnt work if a db.query is after this db.query
+          } else {
+            user.enrolledCourses.push(enrollData.course);
+            user.save().then(
+              doc => {
+                console.log("New details added to this user details", doc);
+                res.send("Addition Successful!");
+              },
+              err => {
+                console.log("Unable to save course details.", err);
+                res.status(400).send();
+              }
+            );
+          }
         }
       }
-      if (alreadyEnrolled !== true) {
-        db.query(`SELECT * FROM coursewaitlists WHERE CourseId = '${enrollData.courseId}'`, (err, results_waitlists) => {
-          if (err) throw err;
-          for (var key in results_waitlists) {
-            if (results_waitlists[key].StudentEmail == enrollData.email) {
-              // If already waitlisted then throw error
-              console.log("Cannot enroll as course is already waitlisted for this email!");
-              alreadyWaitlisted = true;
-              res.status(400).end("Cannot enroll as course is already waitlisted!"); // res.end will end the response here and dont go futher in this post request? But this doesnt work here why? return res.end also doesnt work if a db.query is after this db.query
-              break;
-            }
-          }
-          if (alreadyWaitlisted !== true) {
-            db.query(`INSERT INTO courseenrolments (CourseId, StudentEmail) VALUES ('${enrollData.courseId}','${enrollData.email}')`, err => {
-              if (err) throw err;
-              console.log("New details added to courseenrolments table");
-            });
-            db.query(`SELECT CapacityUsed FROM courses WHERE Id= '${enrollData.courseId}'`, (err, results_courses) => {
-              if (err) throw err;
-              // Increment the capacityUsed
-              let capacityUsed = results_courses[0].CapacityUsed + 1;
-              db.query(`UPDATE courses SET CapacityUsed = '${capacityUsed}' WHERE Id = '${enrollData.courseId}'`, err => {
-                if (err) throw err;
-                console.log("CapacityUsed updated in the courses table");
-                res.status(200).end("Course enrolled!");
-              });
-            });
-          }
-        });
-      }
-    });
+    );
   }
 });
 
