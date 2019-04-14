@@ -6,15 +6,24 @@ const Model = require("../database/connection");
 router.get("/", function(req, res) {
   console.log("Get Profile Data Called!");
   let profileData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
-  db.query(`SELECT * FROM profile WHERE Email = '${profileData.email}'`, (err, results) => {
-    if (err) throw err;
-    if (results[0] !== undefined) {
-      console.log("Profile data for this Email:", results[0]);
-      res.status(200).send(results[0]);
-    } else {
-      res.status(400).send();
+
+  Model.userDetails.findOne(
+    {
+      email: profileData.email
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch user", err);
+      } else {
+        if (user) {
+          console.log("User details: ", user);
+          res.status(200).send(user);
+        } else {
+          res.status(400).send();
+        }
+      }
     }
-  });
+  );
 });
 
 router.post("/", function(req, res) {
@@ -22,16 +31,38 @@ router.post("/", function(req, res) {
   let profileData = req.body.data;
   console.log(profileData);
 
-  db.query(
-    `UPDATE profile SET AboutMe = '${profileData.AboutMe}', Gender='${profileData.Gender}', ContactNo='${profileData.ContactNo}', City='${
-      profileData.City
-    }', Country='${profileData.Country}', Company='${profileData.Company}', School='${profileData.School}', Hometown='${
-      profileData.Hometown
-    }', Languages= '${profileData.Languages}' WHERE Email = '${profileData.email}'`,
-    err => {
-      if (err) throw err;
-      console.log("New details added to Profile table");
-      res.send("Edit Successful!");
+  Model.userDetails.findOne(
+    {
+      email: profileData.email
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch user", err);
+      } else {
+        if (user) {
+          user.aboutMe.push(profileData.profile.aboutMe);
+          user.gender.push(profileData.profile.gender);
+          user.contactNumber.push(profileData.profile.contactNumber);
+          user.city.push(profileData.profile.city);
+          user.country.push(profileData.profile.country);
+          user.company.push(profileData.profile.company);
+          user.school.push(profileData.profile.school);
+          user.hometown.push(profileData.profile.hometown);
+          user.languages.push(profileData.profile.languages);
+          user.save().then(
+            doc => {
+              console.log("New details added to this user profile", doc);
+              res.send("Addition Successful!");
+            },
+            err => {
+              console.log("Unable to save profile details.", err);
+              res.status(400).send();
+            }
+          );
+        } else {
+          res.status(400).send();
+        }
+      }
     }
   );
 });
