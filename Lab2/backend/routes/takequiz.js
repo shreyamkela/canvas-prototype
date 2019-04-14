@@ -8,15 +8,23 @@ router.get("/", function(req, res) {
 
   // ANCHOR
   let quizData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
-  db.query(`SELECT * FROM quiz WHERE Name = '${quizData.name}'`, (err, results) => {
-    if (err) throw err;
-    if (results[0] !== undefined) {
-      console.log("Quiz data for this quiz name:", results[0]);
-      res.status(200).send(results[0]);
-    } else {
-      res.status(400).send();
+  Model.courseDetails.findOne(
+    {
+      courseId: quizData.courseId
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch course", err);
+      } else {
+        if (user) {
+          console.log("Quiz details: ", user.quizzes[quizData.name]);
+          res.status(200).send(user.quizzes[quizData.name]);
+        } else {
+          res.status(400).send();
+        }
+      }
     }
-  });
+  );
 });
 
 module.exports = router;

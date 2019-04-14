@@ -11,86 +11,86 @@ router.get("/", function(req, res) {
   let searchedCourses = [];
   let searchByQuery = null;
 
-  switch (searchBy) {
-    case "id":
-      searchByQuery = "Id";
-      break;
-    case "term":
-      searchByQuery = "Term";
-      break;
-    case "name":
-      searchByQuery = "Name";
-      break;
-  }
-
-  if (searchByQuery === "Id") {
-    db.query(`SELECT Id, Name, Description, Capacity, Waitlist, CapacityUsed, WaitlistUsed FROM Courses`, (err, results) => {
-      if (err) throw err;
-      if (results[0] !== undefined) {
-        for (var key in results) {
-          let currentId = results[key].Id.toLowerCase();
-          switch (filterBy) {
-            case "1":
-              if (currentId === searchValue) {
-                searchedCourses.push(results[key]);
-                console.log("searchedCourses", searchedCourses);
-              }
+  Model.courseDetails.findOne(
+    {
+      courseId: announcementData.courseId
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch announcements", err);
+      } else {
+        if (user) {
+          switch (searchBy) {
+            case "id":
+              searchByQuery = "Id";
               break;
-            case "2":
-              if (currentId > searchValue) {
-                searchedCourses.push(results[key]);
-                console.log("searchedCourses", searchedCourses);
-              }
+            case "term":
+              searchByQuery = "Term";
               break;
-            case "3":
-              if (currentId < searchValue) {
-                searchedCourses.push(results[key]);
-                console.log("searchedCourses", searchedCourses);
-              }
+            case "name":
+              searchByQuery = "Name";
               break;
           }
-        }
-        if (searchedCourses == []) {
-          console.log("No courses available.");
-          res.send("noCourses");
-        } else {
-          res.send(searchedCourses);
-        }
-      } else {
-        console.log("No courses available.");
-        res.send("noCourses");
-      }
-    });
-  } else if (searchByQuery === "Term" || searchByQuery === "Name") {
-    db.query(`SELECT Id, Name, Description, Capacity, Waitlist, CapacityUsed, WaitlistUsed, Term FROM Courses`, (err, results) => {
-      if (err) throw err;
-      if (results[0] !== undefined) {
-        for (var key in results) {
-          if (searchByQuery === "Term") {
-            let currentTerm = results[key].Term.toLowerCase();
-            if (currentTerm.includes(searchValue)) {
-              searchedCourses.push(results[key]);
+
+          if (searchByQuery === "Id") {
+            for (var key in user) {
+              let currentId = user[key].Id.toLowerCase();
+              switch (filterBy) {
+                case "1":
+                  if (currentId === searchValue) {
+                    searchedCourses.push(user[key]);
+                    console.log("searchedCourses", searchedCourses);
+                  }
+                  break;
+                case "2":
+                  if (currentId > searchValue) {
+                    searchedCourses.push(user[key]);
+                    console.log("searchedCourses", searchedCourses);
+                  }
+                  break;
+                case "3":
+                  if (currentId < searchValue) {
+                    searchedCourses.push(user[key]);
+                    console.log("searchedCourses", searchedCourses);
+                  }
+                  break;
+              }
+            }
+            if (searchedCourses == []) {
+              console.log("No courses available.");
+              res.send("noCourses");
+            } else {
+              res.send(searchedCourses);
+            }
+          } else if (searchByQuery === "Term" || searchByQuery === "Name") {
+            for (var key in user) {
+              if (searchByQuery === "Term") {
+                let currentTerm = user[key].Term.toLowerCase();
+                if (currentTerm.includes(searchValue)) {
+                  searchedCourses.push(user[key]);
+                }
+              } else {
+                let currentTerm = user[key].Name.toLowerCase();
+                if (currentTerm.includes(searchValue)) {
+                  searchedCourses.push(user[key]);
+                }
+              }
+            }
+            if (searchedCourses === []) {
+              console.log("No courses available.");
+              res.send("noCourses");
+            } else {
+              console.log("searchedCourses", searchedCourses);
+              res.send(searchedCourses);
             }
           } else {
-            let currentTerm = results[key].Name.toLowerCase();
-            if (currentTerm.includes(searchValue)) {
-              searchedCourses.push(results[key]);
-            }
+            console.log("No courses available.");
+            res.send("noCourses");
           }
         }
-        if (searchedCourses === []) {
-          console.log("No courses available.");
-          res.send("noCourses");
-        } else {
-          console.log("searchedCourses", searchedCourses);
-          res.send(searchedCourses);
-        }
-      } else {
-        console.log("No courses available.");
-        res.send("noCourses");
       }
-    });
-  }
+    }
+  );
 });
 
 module.exports = router;
