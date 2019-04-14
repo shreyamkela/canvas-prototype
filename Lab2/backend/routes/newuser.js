@@ -1,10 +1,13 @@
 //Route to handle Post Request Call to add a new user
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const Model = require("../database/connection");
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 
 const saltRounds = 10; // for bcrypt
+
+var id = mongoose.Types.ObjectId();
 
 router.post("/", function(req, res) {
   console.log("New User Details Posted!");
@@ -17,28 +20,57 @@ router.post("/", function(req, res) {
   console.log("Firstname, Lastname, Email, Unhashed Password, Persona: ", firstname, lastname, email, password, persona);
   // Using an SQL quesy, check if Email is already present. If email not present then register, else show warning
 
-  db.query(`SELECT Persona FROM Users WHERE Email = '${email}'`, (err, results) => {
-    if (err) throw err;
-    if (results[0] === undefined) {
-      // if email not present, then only register
-      // Save hashed passwrod into db using bcrypt
-      bcrypt.hash(password, saltRounds, function(err, hash) {
-        // Store hash in your password DB.
-        db.query(`INSERT INTO Users (Email, Password, Persona) VALUES ('${email}','${hash}',${persona})`, (err, results) => {
-          if (err) throw err;
-          console.log("New details added to Users table");
-        });
-      });
-      db.query(`INSERT INTO Profile (Email, Firstname, Lastname) VALUES ('${email}','${firstname}','${lastname}')`, err => {
-        if (err) throw err;
-        console.log("New details added to Profile table");
-      });
-      res.status(200).send("Registration Successful!"); // status should come before send
-    } else {
-      console.log("Email already registered!");
-      res.status(400).send("Email already registered!"); // Bad request - Catch this error at frontend axios
+  Model.userDetails.findOne(
+    {
+      email: email
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch user details.", err);
+      } else {
+        if (user) {
+          console.log("Email already registered!");
+          res.status(400).send("Email already registered!"); // Bad request - Catch this error at frontend axios
+        } else {
+          // Hashing the password
+          const hashedPassword = bcrypt.hashSync(password);
+          var user = new Model.userDetails({
+            profileId: id,
+            email: email,
+            password: hashedPassword,
+            persona: persona,
+            firstName: firstname,
+            lastName: lastname,
+            aboutMe: null,
+            gender: null,
+            contactNumber: null,
+            city: null,
+            country: null,
+            company: null,
+            school: null,
+            hometown: null,
+            languages: null,
+            profileImage: null,
+            createdCourses: [],
+            enrolledCourses: [],
+            waitlistedCourses: [],
+            permissionNumbers: [],
+            grades: [],
+            messages: []
+          });
+        }
+        user.save().then(
+          doc => {
+            console.log("User saved successfully.", doc);
+            res.status(200).send("Registration Successful!"); // status should come before send
+          },
+          err => {
+            console.log("Unable to save user details.", err);
+          }
+        );
+      }
     }
-  });
+  );
 });
 
 module.exports = router;

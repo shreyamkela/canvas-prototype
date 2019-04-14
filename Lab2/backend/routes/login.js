@@ -27,7 +27,6 @@ router.post("/", function(req, res) {
     (err, user) => {
       if (err) {
         console.log("Unable to fetch user details.", err);
-        callback(err, null);
       } else {
         if (user) {
           console.log("User details: ", user);

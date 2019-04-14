@@ -9,6 +9,7 @@ mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://shreyamkela:Shreyam123@ds139576.mlab.com:39576/canvas-shreyamkela", options);
 
 var userDetails = mongoose.model("userDetails", {
+  profileId: String,
   email: String,
   password: String,
   persona: String,
@@ -33,6 +34,7 @@ var userDetails = mongoose.model("userDetails", {
 });
 
 var courseDetails = mongoose.model("courseDetails", {
+  id: String,
   courseId: String,
   courseName: String,
   facultyEmail: String,
