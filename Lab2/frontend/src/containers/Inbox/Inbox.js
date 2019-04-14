@@ -8,6 +8,7 @@ class Inbox extends Component {
   state = {
     data: "",
     recipent: "",
+    allRecipents: "",
     loading: false,
     hasMore: true,
     visible: false,
@@ -18,7 +19,7 @@ class Inbox extends Component {
 
   async componentDidMount() {
     const { loginRequest } = this.props; // redux state to props
-    const data = { email: loginRequest.email };
+    const data = { email: loginRequest.email, fetchingType: "messages" };
 
     try {
       let response = await API.get("messages", { params: data });
@@ -52,10 +53,16 @@ class Inbox extends Component {
     }
   };
 
-  showModal = () => {
-    this.setState({
-      visible: true
-    });
+  showModal = async () => {
+    const { loginRequest } = this.props; // redux state to props
+    const data = { email: loginRequest.email, fetchingType: "recipents" };
+
+    try {
+      let response = await API.get("messages", { params: data });
+      this.setState({ allRecipents: response.data, visible: true });
+    } catch (error) {
+      console.log(error.response);
+    }
   };
 
   handleOk = async e => {
@@ -111,8 +118,10 @@ class Inbox extends Component {
 
   render() {
     const { Header, Content, Footer } = Layout;
-
-    const options = [];
+    const allRecipents = null;
+    Object.keys(this.state.allRecipents).map(key => {
+      allRecipents = { value: key.courseName, label: key.courseName, children: key.users };
+    });
 
     return (
       <div>
@@ -176,7 +185,7 @@ class Inbox extends Component {
               <Form.Label>Message</Form.Label>
               <Form.Control required as="textarea" rows="3" placeholder="Enter Message" ref="message" />
             </Form.Group>
-            <Cascader options={options} onChange={onChange} placeholder="Please select" />
+            <Cascader options={allRecipents} onChange={onChange} placeholder="Please select" />
           </Form>
           <div className="text-success">{this.state.alert}</div>
         </Modal>
