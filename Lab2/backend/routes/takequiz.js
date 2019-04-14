@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to show questions and options to a student for a particular quiz.
 const express = require("express");
 const router = express.Router();
-const db = require("../database/mongoose");
+const db = require("../database/connection");
 
 router.get("/", function(req, res) {
   console.log("Take a Quiz get data called!");

@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to get all courses for faculty/student depending upon the persona
 const express = require("express");
 const router = express.Router();
-const db = require("../database/mongoose");
+const db = require("../database/connection");
 
 router.get("/", function(req, res) {
   if (req.query.persona === "1") {

@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to show assignments created in a particular course. If persona is student, show whether an assignment is submitted or not. If the persona is faculty, show all the assignments created.
 const express = require("express");
 const router = express.Router();
-const db = require("../database/mongoose");
+const db = require("../database/connection");
 
 router.get("/", function(req, res) {
   console.log("Get All Assignments Data Called!");

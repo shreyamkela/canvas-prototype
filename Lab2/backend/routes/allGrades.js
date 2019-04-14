@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to get all grades for a particular course, for a student
 const express = require("express");
 const router = express.Router();
-const db = require("../database/mongoose");
+const db = require("../database/connection");
 
 router.get("/", function(req, res) {
   console.log("Get all grades for this course called!");

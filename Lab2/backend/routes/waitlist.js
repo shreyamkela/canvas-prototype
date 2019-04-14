@@ -1,7 +1,7 @@
 //Route to handle Post Request Call to waitlist a course, increment the waitlist used, and FIXME send a notification to faculty that waitlists exist
 const express = require("express");
 const router = express.Router();
-const db = require("../database/mongoose");
+const db = require("../database/connection");
 
 router.post("/", function(req, res) {
   console.log("Waitlisting into a course!");

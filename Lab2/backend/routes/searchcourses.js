@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to search all courses for a student based on their query
 const express = require("express");
 const router = express.Router();
-const db = require("../database/mongoose");
+const db = require("../database/connection");
 
 router.get("/", function(req, res) {
   console.log("Search Courses data for the query...", req.query);

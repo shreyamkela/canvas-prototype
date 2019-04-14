@@ -12,14 +12,14 @@ module.exports = function(passport) {
   };
   passport.use(
     new JwtStrategy(opts, function(jwt_payload, callback) {
-      Model.Userdetails.findOne(
+      Model.userDetails.findOne(
         {
-          Username: jwt_payload.Username
+          email: jwt_payload.email
         },
         (err, res) => {
           if (res) {
             var user = res;
-            delete user.Password;
+            delete user.password;
             callback(null, user);
           } else {
             callback(err, false);

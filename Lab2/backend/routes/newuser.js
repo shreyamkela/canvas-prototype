@@ -16,6 +16,7 @@ router.post("/", function(req, res) {
   let persona = newUserDetails.data.persona;
   console.log("Firstname, Lastname, Email, Unhashed Password, Persona: ", firstname, lastname, email, password, persona);
   // Using an SQL quesy, check if Email is already present. If email not present then register, else show warning
+
   db.query(`SELECT Persona FROM Users WHERE Email = '${email}'`, (err, results) => {
     if (err) throw err;
     if (results[0] === undefined) {

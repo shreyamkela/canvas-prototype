@@ -1,7 +1,7 @@
 //Route to handle Get Request Call show all students that are on the waitlist and require permission numbers, for a particular course
 const express = require("express");
 const router = express.Router();
-const db = require("../database/mongoose");
+const db = require("../database/connection");
 
 router.get("/", function(req, res) {
   console.log("Get waitlist/permission number data!");
