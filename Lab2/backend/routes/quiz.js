@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to show quiz submissions according to persona. If the persona is a student, this request returns the submission for a particular quiz in a particular course, and if the persona is of a faculty, this request returns only the submissions for all students for a particular quiz, in a particular course
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const db = require("../database/mongoose");
 
 router.get("/", function(req, res) {
   console.log("Get Quiz Data Called!");

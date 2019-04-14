@@ -1,7 +1,7 @@
 //Route to handle Post Request Call to create a new course
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const db = require("../database/mongoose");
 
 router.post("/", function(req, res) {
   console.log("Create Course Data Posted!");

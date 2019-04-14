@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to show assignment submissions according to persona. If the persona is a student, this request returns all submissions for a particular assignment in a particular course, and if the persona is of a faculty, this request returns only the latest submissions for all students for a particular assignment, in a particular course
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const db = require("../database/mongoose");
 const insertDocuments = require("../uploads/_helpers/insertDocuments");
 
 router.get("/", function(req, res) {

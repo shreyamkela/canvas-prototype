@@ -1,7 +1,7 @@
 //Route to handle Post Request Call to enroll into a course and increment the capacity used
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const db = require("../database/mongoose");
 
 router.post("/", function(req, res) {
   console.log("Enrolling into a course!");

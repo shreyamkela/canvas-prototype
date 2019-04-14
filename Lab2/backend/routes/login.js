@@ -1,7 +1,7 @@
 //Route to handle Post Request Call to login an existing user
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const db = require("../database/mongoose");
 const bcrypt = require("bcrypt");
 
 const saltRounds = 10; // for bcrypt

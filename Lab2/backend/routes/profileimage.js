@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to get the profile picture
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const db = require("../database/mongoose");
 const insertDocuments = require("../uploads/_helpers/insertDocuments");
 
 router.get("/", function(req, res) {

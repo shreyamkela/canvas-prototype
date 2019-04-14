@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to show quizzes created in a particular course. If persona is student, show whether an quiz is submitted or not. If the persona is faculty, show all the quizzes created.
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const db = require("../database/mongoose");
 
 router.get("/", function(req, res) {
   console.log("Get All Quizzes Data Called!");

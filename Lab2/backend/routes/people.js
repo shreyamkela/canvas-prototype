@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to show all people registered for a particular course. Personas can also be save in people table and therefore, we can send faculty name as a seperate key in the json response so that it can be shown on the frontend with a faculty tag.
 const express = require("express");
 const router = express.Router();
-const db = require("../database/connection");
+const db = require("../database/mongoose");
 
 router.get("/", function(req, res) {
   console.log("Get all people data called!");

@@ -1,0 +1,23 @@
+module.exports = userDetails = mongoose.model("userDetails", {
+  email: String,
+  password: String,
+  persona: String,
+  firstName: String,
+  lastName: String,
+  aboutMe: String,
+  gender: String,
+  contactNumber: Number,
+  city: String,
+  country: String,
+  company: String,
+  school: String,
+  hometown: String,
+  languages: String,
+  profileImage: String,
+  createdCourses: Array,
+  enrolledCourses: Array,
+  waitlistedCourses: Array,
+  permissionNumbers: Array,
+  grades: Array,
+  messages: Array
+});
