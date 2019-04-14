@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-import { Layout, List, message, Avatar, Spin } from "antd";
+import { Layout, List, message, Spin, Cascader } from "antd";
 import InfiniteScroll from "react-infinite-scroller";
 
 class Inbox extends Component {
   state = {
     data: "",
+    recipent: "",
     loading: false,
     hasMore: true,
     visible: false,
@@ -69,7 +70,7 @@ class Inbox extends Component {
         title: this.refs.title.value,
         message: this.refs.message.value,
         email: loginRequest.email,
-        recipent: this.refs.recipent.value
+        recipent: this.state.recipent
       };
       try {
         let response = await API.post("messages", { data });
@@ -90,6 +91,11 @@ class Inbox extends Component {
     });
   };
 
+  onChange = value => {
+    console.log(value);
+    this.setState({ recipent: value });
+  };
+
   reverseObject = Obj => {
     // To reverse the allMessages object
     var TempArr = [];
@@ -105,6 +111,9 @@ class Inbox extends Component {
 
   render() {
     const { Header, Content, Footer } = Layout;
+
+    const options = [];
+
     return (
       <div>
         {/* FIXME Make the create page a modal */}
@@ -167,6 +176,7 @@ class Inbox extends Component {
               <Form.Label>Message</Form.Label>
               <Form.Control required as="textarea" rows="3" placeholder="Enter Message" ref="message" />
             </Form.Group>
+            <Cascader options={options} onChange={onChange} placeholder="Please select" />
           </Form>
           <div className="text-success">{this.state.alert}</div>
         </Modal>
