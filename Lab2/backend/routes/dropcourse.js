@@ -10,10 +10,32 @@ router.post("/", function(req, res) {
   // let title = courseData.title;
   // console.log("Title: ", title);
 
-  db.query(`DELETE FROM courses WHERE Email = '${courseData.email}'`, err => {
-    if (err) throw err;
-    res.send("Delete Successful!");
-  });
+  Model.userDetails.findOne(
+    {
+      email: courseData.email
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch user", err);
+      } else {
+        if (user) {
+          user.enrolledcourses.remove(courseData.courseId);
+          user.save().then(
+            doc => {
+              console.log("Course removed from this user", doc);
+              res.send("Removal Successful!");
+            },
+            err => {
+              console.log("Unable to save remove course.", err);
+              res.status(400).send();
+            }
+          );
+        } else {
+          res.status(400).send();
+        }
+      }
+    }
+  );
 });
 
 module.exports = router;

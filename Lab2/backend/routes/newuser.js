@@ -7,8 +7,6 @@ const mongoose = require("mongoose");
 
 const saltRounds = 10; // for bcrypt
 
-var id = mongoose.Types.ObjectId();
-
 router.post("/", function(req, res) {
   console.log("New User Details Posted!");
   let newUserDetails = req.body;
@@ -34,6 +32,8 @@ router.post("/", function(req, res) {
         } else {
           // Hashing the password
           const hashedPassword = bcrypt.hashSync(password, saltRounds);
+          var id = mongoose.Types.ObjectId();
+
           var user = new Model.userDetails({
             profileId: id,
             email: email,
@@ -55,18 +55,13 @@ router.post("/", function(req, res) {
             enrolledCourses: [],
             waitlistedCourses: [],
             permissionNumbers: [],
-            grades: [],
+            grades: {},
             messages: []
           });
         }
         user.save().then(
           doc => {
             console.log("User saved successfully.", doc);
-            // TODO
-            // Model.query(`INSERT INTO Profile (Email, Firstname, Lastname) VALUES ('${email}','${firstname}','${lastname}')`, err => {
-            //   if (err) throw err;
-            //   console.log("New details added to Profile table");
-            // });
 
             res.status(200).send("Registration Successful!"); // status should come before send
           },

@@ -9,27 +9,55 @@ router.post("/", function(req, res) {
   let id = courseData.courseId;
   console.log("Id: ", id);
 
-  db.query(`SELECT Name FROM Courses WHERE Id = '${id}'`, (err, results) => {
-    if (err) throw err;
-    console.log(results);
-    console.log(results[0]);
-    if (results[0] === undefined) {
-      // if not present
-      let { courseName, dept, descrip, room, classCap, waitlistCap, term, email } = courseData;
-      console.log(id, courseName, dept, descrip, room, classCap, waitlistCap, term, email);
-      db.query(
-        `INSERT INTO Courses (Id, Name, Department, Description, Room, Capacity, Waitlist, CapacityUsed, WaitlistUsed, Term, Email) VALUES ('${id}','${courseName}','${dept}','${descrip}','${room}','${classCap}','${waitlistCap}', '0', '0', '${term}', '${email}')`,
-        err => {
-          if (err) throw err;
-          console.log("New details added to Courses table");
+  Model.courseDetails.findOne(
+    {
+      courseId: courseData.courseId
+    },
+    (err, user) => {
+      if (err) {
+        console.log("Unable to fetch courses", err);
+      } else {
+        if (user) {
+          console.log("Course id already present!"); //FIXME Make page stay on frontend if course id already present
+          res.send("Course id already present!");
+        } else {
+          // if not present
+          var id = mongoose.Types.ObjectId();
+          var user = new Model.courseDetails({
+            id: id,
+            courseId: courseData.courseId,
+            courseName: courseData.name,
+            facultyEmail: courseData.email,
+            department: courseData.department,
+            description: courseData.desc,
+            room: courseData.room,
+            capacity: courseData.capacity,
+            waitlist: courseData.waitlist,
+            term: courseData.term,
+            capacityUsed: 0,
+            waitlistUsed: 0,
+            announcements: {},
+            files: {},
+            assignments: {},
+            quizzes: {},
+            enrolledStudents: [],
+            waitlistedStudents: []
+          });
+
+          user.save().then(
+            doc => {
+              console.log("Course saved successfully.", doc);
+              res.status(200).send("Creation Successful!"); // status should come before send
+            },
+            err => {
+              console.log("Unable to save course details.", err);
+              res.status(400).send("Unable to save course details."); // status should come before send
+            }
+          );
         }
-      );
-      res.send("Creation Successful!");
-    } else {
-      console.log("Course id already present!"); //FIXME Make page stay on frontend if course id already present
-      res.send("Course id already present!");
+      }
     }
-  });
+  );
 });
 
 module.exports = router;
