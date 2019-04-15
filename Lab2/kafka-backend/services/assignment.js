@@ -34,6 +34,7 @@ function handle_request(message, callback) {
           callback(null, result);
         } else {
           callback(err, null);
+          //
         }
       }
     }
