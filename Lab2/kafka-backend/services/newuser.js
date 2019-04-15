@@ -1,15 +1,12 @@
-//Route to handle Post Request Call to add a new user
-const express = require("express");
-const router = express.Router();
 const Model = require("../database/connection");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
 const saltRounds = 10; // for bcrypt
 
-router.post("/", function(req, res) {
+function handle_request(message, callback) {
   console.log("New User Details Posted!");
-  let newUserDetails = req.body;
+  let newUserDetails = message;
   let firstname = newUserDetails.data.firstname;
   let lastname = newUserDetails.data.lastname;
   let email = newUserDetails.data.email;
@@ -22,19 +19,20 @@ router.post("/", function(req, res) {
     {
       email: email
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch user details.", err);
+        callback(err, null);
       } else {
-        if (user) {
+        if (result) {
           console.log("Email already registered!");
-          res.status(400).send("Email already registered!"); // Bad request - Catch this error at frontend axios
+          callback("Email already registered!", null);
         } else {
           // Hashing the password
           const hashedPassword = bcrypt.hashSync(password, saltRounds);
           var id = mongoose.Types.ObjectId();
 
-          var user = new Model.userDetails({
+          var result = new Model.userDetails({
             profileId: id,
             email: email,
             password: hashedPassword,
@@ -59,19 +57,19 @@ router.post("/", function(req, res) {
             messages: []
           });
         }
-        user.save().then(
+        result.save().then(
           doc => {
             console.log("User saved successfully.", doc);
-
-            res.status(200).send("Registration Successful!"); // status should come before send
+            callback("Registration Successful!", result);
           },
           err => {
             console.log("Unable to save user details.", err);
+            callback(err, null);
           }
         );
       }
     }
   );
-});
+}
 
-module.exports = router;
+exports.handle_request = handle_request;

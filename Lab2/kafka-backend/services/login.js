@@ -1,6 +1,3 @@
-//Route to handle Post Request Call to login an existing user
-const express = require("express");
-const router = express.Router();
 const Model = require("../database/connection");
 const bcrypt = require("bcrypt");
 //Passport authentication
@@ -13,54 +10,42 @@ const saltRounds = 10; // for bcrypt
 var requireAuth = passport.authenticate("jwt", { session: false });
 const secret = "cmpe273-secret";
 
-router.post("/", function(req, res) {
-  console.log("Login Data Posted!");
-  let loginData = req.body;
-  let email = loginData.data.email;
-  let password = loginData.data.password;
-  console.log("email & Unhashed Password: ", email, password);
-
+function handle_request(message, callback) {
   Model.userDetails.findOne(
     {
-      email: email
+      email: message.email
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch user details.", err);
+        callback(err, null);
       } else {
-        if (user) {
-          console.log("User details: ", user);
-          if (!bcrypt.compareSync(password, user.password)) {
+        if (result) {
+          console.log("User details: ", result);
+          if (!bcrypt.compareSync(message.password, result.password)) {
             console.log("Incorrect password!");
-            res.send("Incorrect password!");
+            callback("Incorrect password!", null);
           } else {
-            let persona = user.persona;
+            let persona = result.persona;
             console.log("Persona: ", persona);
-            res.cookie("cookie", "LoggedIn", {
-              // Set the name 'cookie' to the cookie sent to client, when admin logs in. At react/client end, we can check whether the name is 'cookie' or not, to authenticate.
-              // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
-              maxAge: 900000,
-              httpOnly: false,
-              path: "/"
-            });
             switch (persona) {
               case 1:
                 console.log("Faculty Login Successful!");
-                res.send("Faculty Login Successful!");
+                callback("Faculty Login Successful!", result);
                 break;
               case 2:
                 console.log("Student Login Successful!");
-                res.send("Student Login Successful!");
+                callback("Student Login Successful!", result);
                 break;
             }
           }
         } else {
           console.log("Email does not exist!");
-          res.send("Email does not exist!");
+          callback("Email does not exist!", null);
         }
       }
     }
   );
-});
+}
 
-module.exports = router;
+exports.handle_request = handle_request;
