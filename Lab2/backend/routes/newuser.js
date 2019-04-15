@@ -9,7 +9,7 @@ router.post("/", function(req, res) {
     if (err) {
       console.log("Unable to fetch user details.", err);
     } else {
-      if (user) {
+      if (result) {
         console.log("Email already registered!");
         res.status(400).send("Email already registered!"); // Bad request - Catch this error at frontend axios
       } else {

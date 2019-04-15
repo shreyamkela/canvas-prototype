@@ -10,9 +10,9 @@ router.get("/", function(req, res) {
     if (err) {
       console.log("Unable to fetch user", err);
     } else {
-      if (user) {
-        console.log("Messages detail: ", user);
-        res.status(200).send(user.messages);
+      if (result) {
+        console.log("Messages detail: ", result);
+        res.status(200).send(result.messages);
       } else {
         res.status(400).send();
       }
@@ -29,7 +29,7 @@ router.post("/", function(req, res) {
     if (err) {
       console.log("Unable to fetch user", err);
     } else {
-      if (user) {
+      if (result) {
         res.status(200).send();
       } else {
         res.status(400).send();

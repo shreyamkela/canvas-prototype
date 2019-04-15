@@ -27,7 +27,7 @@ router.post("/", function(req, res) {
     if (err) {
       console.log("Unable to fetch user", err);
     } else {
-      if (user) {
+      if (result) {
         res.send("Addition Successful!");
       } else {
         res.status(400).send();

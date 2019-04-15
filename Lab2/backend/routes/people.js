@@ -11,9 +11,9 @@ router.get("/", function(req, res) {
     if (err) {
       console.log("Unable to fetch course", err);
     } else {
-      if (user) {
-        console.log("People detail: ", user);
-        res.status(200).send(user.people);
+      if (result) {
+        console.log("People detail: ", result);
+        res.status(200).send(result.people);
       } else {
         res.status(400).send();
       }
@@ -29,7 +29,7 @@ router.post("/", function(req, res) {
     if (err) {
       console.log("Unable to fetch user", err);
     } else {
-      if (user) {
+      if (result) {
         res.send("Removal Successful!");
       } else {
         res.status(400).send();
