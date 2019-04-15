@@ -1,62 +1,44 @@
-//Route to handle Get Request Call to load all announcements for the faculty email and courseId
-const express = require("express");
-const router = express.Router();
 const Model = require("../database/connection");
 
-router.get("/", function(req, res) {
-  console.log("Get Announcement Data Called! Announcement Data:", req.query);
-  let announcementData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
-
+function handle_request(message, callback) {
   Model.courseDetails.findOne(
     {
-      courseId: announcementData.courseId
+      courseId: message.courseId
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch announcements", err);
+        callback(err, null);
       } else {
-        if (user) {
-          console.log("Announcements detail: ", user);
-          res.status(200).send(user.announcements);
+        if (result) {
+          console.log("Announcements detail: ", result);
+          callback(null, result);
         } else {
-          res.status(400).send();
+          callback(err, null);
         }
       }
     }
   );
-});
+}
 
-//Route to handle Post Request Call to create a new announcement
-router.post("/", function(req, res) {
-  console.log("Create Announcement Data Posted!");
-  let announcementData = req.body.data;
-
+function handle_request(message, callback) {
   Model.courseDetails.findOne(
     {
-      courseId: announcementData.courseId
+      courseId: message.courseId
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch course", err);
+        callback(err, null);
       } else {
-        if (user) {
-          user.announcements.push(announcementData);
-          user.save().then(
-            doc => {
-              console.log("New details added to this course announcements", doc);
-              res.send("Creation Successful!");
-            },
-            err => {
-              console.log("Unable to save announcement details.", err);
-              res.status(400).send();
-            }
-          );
+        if (result) {
+          callback(null, result);
         } else {
-          res.status(400).send();
+          callback(err, null);
         }
       }
     }
   );
-});
+}
 
-module.exports = router;
+exports.handle_request = handle_request;

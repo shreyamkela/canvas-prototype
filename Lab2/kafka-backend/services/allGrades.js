@@ -1,20 +1,14 @@
-//Route to handle Get Request Call to get all grades for a particular course, for a student
-const express = require("express");
-const router = express.Router();
 const Model = require("../database/connection");
 
-router.get("/", function(req, res) {
-  console.log("Get all grades for this course called!");
-
-  // ANCHOR
-  let gradeData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+function handle_request(message, callback) {
   Model.userDetails.findOne(
     {
-      email: gradeData.email
+      email: message.email
     },
     (err, user) => {
       if (err) {
         console.log("Unable to fetch grades", err);
+        callback(err, null);
       } else {
         if (user) {
           console.log("Grades detail: ", user);
@@ -25,6 +19,6 @@ router.get("/", function(req, res) {
       }
     }
   );
-});
+}
 
-module.exports = router;
+exports.handle_request = handle_request;
