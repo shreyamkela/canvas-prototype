@@ -11,7 +11,17 @@ function handle_request(message, callback) {
         callback(err, null);
       } else {
         if (result) {
-          callback(null, result);
+          result.enrolledcourses.remove(courseData.courseId);
+          result.save().then(
+            doc => {
+              console.log("Course removed from this user", doc);
+              callback(null, doc);
+            },
+            err => {
+              console.log("Unable to save remove course.", err);
+              callback(err, null);
+            }
+          );
         } else {
           callback(err, null);
         }

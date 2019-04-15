@@ -31,7 +31,20 @@ function handle_request(message, callback) {
         callback(err, null);
       } else {
         if (result) {
-          callback(null, result);
+          result.assignments.push(assignmentData);
+          result.save().then(doc => {
+            console.log("New details added to this course assignments", doc);
+            let file = {
+              folder: assignmentData.folder,
+              filePath: assignmentData.filename,
+              document: assignmentData.document
+            };
+            // FIXME Store assignment links in a table
+            // Insert document using multer
+            insertDocuments(Model, file, assignmentData.courseId, assignmentData.email, () => {
+              callback(null, result);
+            });
+          });
         } else {
           callback(err, null);
           //

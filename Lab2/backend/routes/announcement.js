@@ -1,7 +1,7 @@
 //Route to handle Get Request Call to load all announcements for the faculty email and courseId
 const express = require("express");
 const router = express.Router();
-const Model = require("../database/connection");
+var kafka = require("../kafka/client");
 
 router.get("/", function(req, res) {
   console.log("Get Announcement Data Called! Announcement Data:", req.query);
