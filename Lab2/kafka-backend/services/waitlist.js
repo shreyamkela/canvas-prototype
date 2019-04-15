@@ -1,11 +1,8 @@
-//Route to handle Post Request Call to waitlist a course, increment the waitlist used, and FIXME send a notification to faculty that waitlists exist
-const express = require("express");
-const router = express.Router();
 const Model = require("../database/connection");
 
-router.post("/", function(req, res) {
+function handle_request(message, callback) {
   console.log("Waitlisting into a course!");
-  let waitlistData = req.body.data;
+  let waitlistData = message.data;
   console.log("Waitlist data: ", waitlistData);
   let alreadyWaitlisted = false;
   if (waitlistData.courseId != undefined) {
@@ -18,24 +15,24 @@ router.post("/", function(req, res) {
       {
         email: waitlistData.email
       },
-      (err, user) => {
+      (err, result) => {
         if (err) {
           console.log("Unable to fetch user", err);
         } else {
-          if (user) {
+          if (result) {
             console.log("Course already waitlisted for this email!");
             alreadyWaitlisted = true;
-            res.status(400).end("Course already waitlisted!"); // res.end will end the response here and dont go futher in this post request? But this doesnt work here why? return res.end also doesnt work if a db.query is after this db.query
+            callback("Course already waitlisted!", null);
           } else {
-            user.waitlistedCourses.push(waitlistData.course);
-            user.save().then(
+            result.waitlistedCourses.push(waitlistData.course);
+            result.save().then(
               doc => {
                 console.log("New details added to this user details", doc);
-                res.send("Addition Successful!");
+                callback("Addition Successful!", null);
               },
               err => {
                 console.log("Unable to save course details.", err);
-                res.status(400).send();
+                callback(err, null);
               }
             );
           }
@@ -43,6 +40,6 @@ router.post("/", function(req, res) {
       }
     );
   }
-});
+}
 
-module.exports = router;
+exports.handle_request = handle_request;

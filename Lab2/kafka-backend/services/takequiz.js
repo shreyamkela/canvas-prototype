@@ -1,30 +1,28 @@
-//Route to handle Get Request Call to show questions and options to a student for a particular quiz.
-const express = require("express");
-const router = express.Router();
 const Model = require("../database/connection");
 
-router.get("/", function(req, res) {
+function handle_request(message, callback) {
   console.log("Take a Quiz get data called!");
 
   // ANCHOR
-  let quizData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  let quizData = message; // In GET request, req.query is used to access the data sent from frontend in params
   Model.courseDetails.findOne(
     {
       courseId: quizData.courseId
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch course", err);
+        callback(err, null);
       } else {
-        if (user) {
-          console.log("Quiz details: ", user.quizzes[quizData.name]);
-          res.status(200).send(user.quizzes[quizData.name]);
+        if (result) {
+          console.log("Quiz details: ", result.quizzes[quizData.name]);
+          callback(null, result);
         } else {
-          res.status(400).send();
+          callback(err, null);
         }
       }
     }
   );
-});
+}
 
-module.exports = router;
+exports.handle_request = handle_request;
