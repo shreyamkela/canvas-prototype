@@ -1,4 +1,5 @@
 const Model = require("../database/connection");
+const insertDocuments = require("../uploads/_helpers/insertDocuments");
 
 function handle_request(message, callback) {
   Model.courseDetails.findOne(
@@ -32,7 +33,26 @@ function handle_request(message, callback) {
         callback(err, null);
       } else {
         if (user) {
-          callback(null, result);
+          user.files.push(filesData);
+          user.save().then(
+            doc => {
+              console.log("New details added to this course files", doc);
+              let file = {
+                folder: filesData.folder,
+                filePath: filesData.filename,
+                document: filesData.document
+              };
+              // FIXME Store assignment links in a table
+              // Insert document using multer
+              insertDocuments(Model, file, filesData.courseId, filesData.email, () => {
+                callback(null, result);
+              });
+            },
+            err => {
+              console.log("Unable to save file details.", err);
+              callback(err, null);
+            }
+          );
         } else {
           callback(err, null);
         }

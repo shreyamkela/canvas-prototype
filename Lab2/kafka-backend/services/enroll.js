@@ -13,7 +13,17 @@ function handle_request(message, callback) {
         if (result) {
           callback("Course already enrolled!", null);
         } else {
-          callback(null, result);
+          result.enrolledCourses.push(enrollData.course);
+          result.save().then(
+            doc => {
+              console.log("New details added to this user details", doc);
+              callback(null, result);
+            },
+            err => {
+              console.log("Unable to save course details.", err);
+              callback(err, null);
+            }
+          );
         }
       }
     }
