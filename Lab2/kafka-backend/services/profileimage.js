@@ -1,38 +1,35 @@
-//Route to handle Get Request Call to get the profile picture
-const express = require("express");
-const router = express.Router();
 const Model = require("../database/connection");
 const insertDocuments = require("../uploads/_helpers/insertDocuments");
 
-router.get("/", function(req, res) {
+function handle_request(message, callback) {
   console.log("Get profile image!");
   // ANCHOR
-  let profileData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  let profileData = message; // In GET request, req.query is used to access the data sent from frontend in params
 
   Model.userDetails.findOne(
     {
       email: profileData.email
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch user", err);
+        callback(err, null);
       } else {
-        if (user) {
-          res.status(200).sendFile(__dirname + `${user.profileImage.Path}`);
+        if (result) {
+          callback(null, result);
         } else {
           console.log("Unable to fetch profile image", err);
-          res.status(400).send();
+          callback("Unable to fetch profile image", null);
         }
       }
     }
   );
-});
+}
 
-//Route to handle Post Request Call to post/upload the profile picture
-router.post("/", function(req, res) {
+function handle_request(message, callback) {
   console.log("Post/Upload profile image!");
   // ANCHOR
-  let profileData = req.body.data;
+  let profileData = message.data;
   // let title = profileData.title;
   // console.log("Title: ", title);
 
@@ -40,13 +37,14 @@ router.post("/", function(req, res) {
     {
       email: profileData.email
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch user", err);
+        callback(err, null);
       } else {
-        if (user) {
-          user.profileImage.push(profileData.name);
-          user.save().then(
+        if (result) {
+          result.profileImage.push(profileData.name);
+          result.save().then(
             doc => {
               console.log("New details added to this user profile", doc);
               let file = {
@@ -57,20 +55,20 @@ router.post("/", function(req, res) {
               // FIXME Store assignment links in a table
               // Insert document using multer
               insertDocuments(Model, file, profileData.email, () => {
-                res.send("Creation Successful!");
+                callback(null, result);
               });
             },
             err => {
               console.log("Unable to save profile image details.", err);
-              res.status(400).send();
+              callback(err, null);
             }
           );
         } else {
-          res.status(400).send();
+          callback(err, null);
         }
       }
     }
   );
-});
+}
 
-module.exports = router;
+exports.handle_request = handle_request;
