@@ -1,7 +1,7 @@
+var expect = require("chai").expect;
 var assert = require("chai").assert;
 var app = require("../index");
 var chai = require("chai");
-var expect = require("chai").expect;
 
 chai.use(require("chai-http"));
 var agent = require("chai").request.agent(app);
