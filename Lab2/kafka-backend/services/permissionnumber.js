@@ -1,37 +1,33 @@
-//Route to handle Get Request Call show all students that are on the waitlist and require permission numbers, for a particular course
-const express = require("express");
-const router = express.Router();
 const Model = require("../database/connection");
 
-router.get("/", function(req, res) {
+function handle_request(message, callback) {
   console.log("Get waitlist/permission number data!");
   // ANCHOR
-  let waitlistData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  let waitlistData = message; // In GET request, req.query is used to access the data sent from frontend in params
   Model.courseDetails.findOne(
     {
       courseId: waitlistData.courseId
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch course", err);
+        callback(err, null);
       } else {
-        if (user) {
-          console.log("Waitlist detail: ", user);
-          res.status(200).send(user.waitlistedStudents);
+        if (result) {
+          console.log("Waitlist detail: ", result);
+          callback(null, result);
         } else {
-          res.status(400).send();
+          callback(err, null);
         }
       }
     }
   );
-});
+}
 
-//Route to handle Post Request Call to provide permission number to select students that are on the waitlist, for a particular course
-//When a student a selected for permission number, we enroll them in the course. No extra functionality specified in the problem statement.
-router.post("/", function(req, res) {
+function handle_request(message, callback) {
   console.log("Post permission number data!");
   // ANCHOR
-  let waitlistData = req.body.data;
+  let waitlistData = message.data;
   // let title = waitlistData.title;
   // console.log("Title: ", title);
 
@@ -39,28 +35,29 @@ router.post("/", function(req, res) {
     {
       courseId: waitlistData.courseId
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch course", err);
+        callback(err, null);
       } else {
-        if (user) {
-          user.waitlistedStudents.push(waitlistData.permissionnumber);
-          user.save().then(
+        if (result) {
+          result.waitlistedStudents.push(waitlistData.permissionnumber);
+          result.save().then(
             doc => {
               console.log("New details added to this course waitlist", doc);
-              res.send("Addition Successful!");
+              callback("Addition Successful!", result);
             },
             err => {
               console.log("Unable to save waitlist details.", err);
-              res.status(400).send();
+              callback("Unable to save waitlist details", null);
             }
           );
         } else {
-          res.status(400).send();
+          callback(err, null);
         }
       }
     }
   );
-});
+}
 
-module.exports = router;
+exports.handle_request = handle_request;

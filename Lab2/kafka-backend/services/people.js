@@ -1,38 +1,36 @@
-//Route to handle Get Request Call to show all people registered for a particular course. Personas can also be save in people table and therefore, we can send faculty name as a seperate key in the json response so that it can be shown on the frontend with a faculty tag.
-const express = require("express");
-const router = express.Router();
 const Model = require("../database/connection");
 
-router.get("/", function(req, res) {
+function handle_request(message, callback) {
   console.log("Get all people data called!");
 
   // ANCHOR
-  let peopleData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+  let peopleData = message; // In GET request, req.query is used to access the data sent from frontend in params
 
   Model.courseDetails.findOne(
     {
       courseId: peopleData.courseId
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch course", err);
+        callback(err, null);
       } else {
-        if (user) {
-          console.log("People detail: ", user);
-          res.status(200).send(user.people);
+        if (result) {
+          console.log("People detail: ", result);
+          callback(null, result);
         } else {
-          res.status(400).send();
+          callback(err, null);
         }
       }
     }
   );
-});
+}
 
 //Route to handle Post Request Call to remove a student from a course, by a faculty
-router.post("/", function(req, res) {
+function handle_request(message, callback) {
   console.log("Remove a student from people data posted!");
   // ANCHOR
-  let peopleData = req.body.data;
+  let peopleData = message.data;
   // let title = peopleData.title;
   // console.log("Title: ", title);
 
@@ -40,28 +38,29 @@ router.post("/", function(req, res) {
     {
       email: peopleData.email
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch user", err);
+        callback(err, null);
       } else {
-        if (user) {
-          user.enrolledcourses.remove(peopleData.courseId);
-          user.save().then(
+        if (result) {
+          result.enrolledcourses.remove(peopleData.courseId);
+          result.save().then(
             doc => {
               console.log("Course removed from this user", doc);
-              res.send("Removal Successful!");
+              callback("Removal Successful!", result);
             },
             err => {
               console.log("Unable to save remove course.", err);
-              res.status(400).send();
+              callback(err, null);
             }
           );
         } else {
-          res.status(400).send();
+          callback(err, null);
         }
       }
     }
   );
-});
+}
 
-module.exports = router;
+exports.handle_request = handle_request;
