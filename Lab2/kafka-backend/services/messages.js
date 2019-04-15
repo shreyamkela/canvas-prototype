@@ -31,7 +31,17 @@ function handle_request(message, callback) {
         console.log("Unable to fetch user", err);
       } else {
         if (result) {
-          callback(null, result);
+          result.message.push(messageData.message);
+          result.save().then(
+            doc => {
+              console.log("New details added to this user messages", doc);
+              callback(null, result);
+            },
+            err => {
+              console.log("Unable to save message details.", err);
+              callback(err, null);
+            }
+          );
         } else {
           callback(err, null);
         }

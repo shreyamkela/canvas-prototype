@@ -32,7 +32,17 @@ function handle_request(message, callback) {
         callback(err, null);
       } else {
         if (result) {
-          callback(null, result);
+          user.grades.push(gradeData.grade);
+          user.save().then(
+            doc => {
+              console.log("New details added to this user grade", doc);
+              callback(null, result);
+            },
+            err => {
+              console.log("Unable to save grade details.", err);
+              callback(err, null);
+            }
+          );
         } else {
           callback(err, null);
         }
