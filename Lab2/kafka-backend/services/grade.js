@@ -1,66 +1,44 @@
-//Route to handle Get Request Call to show grade for an assignment or a quiz of a student, for a particular course
-const express = require("express");
-const router = express.Router();
 const Model = require("../database/connection");
 
-router.get("/", function(req, res) {
-  console.log("Get an assignment/quiz grade data called!");
-
-  // ANCHOR
-  let gradeData = req.query; // In GET request, req.query is used to access the data sent from frontend in params
+function handle_request(message, callback) {
   Model.userDetails.findOne(
     {
-      email: gradeData.email
+      email: message.email
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch user", err);
+        callback(err, null);
       } else {
-        if (user) {
-          console.log("Grades detail: ", user);
-          res.status(200).send(user.grades);
+        if (result) {
+          console.log("Grades detail: ", result);
+          callback(null, result);
         } else {
-          res.status(400).send();
+          callback(err, null);
         }
       }
     }
   );
-});
+}
 
-//Route to handle Post Request Call to grade an assignment or a quiz or a particular student, by a faculty
-router.post("/", function(req, res) {
-  console.log("Grade an assignment/quiz data posted!");
-  // ANCHOR
-  let gradeData = req.body.data;
-
-  // gradeData.type defines whether the submission is an assignment or a quiz
-
+function handle_request(message, callback) {
   Model.userDetails.findOne(
     {
-      email: gradeData.email
+      email: message.email
     },
-    (err, user) => {
+    (err, result) => {
       if (err) {
         console.log("Unable to fetch user", err);
+        callback(err, null);
       } else {
-        if (user) {
-          user.grades.push(gradeData.grade);
-          user.save().then(
-            doc => {
-              console.log("New details added to this user grade", doc);
-              res.send("Addition Successful!");
-            },
-            err => {
-              console.log("Unable to save grade details.", err);
-              res.status(400).send();
-            }
-          );
+        if (result) {
+          callback(null, result);
         } else {
-          res.status(400).send();
+          callback(err, null);
         }
       }
     }
   );
-});
+}
 
-module.exports = router;
+exports.handle_request = handle_request;

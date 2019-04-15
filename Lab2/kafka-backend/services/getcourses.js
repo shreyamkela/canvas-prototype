@@ -1,54 +1,47 @@
-//Route to handle Get Request Call to get all courses for faculty/student depending upon the persona
-const express = require("express");
-const router = express.Router();
 const Model = require("../database/connection");
 
-router.get("/", function(req, res) {
-  if (req.query.persona === "1") {
+function handle_request(message, callback) {
+  if (message.persona === "1") {
     // Persona is of faculty
-    console.log("Get Courses data for faculty...", req.query);
-    const email = req.query.email; // Selecting only those courses to send to frontend, that have been created by the logged in faculty
 
     Model.userDetails.findOne(
       {
-        email: req.query.email
+        email: message.email
       },
-      (err, user) => {
+      (err, result) => {
         if (err) {
           console.log("Unable to fetch user", err);
         } else {
-          if (user) {
+          if (result) {
             console.log("Courses detail: ", user);
-            res.status(200).send(user.createdCourses);
+            callback(null, result);
           } else {
             console.log("No courses available.");
-            res.send("noCourses");
+            callback("noCourses", null);
           }
         }
       }
     );
-  } else if (req.query.persona === "2") {
-    console.log("Get Courses data for student...", req.query);
-    const email = req.query.email; // Selecting only those courses to send to frontend, that have been created by the logged in faculty
+  } else if (message.persona === "2") {
     Model.userDetails.findOne(
       {
-        email: req.query.email
+        email: message.email
       },
-      (err, user) => {
+      (err, result) => {
         if (err) {
           console.log("Unable to fetch user", err);
         } else {
-          if (user) {
-            console.log("Courses detail: ", user);
-            res.status(200).send(user.enrolledCourses);
+          if (result) {
+            console.log("Courses detail: ", result);
+            callback(null, result);
           } else {
             console.log("No courses available.");
-            res.send("noCourses");
+            callback("noCourses", null);
           }
         }
       }
     );
   }
-});
+}
 
-module.exports = router;
+exports.handle_request = handle_request;
