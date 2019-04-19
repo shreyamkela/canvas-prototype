@@ -51,7 +51,7 @@ class Main extends Component {
     } else if (loginRequest.persona == 2) {
       persona = "Student - ";
     }
-
+    //
     if (!cookie.load("cookie") && (loginRequest.persona !== "1" || loginRequest.persona !== "2")) {
       return <Login />;
     } else {
