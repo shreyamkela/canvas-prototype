@@ -45,6 +45,8 @@ class Dashboard extends Component {
     // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
     // https://stackoverflow.com/questions/44107665/how-to-access-a-browser-cookie-in-a-react-app
     //console.log("COURSES:", this.state.courses);
+
+    console.log("XXXXXXXXXXXXXXXXXXXXXXXX", this.state.courses);
     if (this.state.courses === "noCourses") {
       allCourses = "noCourses";
       coursesPresent = (

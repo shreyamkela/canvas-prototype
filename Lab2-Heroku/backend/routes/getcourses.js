@@ -11,7 +11,7 @@ router.get("/", function(req, res) {
 
     Model.userDetails.findOne(
       {
-        email: req.query.email
+        email: email
       },
       (err, user) => {
         if (err) {
@@ -19,7 +19,21 @@ router.get("/", function(req, res) {
         } else {
           if (user) {
             console.log("Courses detail: ", user);
-            res.status(200).send(user.createdCourses);
+
+            Model.courseDetails.find({ courseId: { $in: user.createdCourses } }, (err, results) => {
+              if (err) {
+                console.log("Unable to fetch courses", err);
+                res.status(400).send("Unable to fetch courses");
+              } else {
+                if (results) {
+                  console.log("Courses detail: ", results);
+                  res.status(200).send(results);
+                } else {
+                  console.log("Unable to fetch courses");
+                  res.status(400).send("Unable to fetch courses");
+                }
+              }
+            });
           } else {
             console.log("No courses available.");
             res.send("noCourses");

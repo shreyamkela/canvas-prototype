@@ -49,21 +49,17 @@ router.post("/", function(req, res) {
             doc => {
               console.log("Course saved successfully.", doc);
 
-              Model.userDetails.findOne(
+              Model.userDetails.updateOne(
                 {
                   email: courseData.email
                 },
+                { $push: { createdCourses: courseData.courseId } },
                 (err, result) => {
                   if (err) {
-                    console.log("Unable to fetch user details.", err);
+                    console.log("Unable to fetch faculty.", err);
                     res.status(400).send("Unable to save course details."); // status should come before send
                   } else {
                     if (result) {
-                      let prevCreatedCourses = result.createdCourses;
-                      prevCreatedCourses.push(courseData.courseId);
-
-                      var newCourse = new Model.courseDetails({});
-
                       res.status(200).send("Creation Successful!"); // status should come before send
                     } else {
                       console.log("Faculty not found!", err);
