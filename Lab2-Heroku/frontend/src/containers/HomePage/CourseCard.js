@@ -15,9 +15,9 @@ class CourseCard extends Component {
   };
 
   componentDidMount() {
-    //console.log("This Course", this.props.course);
-    let titleString = `${this.props.course.Id} - ${this.props.course.Name}`;
-    let link = `/courses/${this.props.course.Id}`; // Ex: Endpoint for this course is /view/CMPE273
+    console.log("XXXXXXXXXXXXXXXX", this.props.course);
+    let titleString = `${this.props.course.courseId} - ${this.props.course.courseName}`;
+    let link = `/courses/${this.props.course.courseId}`; // Ex: Endpoint for this course is /view/CMPE273
     let courseTitle = (
       // NOTE Dont use <a> for including links in react. As react uses react router to route between pages, therefore, we should only us the Link tag provided by react react. <a> tag can malfunction with react router
       <Link to={link} style={{ textDecoration: "underline" }} onClick={this.handleLinkCLick}>

@@ -5,7 +5,7 @@ const Model = require("../database/connection");
 const mongoose = require("mongoose");
 
 router.post("/", function(req, res) {
-  console.log("Create Course Data Posted!");
+  console.log("Create Course Data Posted!", req.body.data);
   let courseData = req.body.data;
   let id = courseData.courseId;
   console.log("Id: ", id);
@@ -27,13 +27,13 @@ router.post("/", function(req, res) {
           var user = new Model.courseDetails({
             id: id,
             courseId: courseData.courseId,
-            courseName: courseData.name,
+            courseName: courseData.courseName,
             facultyEmail: courseData.email,
-            department: courseData.department,
-            description: courseData.desc,
+            department: courseData.dept,
+            description: courseData.descrip,
             room: courseData.room,
-            capacity: courseData.capacity,
-            waitlist: courseData.waitlist,
+            capacity: courseData.classCap,
+            waitlist: courseData.waitlistCap,
             term: courseData.term,
             capacityUsed: 0,
             waitlistUsed: 0,

@@ -105,6 +105,8 @@ class Main extends Component {
                 <Route path="/create" component={Create} /> {/* FIXME Configure create and enroll route inside the courses file*/}
                 <Route path="/enroll" component={Enroll} />
                 <Route path="/inbox" component={Inbox} />
+                <Route path="/*" component={Dashboard} />
+                {/* To route path '/' and all non existant routes to home */}
               </Layout>
             </Content>
             <footer

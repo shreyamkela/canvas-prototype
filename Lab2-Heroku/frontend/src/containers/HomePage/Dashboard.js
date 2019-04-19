@@ -46,8 +46,7 @@ class Dashboard extends Component {
     // https://stackoverflow.com/questions/44107665/how-to-access-a-browser-cookie-in-a-react-app
     //console.log("COURSES:", this.state.courses);
 
-    console.log("XXXXXXXXXXXXXXXXXXXXXXXX", this.state.courses);
-    if (this.state.courses === "noCourses") {
+    if (this.state.courses === "noCourses" || this.state.courses === "") {
       allCourses = "noCourses";
       coursesPresent = (
         <font className="font-weight-bold" size="3">
@@ -56,7 +55,6 @@ class Dashboard extends Component {
       );
     } else {
       allCourses = this.state.courses;
-
       coursesPresent = (
         <React.Fragment>
           {Object.keys(allCourses).map(key => (

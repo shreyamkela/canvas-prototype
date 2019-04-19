@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import cookie from "react-cookies";
 import { connect } from "react-redux"; // Connects the components to the redux store
 import { Route } from "react-router-dom";
+import { Redirect } from "react-router";
 
 //import './App.css';
 import Login from "../LoginPage/Login";
@@ -16,7 +17,11 @@ class App extends Component {
     // At react/client end, we check the cookie name using cookie.load('cookie') command of the 'react-cookies' library. If cookie.load('cookie') != null this means that the user is admin
     // https://stackoverflow.com/questions/44107665/how-to-access-a-browser-cookie-in-a-react-app
     if (cookie.load("cookie") || loginRequest.persona == "1" || loginRequest.persona == "2") {
-      return <Main />;
+      return (
+        <React.Fragment>
+          <Route path="/" component={Main} />
+        </React.Fragment>
+      );
     } else {
       return (
         <React.Fragment>
