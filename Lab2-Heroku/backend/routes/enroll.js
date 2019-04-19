@@ -8,8 +8,6 @@ router.post("/", function(req, res) {
   let enrollData = req.body.data;
   console.log("Enroll data: ", enrollData);
 
-  let alreadyEnrolled = false;
-  let alreadyWaitlisted = false;
   if (enrollData.courseId != undefined) {
     // First we check if enrollData.courseId is undefined
     // Then we check whether this course is already enrolled
@@ -25,21 +23,24 @@ router.post("/", function(req, res) {
           console.log("Unable to fetch user", err);
         } else {
           if (user) {
-            console.log("Course already enrolled for this email!");
-            alreadyEnrolled = true;
-            res.status(400).end("Course already enrolled!"); // res.end will end the response here and dont go futher in this post request? But this doesnt work here why? return res.end also doesnt work if a db.query is after this db.query
+            if (user.enrolledCourses.includes(enrollData.courseId)) {
+              console.log("Course already enrolled for this email!");
+              res.status(400).end("Course already enrolled!"); // res.end will end the response here and dont go futher in this post request? But this doesnt work here why? return res.end also doesnt work if a db.query is after this db.query
+            } else {
+              user.enrolledCourses.push(enrollData.course);
+              user.save().then(
+                doc => {
+                  console.log("New details added to this user details", doc);
+                  res.send("Course enrolled!");
+                },
+                err => {
+                  console.log("Unable to enroll course. Please try again.", err);
+                  res.status(400).send("Unable to enroll course. Please try again.");
+                }
+              );
+            }
           } else {
-            user.enrolledCourses.push(enrollData.course);
-            user.save().then(
-              doc => {
-                console.log("New details added to this user details", doc);
-                res.send("Addition Successful!");
-              },
-              err => {
-                console.log("Unable to save course details.", err);
-                res.status(400).send();
-              }
-            );
+            res.status(400).end("Unable to enroll course. Please try again."); // res.end will end the response here and dont go futher in this post request? But this doesnt work here why? return res.end also doesnt work if a db.query is after this db.query
           }
         }
       }

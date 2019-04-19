@@ -23,75 +23,75 @@ router.get("/", function(req, res) {
       break;
   }
 
-  if (searchByQuery === "Id") {
-    for (var key in user) {
-      let currentId = user[key].Id.toLowerCase();
-      switch (filterBy) {
-        case "1":
-          if (currentId === searchValue) {
-            searchedCourses.push(user[key]);
-            console.log("searchedCourses", searchedCourses);
-          }
-          break;
-        case "2":
-          if (currentId > searchValue) {
-            searchedCourses.push(user[key]);
-            console.log("searchedCourses", searchedCourses);
-          }
-          break;
-        case "3":
-          if (currentId < searchValue) {
-            searchedCourses.push(user[key]);
-            console.log("searchedCourses", searchedCourses);
-          }
-          break;
-      }
-    }
-    if (searchedCourses == []) {
-      console.log("No courses available.");
-      res.send("noCourses");
+  Model.courseDetails.find({}, (err, user) => {
+    if (err) {
+      console.log("Unable to fetch courses", err);
+      res.status(400).send("Unable to fetch courses!");
     } else {
-      res.send(searchedCourses);
-    }
-  } else if (searchByQuery === "Term" || searchByQuery === "Name") {
-    for (var key in user) {
-      if (searchByQuery === "Term") {
-        let currentTerm = user[key].Term.toLowerCase();
-        if (currentTerm.includes(searchValue)) {
-          searchedCourses.push(user[key]);
+      if (user) {
+        console.log("XXXXXXXXXXXXXXXXXXXXx", user);
+        if (searchByQuery === "Id") {
+          for (var key in user) {
+            let currentId = user[key].courseId.toLowerCase();
+            switch (filterBy) {
+              case "1":
+                if (currentId === searchValue) {
+                  searchedCourses.push(user[key]);
+                  console.log("searchedCourses", searchedCourses);
+                }
+                break;
+              case "2":
+                if (currentId > searchValue) {
+                  searchedCourses.push(user[key]);
+                  console.log("searchedCourses", searchedCourses);
+                }
+                break;
+              case "3":
+                if (currentId < searchValue) {
+                  searchedCourses.push(user[key]);
+                  console.log("searchedCourses", searchedCourses);
+                }
+                break;
+            }
+          }
+          if (searchedCourses == []) {
+            console.log("No courses available.");
+            res.send("noCourses");
+          } else {
+            res.send(searchedCourses);
+          }
+        } else if (searchByQuery === "Term" || searchByQuery === "Name") {
+          for (var key in user) {
+            if (searchByQuery === "Term") {
+              let currentTerm = user[key].term.toLowerCase();
+              if (currentTerm.includes(searchValue)) {
+                searchedCourses.push(user[key]);
+              }
+            } else {
+              let currentTerm = user[key].courseName.toLowerCase();
+              if (currentTerm.includes(searchValue)) {
+                searchedCourses.push(user[key]);
+              }
+            }
+          }
+          if (searchedCourses === []) {
+            console.log("No courses available.");
+            res.send("noCourses");
+          } else {
+            console.log("searchedCourses", searchedCourses);
+            res.send(searchedCourses);
+          }
+        } else {
+          console.log("No courses available.");
+          res.send("noCourses");
         }
+        //res.status(200).end("Course already enrolled!"); // res.end will end the response here and dont go futher in this post request? But this doesnt work here why? return res.end also doesnt work if a db.query is after this db.query
       } else {
-        let currentTerm = user[key].Name.toLowerCase();
-        if (currentTerm.includes(searchValue)) {
-          searchedCourses.push(user[key]);
-        }
+        console.log("Unable to fetch courses", err);
+        res.status(400).send("No courses found!");
       }
     }
-    if (searchedCourses === []) {
-      console.log("No courses available.");
-      res.send("noCourses");
-    } else {
-      console.log("searchedCourses", searchedCourses);
-      res.send(searchedCourses);
-    }
-  } else {
-    console.log("No courses available.");
-    res.send("noCourses");
-  }
-
-  Model.courseDetails.findOne(
-    {
-      courseId: announcementData.courseId
-    },
-    (err, user) => {
-      if (err) {
-        console.log("Unable to fetch announcements", err);
-      } else {
-        if (user) {
-        }
-      }
-    }
-  );
+  });
 });
 
 module.exports = router;

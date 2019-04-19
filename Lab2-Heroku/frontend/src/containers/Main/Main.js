@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { connect } from "react-redux"; // Connects the components to the redux store
 import axios from "axios";
 import cookie from "react-cookies";
@@ -98,15 +98,18 @@ class Main extends Component {
             <Content>
               {/* Layout inside layout would make the internal layout towards the right of parent layout i.e horizontally. All the components inside a layout would be displayed vertically from top to bottom */}
               <Layout>
-                <Route exact path="/home" component={Dashboard} />
-                <Route path="/profile" component={Profile} />
-                <Route path="/courses/:id" component={Courses} />
-                {/* FIXME Make create route inside the courses file*/}
-                <Route path="/create" component={Create} /> {/* FIXME Configure create and enroll route inside the courses file*/}
-                <Route path="/enroll" component={Enroll} />
-                <Route path="/inbox" component={Inbox} />
-                <Route path="/*" component={Dashboard} />
-                {/* To route path '/' and all non existant routes to home */}
+                <Switch>
+                  <Route path="/profile" component={Profile} />
+                  <Route path="/courses/:id" component={Courses} />
+                  {/* FIXME Make create route inside the courses file*/}
+                  <Route path="/create" component={Create} /> {/* FIXME Configure create and enroll route inside the courses file*/}
+                  <Route path="/enroll" component={Enroll} />
+                  <Route path="/inbox" component={Inbox} />
+                  <Route path="/(home|)" component={Dashboard} />
+                  {/* Handling home and / routes */}
+                  <Route path="*" component={Dashboard} />
+                  {/* Handling 404 routes */}
+                </Switch>
               </Layout>
             </Content>
             <footer

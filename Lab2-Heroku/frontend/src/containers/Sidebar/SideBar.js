@@ -9,7 +9,7 @@ import { logOut } from "../../_actions/user.actions";
 import { Layout, Menu, Icon, Drawer, Button, Col, Row } from "antd";
 
 class SideBar extends Component {
-  state = { accountDrawerVisible: false, coursesDrawerVisible: false, logOut: false };
+  state = { accountDrawerVisible: false, coursesDrawerVisible: false, logOut: false, redirect: false };
 
   showAccountDrawer = () => {
     this.setState({
@@ -44,6 +44,12 @@ class SideBar extends Component {
     window.location.replace("/"); // NOTE can use this to change route
   };
 
+  handleOnClick = () => {
+    // Sometimes, on clicking the dashboard, the url changes but the page doesnt
+    // This forces the component to rerender when Dashboard is clicked on the sider
+    this.setState({ redirect: true });
+  };
+
   render() {
     const { courseDataToComponent, loginRequest } = this.props; // redux state to props
     let coursesPresent = null;
@@ -57,7 +63,7 @@ class SideBar extends Component {
     } else {
       allCourses = courseDataToComponent.courses;
       Object.keys(allCourses).map(key => {
-        let linkString = `${allCourses[key].Id}`;
+        let linkString = `${allCourses[key].courseId}`;
         Object.assign(allCourses[key], { Link: `/courses/${linkString}` });
       });
       coursesPresent = (
@@ -67,7 +73,7 @@ class SideBar extends Component {
             // NOTE Dont use <a> for including links in react. As react uses react router to route between pages, therefore, we should only us the Link tag provided by react react. <a> tag can malfunction with react router
             <Link to={allCourses[key].Link} style={{ textDecoration: "underline" }} onClick={this.onClose} key={key}>
               {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
-              <font size="4">{allCourses[key].Id}</font>
+              <font size="4">{allCourses[key].courseId}</font>
               <br />
               <br />
             </Link>
@@ -132,7 +138,7 @@ class SideBar extends Component {
               <Menu.Item key="2">
                 <Icon type="dashboard" style={{ color: "white" }} />
                 <span className="nav-text">
-                  <Link to="/home">
+                  <Link to="/home" onClick={this.handleOnClick}>
                     {/** NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                     <font size="2" color="white">
                       Dashboard

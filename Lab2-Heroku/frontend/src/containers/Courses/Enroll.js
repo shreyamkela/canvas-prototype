@@ -54,19 +54,19 @@ class Enroll extends Component {
   };
 
   handleEnroll = async key => {
-    // console.log("Enroll - key, capacity, used, difference:", key, this.state.courses[key].Capacity, this.state.courses[key].CapacityUsed, this.state.courses[key].Capacity - this.state.courses[key].CapacityUsed);
-    if (this.state.courses[key].Capacity - this.state.courses[key].CapacityUsed === 0) {
+    // console.log("Enroll - key, capacity, used, difference:", key, this.state.courses[key].Capacity, this.state.courses[key].capacityUsed, this.state.courses[key].Capacity - this.state.courses[key].capacityUsed);
+    if (this.state.courses[key].capacity - this.state.courses[key].capacityUsed === 0) {
       message.error("Cannot enroll as the class capacity is full!");
     } else {
       const { loginRequest } = this.props;
-      const data = { courseId: this.state.courses[key].Id, email: loginRequest.email };
+      const data = { courseId: this.state.courses[key].courseId, email: loginRequest.email };
       try {
         let response = await API.post("enroll", { data });
         message.success(response.data);
         // Change the count of the capacity used - NOTE Here we are not fetching the courses data again, after the update. We are updating the frontend without requesting any new data from the backend as we know that the database would have been already updated so we can change the count.
         // If the database would not have been updated then then this setState wont run as there must be an error at backend which will be caught by the catch below
         let newCourses = this.state.courses;
-        newCourses[key].CapacityUsed++;
+        newCourses[key].capacityUsed++;
         this.setState({ courses: newCourses });
 
         // FIXME dispatch? so that the count is updated on enroll page
@@ -82,21 +82,21 @@ class Enroll extends Component {
     //   "Waitlist - key, waitlist, used, difference:",
     //   key,
     //   this.state.courses[key].Waitlist,
-    //   this.state.courses[key].WaitlistUsed,
-    //   this.state.courses[key].Waitlist - this.state.courses[key].WaitlistUsed
+    //   this.state.courses[key].waitlistUsed,
+    //   this.state.courses[key].Waitlist - this.state.courses[key].waitlistUsed
     // );
-    if (this.state.courses[key].Waitlist - this.state.courses[key].WaitlistUsed === 0) {
+    if (this.state.courses[key].waitlist - this.state.courses[key].waitlistUsed === 0) {
       message.error("Cannot add to waitlist as the waitlist is full!");
     } else {
       const { loginRequest } = this.props;
-      const data = { courseId: this.state.courses[key].Id, email: loginRequest.email };
+      const data = { courseId: this.state.courses[key].courseId, email: loginRequest.email };
       try {
         let response = await API.post("waitlist", { data });
         message.success(response.data);
         // Change the count of the waitlist used - NOTE Here we are not fetching the courses data again, after the update. We are updating the frontend without requesting any new data from the backend as we know that the database would have been already updated so we can change the count.
         // If the database would not have been updated then then this setState wont run as there must be an error at backend which will be caught by the catch below
         let newCourses = this.state.courses;
-        newCourses[key].WaitlistUsed++;
+        newCourses[key].waitlistUsed++;
         this.setState({ courses: newCourses });
         // FIXME dispatch? so that the count is updated on enroll page
         // FIXME send a notification to faculty that waitlists exist
@@ -131,9 +131,9 @@ class Enroll extends Component {
       );
     }
 
-    //console.log("Courses data:", this.state.courses);
+    console.log("XXXXXXXXXXXXXXXXXX", this.state.courses);
     let coursesSearched = null;
-    if (this.state.courses === "noCourses") {
+    if (this.state.courses === "noCourses" || this.state.courses[0] === undefined) {
       coursesSearched = (
         <font className="font-weight-bold" size="3">
           No courses available{/**If no courses present */}
@@ -150,7 +150,7 @@ class Enroll extends Component {
                   <div className="row">
                     <div className="col-sm">
                       <h5 className="card-title">
-                        {this.state.courses[key].Id} {this.state.courses[key].Name}
+                        {this.state.courses[key].courseId} {this.state.courses[key].courseName}
                       </h5>
                     </div>
                     <div className="col-sm" style={{ textAlign: "right" }}>
@@ -181,19 +181,19 @@ class Enroll extends Component {
 
                   <div className="row" style={{ marginLeft: 1 }}>
                     <p className="card-text mr-4">
-                      <b>Total capacity: {this.state.courses[key].Capacity}</b>
+                      <b>Total capacity: {this.state.courses[key].capacity}</b>
                     </p>
                     <p className="card-text mx-4">
-                      <b>Capacity Left: {this.state.courses[key].Capacity - this.state.courses[key].CapacityUsed}</b>
+                      <b>Capacity Left: {this.state.courses[key].capacity - this.state.courses[key].capacityUsed}</b>
                     </p>
                     <p className="card-text mx-4">
-                      <b>Total waitlist: {this.state.courses[key].Waitlist}</b>
+                      <b>Total waitlist: {this.state.courses[key].waitlist}</b>
                     </p>
                     <p className="card-text mx-4">
-                      <b>Waitlist Left: {this.state.courses[key].Waitlist - this.state.courses[key].WaitlistUsed}</b>
+                      <b>Waitlist Left: {this.state.courses[key].waitlist - this.state.courses[key].waitlistUsed}</b>
                     </p>
                   </div>
-                  <p className="card-text">{this.state.courses[key].Description}</p>
+                  <p className="card-text">{this.state.courses[key].description}</p>
                 </div>
               </div>
               <br />

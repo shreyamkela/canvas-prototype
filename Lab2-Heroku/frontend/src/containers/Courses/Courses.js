@@ -22,6 +22,7 @@ class Courses extends Component {
 
     const { dispatch } = this.props;
     const { id } = this.props.match.params; // Course Id passed through :id while routing to this page
+
     const { courseDataToComponent, loginRequest } = this.props; // redux state to propsl
     let allCourses = null;
     let currentCourse = null;
@@ -35,6 +36,7 @@ class Courses extends Component {
     let gradesUrl = null;
 
     let courseUrl = null;
+    console.log("CCCCCCCCCCCCCCCCCCCCCC", courseDataToComponent.courses);
 
     if (courseDataToComponent.courses == undefined) {
       allCourses = null;
@@ -44,21 +46,21 @@ class Courses extends Component {
 
     for (var key in allCourses) {
       // To find which is the current course clicked, inside courseDataToComponent
-      if (allCourses[key].Id === undefined) {
+      if (allCourses[key].courseId === undefined) {
         continue;
-      } else if (allCourses[key].Id === id) {
+      } else if (allCourses[key].courseId === id) {
         currentCourse = allCourses[key];
         // FIXME Remove dispatch from render. Render is only for rendering props and state and not for changing state or dispatching to redux
         dispatch(currentCourseDataToComponent(currentCourse)); // dispatch current course data to components that require it
-        courseTitle = `${allCourses[key].Id} - ${allCourses[key].Name}`;
+        courseTitle = `${allCourses[key].courseId} - ${allCourses[key].courseName}`;
 
-        announcementsUrl = `/courses/${allCourses[key].Id}/announcements`;
-        assignmentsUrl = `/courses/${allCourses[key].Id}/assignments`;
-        filesUrl = `/courses/${allCourses[key].Id}/files`;
-        peopleUrl = `/courses/${allCourses[key].Id}/people`;
-        quizzesUrl = `/courses/${allCourses[key].Id}/quizzes`;
-        gradesUrl = `/courses/${allCourses[key].Id}/grades`;
-        courseUrl = `/courses/${allCourses[key].Id}`;
+        announcementsUrl = `/courses/${allCourses[key].courseId}/announcements`;
+        assignmentsUrl = `/courses/${allCourses[key].courseId}/assignments`;
+        filesUrl = `/courses/${allCourses[key].courseId}/files`;
+        peopleUrl = `/courses/${allCourses[key].courseId}/people`;
+        quizzesUrl = `/courses/${allCourses[key].courseId}/quizzes`;
+        gradesUrl = `/courses/${allCourses[key].courseId}/grades`;
+        courseUrl = `/courses/${allCourses[key].courseId}`;
       }
     }
     let gradesRoute = null;

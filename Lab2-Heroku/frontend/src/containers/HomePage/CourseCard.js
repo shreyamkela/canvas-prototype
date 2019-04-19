@@ -15,7 +15,6 @@ class CourseCard extends Component {
   };
 
   componentDidMount() {
-    console.log("XXXXXXXXXXXXXXXX", this.props.course);
     let titleString = `${this.props.course.courseId} - ${this.props.course.courseName}`;
     let link = `/courses/${this.props.course.courseId}`; // Ex: Endpoint for this course is /view/CMPE273
     let courseTitle = (
