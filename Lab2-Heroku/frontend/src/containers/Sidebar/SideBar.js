@@ -52,9 +52,15 @@ class SideBar extends Component {
 
   render() {
     const { courseDataToComponent, loginRequest } = this.props; // redux state to props
+
     let coursesPresent = null;
     let allCourses = null;
-    if (courseDataToComponent.courses === "noCourses") {
+
+    if (
+      courseDataToComponent.courses === "noCourses" ||
+      courseDataToComponent.courses[0] === null ||
+      courseDataToComponent.courses[0] === undefined
+    ) {
       coursesPresent = (
         <font className="font-weight-bold" size="3">
           No courses available{/**If no courses present */}
