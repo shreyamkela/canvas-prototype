@@ -33,16 +33,24 @@ export const postLoginData = data => dispatch => {
   console.log("postLoginData called!");
   //set the with credentials to true - NOTE withCredentials has to be true if we want to send and receive cookies between express and react
   axios.defaults.withCredentials = true;
+
   API.post("login", {
     // data is accessible at the backend by req.body.query
     data
-  }).then(response =>
-    dispatch({
-      type: LOGIN_REQUEST, // Sending type in action dispatches is mandatory
-      payload: response,
-      email: data.email
-    })
-  );
+  })
+    .then(response =>
+      dispatch({
+        type: LOGIN_REQUEST, // Sending type in action dispatches is mandatory
+        payload: response,
+        email: data.email
+      })
+    )
+    .catch(error => {
+      dispatch({
+        type: LOGIN_REQUEST, // Sending type in action dispatches is mandatory
+        payload: error.response
+      });
+    });
 
   console.log("Actions cookie", cookie.load("cookie"));
 };

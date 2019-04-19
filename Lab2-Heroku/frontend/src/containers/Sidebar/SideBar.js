@@ -163,19 +163,18 @@ class SideBar extends Component {
                   </Link>
                 </span>
               </Menu.Item>
-              {/*
+
               <Menu.Item key="4">
                 <Icon type="mail" style={{ color: "white" }} />
                 <span className="nav-text">
                   <Link to="/inbox">
-                    // NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing 
+                    {/* NOTE This Link tag is not of html and is the link of react-router-dom. The latter link can be used for routing */}
                     <font size="2" color="white">
                       Inbox
                     </font>
                   </Link>
                 </span>
               </Menu.Item>
-                */}
             </Menu>
           </Sider>
           {/* FIXME Move the drawer after the sider */}

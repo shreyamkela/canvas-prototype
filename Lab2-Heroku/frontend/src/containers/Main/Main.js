@@ -52,7 +52,7 @@ class Main extends Component {
       persona = "Student - ";
     }
     //
-    if (!cookie.load("cookie") && (loginRequest.persona !== "1" || loginRequest.persona !== "2")) {
+    if (!cookie.load("cookie") && loginRequest.email === "") {
       return <Login />;
     } else {
       let pageHeading = null;
