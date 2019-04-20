@@ -36,7 +36,6 @@ class Courses extends Component {
     let gradesUrl = null;
 
     let courseUrl = null;
-    console.log("CCCCCCCCCCCCCCCCCCCCCC", courseDataToComponent.courses);
 
     if (courseDataToComponent.courses == undefined) {
       allCourses = null;
