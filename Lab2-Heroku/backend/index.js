@@ -9,11 +9,12 @@ const app = express();
 
 //Passport authentication
 const passport = require("passport");
+const origin = "http://localhost:3000";
 
 // FIXME Use the structure of webstorm repo for backend
 
 //use cors to allow cross origin resource sharing
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: `${origin}`, credentials: true }));
 
 //app.set("view engine", "ejs");
 
@@ -33,7 +34,7 @@ app.use(bodyParser.json());
 
 //Allow Access Control
 app.use(function(req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", `${origin}`);
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
   res.setHeader(
@@ -68,7 +69,7 @@ var getOrPostAssignment = require("./routes/assignment");
 var allquizzes = require("./routes/allquizzes");
 var getOrPostQuiz = require("./routes/quiz");
 var takequiz = require("./routes/takequiz");
-var allgrades = require("./routes/allgrades");
+//var allgrades = require("./routes/allgrades");
 var grade = require("./routes/grade");
 var files = require("./routes/files");
 var people = require("./routes/people");
@@ -93,12 +94,12 @@ app.use("/assignment", getOrPostAssignment);
 app.use("/allquizzes", allquizzes);
 app.use("/quiz", getOrPostQuiz);
 app.use("/takequiz", takequiz);
-app.use("/allgrades", allgrades);
+//app.use("/allgrades", allgrades);
 app.use("/grade", grade);
 app.use("/files", files);
 app.use("/people", people);
 app.use("/messages", getOrPostMessages);
 
 //start your server on port 3001
-app.listen(3001);
+app.listen(process.env.PORT || 3001);
 console.log("Server Listening on port 3001");
