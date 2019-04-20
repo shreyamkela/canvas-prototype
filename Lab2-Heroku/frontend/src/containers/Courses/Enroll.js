@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
 
-import { Typography, Layout, Input, Radio, message } from "antd";
+import { Typography, Layout, Input, Radio, message, Pagination } from "antd";
 import API from "../../_helpers/API";
 
 class Enroll extends Component {
@@ -107,6 +107,10 @@ class Enroll extends Component {
     }
   };
 
+  handlePageNumberClick = () => {
+    console.log("Hey");
+  };
+
   render() {
     const { Header, Content, Footer } = Layout;
     const { Title } = Typography;
@@ -131,7 +135,6 @@ class Enroll extends Component {
       );
     }
 
-    console.log("XXXXXXXXXXXXXXXXXX", this.state.courses);
     let coursesSearched = null;
     if (this.state.courses === "noCourses" || this.state.courses[0] === undefined) {
       coursesSearched = (
@@ -203,6 +206,15 @@ class Enroll extends Component {
       );
     }
 
+    var pagination = null;
+    console.log("XXXXXXXXXXXXXXXXXXXXXXX", this.state.courses);
+    if (this.state.courses[0] !== undefined && this.state.courses.length > 2) {
+      let pageNumbers = Math.floor(this.state.courses.length / 2) + (this.state.courses.length % 2);
+      console.log("YYYYYYYYYYYYYYYYYYYYYYY", pageNumbers);
+
+      pagination = <Pagination defaultPageSize={1} defaultCurrent={1} total={pageNumbers} onChange={this.handlePageNumberClick} />;
+    }
+
     return (
       <div>
         {/* FIXME Make the create page a modal */}
@@ -245,6 +257,7 @@ class Enroll extends Component {
             <br />
 
             <div>{coursesSearched}</div>
+            {pagination}
           </Content>
         </Layout>
       </div>
