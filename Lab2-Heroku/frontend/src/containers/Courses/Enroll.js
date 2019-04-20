@@ -13,7 +13,8 @@ class Enroll extends Component {
     filterPresent: true,
     filterRadioValue: 1,
     searchByRadioValue: "id",
-    courses: ""
+    courses: "",
+    pagenumber: 1
   };
 
   async handleSearch(searchValue) {
@@ -22,11 +23,15 @@ class Enroll extends Component {
     // console.log("Filter Radio:", this.state.filterRadioValue);
     // console.log("Search By Radio:", this.state.searchByRadioValue);
     if (searchValue !== "") {
-      const data = { searchValue: searchValue, filterRadioValue: this.state.filterRadioValue, searchByRadioValue: this.state.searchByRadioValue };
+      const data = {
+        searchValue: searchValue,
+        filterRadioValue: this.state.filterRadioValue,
+        searchByRadioValue: this.state.searchByRadioValue
+      };
 
       try {
         let response = await API.get("searchcourses", { params: data });
-        this.setState({ courses: response.data });
+        this.setState({ courses: response.data, pagenumber: 1 });
       } catch (error) {
         console.log(error.response);
       }
@@ -54,7 +59,7 @@ class Enroll extends Component {
   };
 
   handleEnroll = async key => {
-    // console.log("Enroll - key, capacity, used, difference:", key, this.state.courses[key].Capacity, this.state.courses[key].capacityUsed, this.state.courses[key].Capacity - this.state.courses[key].capacityUsed);
+    console.log("Enroll:", key);
     if (this.state.courses[key].capacity - this.state.courses[key].capacityUsed === 0) {
       message.error("Cannot enroll as the class capacity is full!");
     } else {
@@ -78,6 +83,8 @@ class Enroll extends Component {
   };
 
   handleWaitlist = async key => {
+    console.log("Waitlist:", key);
+
     // console.log(
     //   "Waitlist - key, waitlist, used, difference:",
     //   key,
@@ -107,8 +114,9 @@ class Enroll extends Component {
     }
   };
 
-  handlePageNumberClick = () => {
-    console.log("Hey");
+  handlePageNumberClick = e => {
+    console.log("Page number changed!", e);
+    this.setState({ pagenumber: e });
   };
 
   render() {
@@ -135,6 +143,22 @@ class Enroll extends Component {
       );
     }
 
+    var pagination = null;
+    let allCourses = null;
+    let pageCourses = []; // courses to show on this page number
+    if (this.state.courses[0] !== undefined) {
+      let pageNumbers = Math.floor(this.state.courses.length / 2) + (this.state.courses.length % 2);
+      pagination = <Pagination defaultPageSize={1} defaultCurrent={1} total={pageNumbers} onChange={this.handlePageNumberClick} />;
+      allCourses = this.state.courses;
+      let thisPageLast = this.state.pagenumber * 2;
+      for (var i = thisPageLast - 2; i < thisPageLast; i++) {
+        if (allCourses[i] !== undefined) {
+          pageCourses[i] = allCourses[i];
+        }
+      }
+      //console.log("XXXXXXXXXXXXXXXXXXXXXXX", pageCourses);
+    }
+
     let coursesSearched = null;
     if (this.state.courses === "noCourses" || this.state.courses[0] === undefined) {
       coursesSearched = (
@@ -146,14 +170,14 @@ class Enroll extends Component {
       // there is something other than noCourses
       coursesSearched = (
         <React.Fragment>
-          {Object.keys(this.state.courses).map(key => (
+          {Object.keys(pageCourses).map(key => (
             <div key={key}>
               <div className="card" style={{ width: 900 }}>
                 <div className="card-body">
                   <div className="row">
                     <div className="col-sm">
                       <h5 className="card-title">
-                        {this.state.courses[key].courseId} {this.state.courses[key].courseName}
+                        {pageCourses[key].courseId} {pageCourses[key].courseName}
                       </h5>
                     </div>
                     <div className="col-sm" style={{ textAlign: "right" }}>
@@ -165,7 +189,16 @@ class Enroll extends Component {
                         type="button"
                         className="btn btn-success btn-sm m-2"
                         onClick={() => {
-                          this.handleEnroll(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
+                          console.log(
+                            "XXXXXXXXXXXXXXXXXXXXXXXX",
+                            this.state.pagenumber,
+                            this.state.pagenumber * 2,
+                            this.state.pagenumber * 2 - 2,
+                            parseInt(key),
+                            this.state.pagenumber * 2 - 2 + parseInt(key),
+                            pageCourses
+                          );
+                          this.handleEnroll(parseInt(key)); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
                         }}
                       >
                         Enroll
@@ -174,7 +207,7 @@ class Enroll extends Component {
                         type="button"
                         className="btn btn-primary btn-sm m-2"
                         onClick={() => {
-                          this.handleWaitlist(key);
+                          this.handleWaitlist(parseInt(key));
                         }}
                       >
                         Waitlist
@@ -184,19 +217,19 @@ class Enroll extends Component {
 
                   <div className="row" style={{ marginLeft: 1 }}>
                     <p className="card-text mr-4">
-                      <b>Total capacity: {this.state.courses[key].capacity}</b>
+                      <b>Total capacity: {pageCourses[key].capacity}</b>
                     </p>
                     <p className="card-text mx-4">
-                      <b>Capacity Left: {this.state.courses[key].capacity - this.state.courses[key].capacityUsed}</b>
+                      <b>Capacity Left: {pageCourses[key].capacity - pageCourses[key].capacityUsed}</b>
                     </p>
                     <p className="card-text mx-4">
-                      <b>Total waitlist: {this.state.courses[key].waitlist}</b>
+                      <b>Total waitlist: {pageCourses[key].waitlist}</b>
                     </p>
                     <p className="card-text mx-4">
-                      <b>Waitlist Left: {this.state.courses[key].waitlist - this.state.courses[key].waitlistUsed}</b>
+                      <b>Waitlist Left: {pageCourses[key].waitlist - pageCourses[key].waitlistUsed}</b>
                     </p>
                   </div>
-                  <p className="card-text">{this.state.courses[key].description}</p>
+                  <p className="card-text">{pageCourses[key].description}</p>
                 </div>
               </div>
               <br />
@@ -204,15 +237,6 @@ class Enroll extends Component {
           ))}
         </React.Fragment>
       );
-    }
-
-    var pagination = null;
-    console.log("XXXXXXXXXXXXXXXXXXXXXXX", this.state.courses);
-    if (this.state.courses[0] !== undefined && this.state.courses.length > 2) {
-      let pageNumbers = Math.floor(this.state.courses.length / 2) + (this.state.courses.length % 2);
-      console.log("YYYYYYYYYYYYYYYYYYYYYYY", pageNumbers);
-
-      pagination = <Pagination defaultPageSize={1} defaultCurrent={1} total={pageNumbers} onChange={this.handlePageNumberClick} />;
     }
 
     return (
