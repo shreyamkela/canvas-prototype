@@ -28,7 +28,6 @@ class Profile extends Component {
   // Edit modal - Toggle the modal by a state property "showModal" - Show a modal if showModal state is true, else dont show
   handleModalClose = () => {
     const { editRequest } = this.props; // redux state to props
-    console.log("XXXXXXXXXXXXXXXXXXXx", editRequest.response);
     this.setState({ showModal: false, profile: editRequest.response });
   };
 
@@ -65,47 +64,47 @@ class Profile extends Component {
                 <br />
 
                 <b>About me: </b>
-                {this.state.profile.AboutMe === null ? "" : `${this.state.profile.AboutMe}`}
+                {this.state.profile.AboutMe === null || this.state.profile.AboutMe === undefined ? "" : `${this.state.profile.AboutMe}`}
 
                 <br />
                 <br />
                 <b>Gender: </b>
-                {this.state.profile.Gender === null ? "" : `${this.state.profile.Gender}`}
+                {this.state.profile.Gender === null || this.state.profile.Gender === undefined ? "" : `${this.state.profile.Gender}`}
 
                 <br />
                 <br />
                 <b>Contact No: </b>
-                {this.state.profile.ContactNo === null ? "" : `${this.state.profile.ContactNo}`}
+                {this.state.profile.ContactNo === null || this.state.profile.ContactNo === undefined ? "" : `${this.state.profile.ContactNo}`}
                 <br />
                 <br />
 
                 <b>City: </b>
-                {this.state.profile.City === null ? "" : `${this.state.profile.City}`}
+                {this.state.profile.City === null || this.state.profile.City === undefined ? "" : `${this.state.profile.City}`}
 
                 <br />
                 <br />
                 <b>Country: </b>
-                {this.state.profile.Country === null ? "" : `${this.state.profile.Country}`}
+                {this.state.profile.Country === null || this.state.profile.Country === undefined ? "" : `${this.state.profile.Country}`}
                 <br />
                 <br />
 
                 <b>Company: </b>
-                {this.state.profile.Company === null ? "" : `${this.state.profile.Company}`}
+                {this.state.profile.Company === null || this.state.profile.Company === undefined ? "" : `${this.state.profile.Company}`}
                 <br />
                 <br />
 
                 <b>School: </b>
-                {this.state.profile.School === null ? "" : `${this.state.profile.School}`}
+                {this.state.profile.School === null || this.state.profile.School === undefined ? "" : `${this.state.profile.School}`}
                 <br />
                 <br />
 
                 <b>Hometown: </b>
-                {this.state.profile.Hometown === null ? "" : `${this.state.profile.Hometown}`}
+                {this.state.profile.Hometown === null || this.state.profile.Hometown === undefined ? "" : `${this.state.profile.Hometown}`}
                 <br />
                 <br />
 
                 <b>Languages: </b>
-                {this.state.profile.Languages === null ? "" : `${this.state.profile.Languages}`}
+                {this.state.profile.Languages === null || this.state.profile.Languages === undefined ? "" : `${this.state.profile.Languages}`}
               </div>
               <div className="col" style={{ textAlign: "right", position: "auto" }}>
                 {/* Simply textAlign: "right" doesnt work to align button at the right, we also also to set position as auto */}

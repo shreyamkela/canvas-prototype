@@ -199,4 +199,9 @@ class Inbox extends Component {
   }
 }
 
-export default connect(null)(Inbox);
+function mapStateToProps(state) {
+  const { loginRequest } = state;
+  return { loginRequest };
+}
+
+export default connect(mapStateToProps)(Inbox);
