@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Document, Page } from "react-pdf";
 
 import { Button, Modal, DatePicker, message } from "antd";
+import moment from "moment";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
 import API from "../../../_helpers/API";
 
@@ -31,7 +32,7 @@ class Assignment extends Component {
   };
 
   handleOk = async e => {
-    let { loginRequest, currentCourseDataToComponent } = this.props;
+    let { currentCourseDataToComponent } = this.props;
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.preventDefault(); // dont do default - default is submitting the data to the database
@@ -45,8 +46,7 @@ class Assignment extends Component {
       let data = {
         desc: this.refs.desc.value,
         title: this.refs.title.value,
-        email: loginRequest.email,
-        courseId: currentCourseDataToComponent.currentCourse.Id,
+        courseId: currentCourseDataToComponent.currentCourse.courseId,
         dueBy: this.state.dueBy,
         points: this.refs.points.value
       };
@@ -170,6 +170,11 @@ class Assignment extends Component {
   //   }
   //   return NewObj;
   // };
+
+  disabledDate = current => {
+    // Can not select days before today and today
+    return current && current < moment().endOf("day");
+  };
 
   onChange = (date, dateString) => {
     console.log(date, dateString);
@@ -301,7 +306,8 @@ class Assignment extends Component {
               <Form.Group as={Col} controlId="validationDueBy">
                 <Form.Label>Due By</Form.Label>
                 <br />
-                <DatePicker onChange={this.onChange} />
+
+                <DatePicker format="YYYY-MM-DD" disabledDate={this.disabledDate} onChange={this.onChange} />
               </Form.Group>
             </Form>
 

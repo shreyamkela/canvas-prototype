@@ -39,6 +39,7 @@ router.post("/", function(req, res) {
   console.log("Create/Submit Assignment Data Posted!");
   // ANCHOR
   let assignmentData = req.body.data;
+  console.log(req.body.data);
 
   Model.courseDetails.findOne(
     {
