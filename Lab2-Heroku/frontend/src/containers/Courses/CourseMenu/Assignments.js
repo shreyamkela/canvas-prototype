@@ -43,6 +43,9 @@ class Assignment extends Component {
     } else if (this.refs.title.value != "" && this.refs.desc.value != "" && this.refs.desc.points != "" && this.state.dueBy != "") {
       // ANCHOR 1
       //Only dispatch when both fields are non empty
+      if (this.refs.points.value < 0) {
+        this.refs.points.value *= -1;
+      }
       let data = {
         desc: this.refs.desc.value,
         title: this.refs.title.value,

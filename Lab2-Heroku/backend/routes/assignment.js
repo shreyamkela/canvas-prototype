@@ -36,10 +36,9 @@ router.get("/", function(req, res) {
 
 //Route to handle Post Request Call to create a new assignment if the persona is of a faculty, and submit an assignment, if the persona is of a student. We dont override the the previous submissions
 router.post("/", function(req, res) {
-  console.log("Create/Submit Assignment Data Posted!");
+  console.log("Create/Submit Assignment Data Posted!", req.body.data);
   // ANCHOR
   let assignmentData = req.body.data;
-  console.log(req.body.data);
 
   Model.courseDetails.findOne(
     {
