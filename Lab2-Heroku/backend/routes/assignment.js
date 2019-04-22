@@ -53,13 +53,11 @@ router.post("/", function(req, res) {
         } else {
           if (user) {
             var id = mongoose.Types.ObjectId();
-            //assignmentData["assignmentId"] = id;
+            assignmentData["assignmentId"] = id;
             delete assignmentData["courseId"];
             delete assignmentData["persona"];
-            user.assignments[id] = [];
-            user.assignments[id].push(assignmentData);
-            user.markModified("assignments"); // NOTE Sometimes the mongo db does not get updated even on using user.save(). Mongo is not able to detect changes and thus doesnt save. Therefore we hard modify the db with markModified so that it will be saved
-            console.log("XXXXXXXXXX", user.assignments, id);
+            user.assignments.push(assignmentData);
+            //console.log("XXXXXXXXXX", user.assignments);
             user.save().then(
               doc => {
                 console.log("New details added to this course assignments", doc);
@@ -97,20 +95,23 @@ router.post("/", function(req, res) {
           res.status(400).send("Unable to save assignment details.");
         } else {
           if (user) {
-            let currentAssignmentId = assignmentData.document.assignmentId;
-            if (user.assignments[currentAssignmentId].submissions !== undefined) {
-              if (user.assignments[currentAssignmentId].submissions[assignmentData.email] == undefined) {
-                user.assignments[currentAssignmentId].submissions[assignmentData.email] = [];
-                user.assignments[currentAssignmentId].submissions[assignmentData.email].push(assignmentData.document.file);
-              } else {
-                user.assignments[currentAssignmentId].submissions[assignmentData.email].push(assignmentData.document.file);
+            for (var i = 0; i < user.assignments.length; i++) {
+              if (user.assignments[i].assignmentId == assignmentData.document.assignmentId) {
+                if (user.assignments[i].submissions !== undefined) {
+                  if (user.assignments[i].submissions[assignmentData.email] == undefined) {
+                    user.assignments[i].submissions[assignmentData.email] = [];
+                    user.assignments[i].submissions[assignmentData.email].push(assignmentData.document.file);
+                  } else {
+                    user.assignments[i].submissions[assignmentData.email].push(assignmentData.document.file);
+                  }
+                } else {
+                  user.assignments[i].submissions = {};
+                  user.assignments[i].submissions[assignmentData.email] = [];
+                  user.assignments[i].submissions[assignmentData.email].push(assignmentData.document.file);
+                }
               }
-            } else {
-              user.assignments[currentAssignmentId].submissions = {};
-              user.assignments[currentAssignmentId].submissions[assignmentData.email] = [];
-              user.assignments[currentAssignmentId].submissions[assignmentData.email].push(assignmentData.document.file);
             }
-
+            console.log("QQQQQQQQQQQQQQQQQ", user.assignments[1]);
             user.markModified("assignments"); // NOTE Sometimes the mongo db does not get updated even on using user.save(). Mongo is not able to detect changes and thus doesnt save. Therefore we hard modify the db with markModified so that it will be saved
             user.save().then(
               doc => {

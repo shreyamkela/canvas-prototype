@@ -48,7 +48,7 @@ var courseDetails = mongoose.model("courseDetails", {
   waitlistUsed: Number,
   announcements: Array,
   files: Array,
-  assignments: JSON,
+  assignments: Array,
   quizzes: Array,
   enrolledStudents: Array,
   waitlistedStudents: Array
