@@ -44,7 +44,7 @@ class Assignment extends Component {
   };
 
   handleOk = async e => {
-    let { currentCourseDataToComponent } = this.props;
+    let { loginRequest, currentCourseDataToComponent } = this.props;
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.preventDefault(); // dont do default - default is submitting the data to the database
@@ -59,6 +59,7 @@ class Assignment extends Component {
         this.refs.points.value *= -1;
       }
       let data = {
+        persona: loginRequest.persona,
         desc: this.refs.desc.value,
         title: this.refs.title.value,
         courseId: currentCourseDataToComponent.currentCourse.courseId,
@@ -107,11 +108,12 @@ class Assignment extends Component {
     }
   };
 
-  handleSubmit = async key => {
-    if (this.state.document != "") {
+  handleSubmit = async id => {
+    if (this.state.document != "" && this.state.document["assignmentId"] == id) {
       const { loginRequest, currentCourseDataToComponent } = this.props;
       const data = {
         email: loginRequest.email,
+        persona: loginRequest.persona,
         courseId: currentCourseDataToComponent.currentCourse.courseId,
         document: this.state.document
       };
@@ -121,14 +123,15 @@ class Assignment extends Component {
         message.success("Uploaded successfully!");
       } catch (error) {
         console.log(error.response);
+        message.error("Unable to upload file!");
       }
     } else {
-      message.error("Please select a file to upload!");
+      message.error("Please select a file for this assignment!");
     }
   };
 
-  handleSelectFile = key => {
-    this.setState({ document: "my file" });
+  handleSelectFile = id => {
+    this.setState({ document: { file: "my file", assignmentId: id } });
   };
 
   onDocumentLoadSuccess = ({ numPages }) => {
@@ -256,7 +259,7 @@ class Assignment extends Component {
                             type="button"
                             className="btn btn-primary btn-sm m-2"
                             onClick={() => {
-                              this.handleSelectFile(key);
+                              this.handleSelectFile(allAssignments[key].assignmentId);
                               // this.handleSubmit(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
                             }}
                           >
@@ -266,7 +269,7 @@ class Assignment extends Component {
                             type="button"
                             className="btn btn-success btn-sm m-2"
                             onClick={() => {
-                              this.handleSubmit(key);
+                              this.handleSubmit(allAssignments[key].assignmentId);
                               // this.handleSubmit(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
                             }}
                           >
