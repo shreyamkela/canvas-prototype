@@ -110,25 +110,40 @@ class Assignment extends Component {
     }
   };
 
-  handleSubmit = async id => {
-    if (this.state.document != "" && this.state.document["assignmentId"] == id) {
-      const { loginRequest, currentCourseDataToComponent } = this.props;
-      const data = {
-        email: loginRequest.email,
-        persona: loginRequest.persona,
-        courseId: currentCourseDataToComponent.currentCourse.courseId,
-        document: this.state.document
-      };
+  handleSubmit = async (id, dueBy) => {
+    // Checking whether the student is trying to submit past the due date
 
-      try {
-        let response = await API.post("assignment", { data });
-        message.success("Uploaded successfully!");
-      } catch (error) {
-        console.log(error.response);
-        message.error("Unable to upload file!");
+    var d = new Date();
+    var month = "" + (d.getMonth() + 1);
+    var day = "" + d.getDate();
+    var year = d.getFullYear();
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+    var todayDate = [year, month, day].join("-");
+    //console.log("RRRRRRRRRRRRRRRRRRRR", todayDate, dueBy);
+
+    if (dueBy >= todayDate) {
+      if (this.state.document != "" && this.state.document["assignmentId"] == id) {
+        const { loginRequest, currentCourseDataToComponent } = this.props;
+        const data = {
+          email: loginRequest.email,
+          persona: loginRequest.persona,
+          courseId: currentCourseDataToComponent.currentCourse.courseId,
+          document: this.state.document
+        };
+
+        try {
+          let response = await API.post("assignment", { data });
+          message.success("Uploaded successfully!");
+        } catch (error) {
+          console.log(error.response);
+          message.error("Unable to upload file!");
+        }
+      } else {
+        message.error("Please select a file for this assignment!");
       }
     } else {
-      message.error("Please select a file for this assignment!");
+      message.error("Cannot submit assignment past its due date!");
     }
   };
 
@@ -291,7 +306,7 @@ class Assignment extends Component {
                             type="button"
                             className="btn btn-success btn-sm m-2"
                             onClick={() => {
-                              this.handleSubmit(allAssignments[key].assignmentId);
+                              this.handleSubmit(allAssignments[key].assignmentId, allAssignments[key].dueBy);
                               // this.handleSubmit(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
                             }}
                           >
@@ -349,8 +364,6 @@ class Assignment extends Component {
         </Button>
       );
     }
-
-    console.log("XXXXXXXXXXXXXXX", this.state.viewSubmissions["vader@sjsu.edu"]);
 
     return (
       <React.Fragment>
