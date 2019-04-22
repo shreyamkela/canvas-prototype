@@ -17,14 +17,17 @@ router.get("/", function(req, res) {
     (err, user) => {
       if (err) {
         console.log("Unable to fetch course", err);
+        res.status(400).send();
       } else {
         if (user) {
-          if (assignmentData.persona == 2) {
-            for (key in results) {
-              res.status(200).sendFile(__dirname + `${user.assignments[key].Path}`);
+          for (var i = 0; i < user.assignments.length; i++) {
+            if (user.assignments[i].assignmentId == assignmentData.assignmentId) {
+              if (assignmentData.persona == 2) {
+                res.status(200).send(user.assignments[i].submissions[assignmentData.email]);
+              } else if (assignmentData.persona == 1) {
+                res.status(200).send(user.assignments[i].submissions);
+              }
             }
-          } else if (assignmentData.persona == 1) {
-            res.status(200).sendFile(__dirname + `${user.assignments[0].Path}`);
           }
         } else {
           console.log("Unable to fetch course", err);
@@ -111,7 +114,6 @@ router.post("/", function(req, res) {
                 }
               }
             }
-            console.log("QQQQQQQQQQQQQQQQQ", user.assignments[1]);
             user.markModified("assignments"); // NOTE Sometimes the mongo db does not get updated even on using user.save(). Mongo is not able to detect changes and thus doesnt save. Therefore we hard modify the db with markModified so that it will be saved
             user.save().then(
               doc => {

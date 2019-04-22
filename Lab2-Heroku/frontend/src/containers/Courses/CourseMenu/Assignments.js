@@ -16,6 +16,7 @@ class Assignment extends Component {
     message: "",
     assignments: "",
     viewSubmissions: "",
+    viewSubmissionsKey: "",
     fileList: "",
     document: "",
     numPages: null,
@@ -91,20 +92,21 @@ class Assignment extends Component {
   };
 
   // ANCHOR 1
-  handleViewSubmissions = async key => {
+  handleViewSubmissions = async id => {
     const { loginRequest, currentCourseDataToComponent } = this.props;
     const data = {
       email: loginRequest.email,
       persona: loginRequest.persona,
-      courseId: currentCourseDataToComponent.currentCourse.Id,
-      name: this.state.assignments[key].name
+      courseId: currentCourseDataToComponent.currentCourse.courseId,
+      assignmentId: id
     };
 
     try {
       let response = await API.get("assignment", { params: data });
-      this.setState({ viewSubmissions: response.data });
+      this.setState({ viewSubmissions: response.data, viewSubmissionsKey: id });
     } catch (error) {
       console.log(error.response);
+      message.error("Unable to view submissions!");
     }
   };
 
@@ -131,7 +133,7 @@ class Assignment extends Component {
   };
 
   handleSelectFile = id => {
-    this.setState({ document: { file: "my file", assignmentId: id } });
+    this.setState({ document: { file: "file", assignmentId: id } });
   };
 
   onDocumentLoadSuccess = ({ numPages }) => {
@@ -209,21 +211,41 @@ class Assignment extends Component {
     const { validated } = this.state; // form validations
     const { loginRequest } = this.props;
 
-    let allSubmissions = null;
+    let viewSubmissions = null;
+    if (loginRequest.persona == "1") {
+      viewSubmissions = (
+        <React.Fragment>
+          <br />
+          {Object.keys(this.state.viewSubmissions).map(key => (
+            <div>
+              <h6>{key}</h6>
+              <div style={{ marginLeft: 40 }}>
+                <Link to="#" onCLick={this.handleViewDocument(key)}>
+                  <font size="4">{this.state.viewSubmissions[key][this.state.viewSubmissions[key].length - 1]}</font>
+                  <br />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </React.Fragment>
+      );
+    } else if (loginRequest.persona == "2") {
+      viewSubmissions = (
+        <React.Fragment>
+          <br />
+          {Object.keys(this.state.viewSubmissions)
+            .reverse()
+            .map(key => (
+              <Link to="#" onCLick={this.handleViewDocument(key)}>
+                <font size="4">{this.state.viewSubmissions[key]}</font>
+                <br />
+              </Link>
+            ))}
+        </React.Fragment>
+      );
+    }
 
-    // allSubmissions = (
-    //   <React.Fragment>
-    //     {Object.keys(this.state.assignments).map(key => (
-    //       <Link to="#" onCLick={this.handleViewDocument(key)}>
-    //         <font size="4">{this.state.viewSubmissions[key].name}</font>
-    //       </Link>
-    //     ))}
-    //   </React.Fragment>
-    // );
-
-    // ANCHOR 2
     let assignmentPresent = null;
-    // ANCHOR 1
     if (this.state.assignments === "noAssignments" || this.state.assignments === "" || this.state.assignments.length == 0) {
       assignmentPresent = (
         <div className="px-4 my-4" style={{ textAlign: "center" }}>
@@ -236,7 +258,6 @@ class Assignment extends Component {
       // there is something other than noAssignments
 
       let allAssignments = this.state.assignments;
-      console.log("XXXXXXXXXXXXXXX", allAssignments);
       allAssignments = this.reverseObject(allAssignments);
       assignmentPresent = (
         <React.Fragment>
@@ -281,7 +302,7 @@ class Assignment extends Component {
                       {/* View submissions button - Only for faculty */}
                     </div>
                   </div>
-                  {allSubmissions}
+
                   <p className="card-text" style={{ textAlign: "left" }}>
                     {allAssignments[key].desc}
                   </p>
@@ -299,11 +320,15 @@ class Assignment extends Component {
                       type="button"
                       className="btn btn-primary btn-sm"
                       onClick={() => {
-                        this.handleViewSubmissions(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
+                        this.handleViewSubmissions(allAssignments[key].assignmentId); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
                       }}
                     >
                       View Submissions
                     </button>
+                  </div>
+                  <div style={{ textAlign: "left" }}>
+                    {/* View submissions for this assignment card only - using a state viewSubmissionsKey */}
+                    {allAssignments[key].assignmentId == this.state.viewSubmissionsKey ? viewSubmissions : null}
                   </div>
                 </div>
               </div>
@@ -324,6 +349,8 @@ class Assignment extends Component {
         </Button>
       );
     }
+
+    console.log("XXXXXXXXXXXXXXX", this.state.viewSubmissions["vader@sjsu.edu"]);
 
     return (
       <React.Fragment>
