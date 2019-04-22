@@ -173,7 +173,7 @@ class Assignment extends Component {
   // ANCHOR 2
 
   reverseObject = Obj => {
-    // To reverse the allAnnouncements object
+    // To reverse the allAssignments object
     var TempArr = [];
     var NewObj = [];
     for (var Key in Obj) {
@@ -261,15 +261,20 @@ class Assignment extends Component {
                         Submit
                       </a> */}
                       {submitButton}
-                      <button
-                        type="button"
-                        className="btn btn-success btn-sm m-2"
-                        onClick={() => {
-                          this.handleViewSubmissions(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
-                        }}
-                      >
-                        View Submissions
-                      </button>
+                      {loginRequest.persona == 1 ? (
+                        // If persona is of a faculty then only show the view submissions button
+                        <React.Fragment>
+                          <button
+                            type="button"
+                            className="btn btn-success btn-sm m-2"
+                            onClick={() => {
+                              this.handleViewSubmissions(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
+                            }}
+                          >
+                            View Submissions
+                          </button>
+                        </React.Fragment>
+                      ) : null}
                     </div>
                   </div>
                   {allSubmissions}
