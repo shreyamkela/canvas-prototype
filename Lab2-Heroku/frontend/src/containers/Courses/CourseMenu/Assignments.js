@@ -108,20 +108,27 @@ class Assignment extends Component {
   };
 
   handleSubmit = async key => {
-    const { loginRequest, currentCourseDataToComponent } = this.props;
+    if (this.state.document != "") {
+      const { loginRequest, currentCourseDataToComponent } = this.props;
+      const data = {
+        email: loginRequest.email,
+        courseId: currentCourseDataToComponent.currentCourse.courseId,
+        document: this.state.document
+      };
 
-    const data = {
-      email: loginRequest.email,
-      courseId: currentCourseDataToComponent.currentCourse.Id,
-      document: this.state.document
-    };
-
-    try {
-      let response = await API.get("assignment", { params: data });
-      this.setState({ viewSubmissions: response.data });
-    } catch (error) {
-      console.log(error.response);
+      try {
+        let response = await API.post("assignment", { data });
+        message.success("Uploaded successfully!");
+      } catch (error) {
+        console.log(error.response);
+      }
+    } else {
+      message.error("Please select a file to upload!");
     }
+  };
+
+  handleSelectFile = key => {
+    this.setState({ document: "my file" });
   };
 
   onDocumentLoadSuccess = ({ numPages }) => {
@@ -199,24 +206,6 @@ class Assignment extends Component {
     const { validated } = this.state; // form validations
     const { loginRequest } = this.props;
 
-    // ANCHOR 1
-
-    let submitButton = null;
-    if (loginRequest.persona == 2) {
-      submitButton = (
-        <button
-          type="button"
-          className="btn btn-success btn-sm m-2"
-          onClick={() => {
-            this.handleSubmit();
-            // this.handleSubmit(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
-          }}
-        >
-          Submit
-        </button>
-      );
-    }
-
     let allSubmissions = null;
 
     // allSubmissions = (
@@ -260,21 +249,32 @@ class Assignment extends Component {
                       {/* <a href="#" className="btn btn-success">
                         Submit
                       </a> */}
-                      {submitButton}
-                      {loginRequest.persona == 1 ? (
-                        // If persona is of a faculty then only show the view submissions button
+                      {/* Submit assignment button - Only for student */}
+                      {loginRequest.persona == 2 ? (
                         <React.Fragment>
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-sm m-2"
+                            onClick={() => {
+                              this.handleSelectFile(key);
+                              // this.handleSubmit(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
+                            }}
+                          >
+                            Select file
+                          </button>
                           <button
                             type="button"
                             className="btn btn-success btn-sm m-2"
                             onClick={() => {
-                              this.handleViewSubmissions(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
+                              this.handleSubmit(key);
+                              // this.handleSubmit(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
                             }}
                           >
-                            View Submissions
+                            Submit
                           </button>
                         </React.Fragment>
                       ) : null}
+                      {/* View submissions button - Only for faculty */}
                     </div>
                   </div>
                   {allSubmissions}
@@ -289,6 +289,17 @@ class Assignment extends Component {
                     <p className="card-text mx-4">
                       <b>Points: {allAssignments[key].points}</b>
                     </p>
+                  </div>
+                  <div style={{ textAlign: "left" }}>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={() => {
+                        this.handleViewSubmissions(key); // This is how we can pass a variable with onCLick in react. Ifwe dont use the () => then this.handleEnroll becomes a normal function and it will be called as soon a this button is rendered. It wount wait for the click
+                      }}
+                    >
+                      View Submissions
+                    </button>
                   </div>
                 </div>
               </div>
