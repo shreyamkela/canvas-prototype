@@ -39,7 +39,6 @@ export const postLoginData = data => dispatch => {
     data
   })
     .then(response => {
-      console.log("XXXXXXXXXXXXXXXXXXXXXXXXX", response);
       // FIXME when we open login page, we can only login after 8-10 seconds of application being left idle on the login page, even when all credentials are correct. Why is this happening? Why can't we login as soon as the application login loads?
       dispatch({
         type: LOGIN_REQUEST, // Sending type in action dispatches is mandatory

@@ -15,14 +15,14 @@ router.get("/", function(req, res) {
     (err, user) => {
       if (err) {
         console.log("Unable to fetch assignments detail.", err);
+        res.status(400).send("Unable to fetch assignments detail.");
       } else {
         if (user) {
           console.log("Assignments detail: ", user);
-          for (key in user) {
-            res.status(200).sendFile(__dirname + `${user[key].Path}`);
-          }
+          res.status(200).send(user.assignments);
         } else {
-          res.status(400).send();
+          console.log("Unable to fetch assignments detail.");
+          res.status(400).send("Unable to fetch assignments detail.");
         }
       }
     }

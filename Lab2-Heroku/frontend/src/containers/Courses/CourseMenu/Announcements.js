@@ -131,7 +131,6 @@ class Announcements extends Component {
         {redirectVal}
         <div style={{ textAlign: "right", marginRight: 20 }}>
           <div>{announcementButton}</div>
-
           <div>{announcementPresent}</div>
           <Modal title="Make an announcement:" visible={this.state.visible} onOk={e => this.handleOk(e)} onCancel={this.handleCancel}>
             <Form noValidate validated={validated}>

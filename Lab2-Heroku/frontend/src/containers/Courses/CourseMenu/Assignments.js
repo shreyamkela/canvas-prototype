@@ -25,6 +25,18 @@ class Assignment extends Component {
     error: ""
   };
 
+  async componentDidMount() {
+    const { currentCourseDataToComponent } = this.props; // redux state to props
+    const data = { courseId: currentCourseDataToComponent.currentCourse.courseId };
+
+    try {
+      let response = await API.get("allassignments", { params: data });
+      this.setState({ assignments: response.data });
+    } catch (error) {
+      console.log(error.response);
+    }
+  }
+
   showModal = () => {
     this.setState({
       visible: true
@@ -55,7 +67,7 @@ class Assignment extends Component {
       };
       try {
         let response = await API.post("assignment", { data });
-        this.setState({ visible: false, redirect: true, message: `Creation successful!`, error: "" });
+        this.setState({ redirect: true, message: `Creation successful!`, error: "" });
       } catch (error) {
         console.log(error.response);
         this.setState({ message: "", error: "Unable to create assignment!" });
@@ -117,28 +129,27 @@ class Assignment extends Component {
   };
 
   handleViewDocument = key => {
-    const { pageNumber, numPages } = this.state;
-
-    let viewDocument = (
-      <div>
-        <Document file={this.viewSubmissions[key]} onLoadSuccess={this.onDocumentLoadSuccess}>
-          <Page pageNumber={pageNumber} />
-        </Document>
-        <p>
-          Page {pageNumber} of {numPages}
-        </p>
-        <div style={{ width: 300, height: "110vh", position: "fixed", right: 0 }}>
-          <div className="p-4">
-            <h4>Grade</h4>
-            <input type="number" value="Enter grade" />
-            <Button className="shadow" type="primary" onClick={this.handleGradeSubmit}>
-              Submit
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-    this.setState({ viewDocument });
+    // const { pageNumber, numPages } = this.state;
+    // let viewDocument = (
+    //   <div>
+    //     <Document file={this.viewSubmissions[key]} onLoadSuccess={this.onDocumentLoadSuccess}>
+    //       <Page pageNumber={pageNumber} />
+    //     </Document>
+    //     <p>
+    //       Page {pageNumber} of {numPages}
+    //     </p>
+    //     <div style={{ width: 300, height: "110vh", position: "fixed", right: 0 }}>
+    //       <div className="p-4">
+    //         <h4>Grade</h4>
+    //         <input type="number" value="Enter grade" />
+    //         <Button className="shadow" type="primary" onClick={this.handleGradeSubmit}>
+    //           Submit
+    //         </Button>
+    //       </div>
+    //     </div>
+    //   </div>
+    // );
+    // this.setState({ viewDocument });
   };
 
   handleGradeSubmit = async e => {
@@ -161,18 +172,18 @@ class Assignment extends Component {
 
   // ANCHOR 2
 
-  // reverseObject = Obj => {
-  //   // To reverse the allAnnouncements object
-  //   var TempArr = [];
-  //   var NewObj = [];
-  //   for (var Key in Obj) {
-  //     TempArr.push(Key);
-  //   }
-  //   for (var i = 0; i < TempArr.length; i++) {
-  //     NewObj[TempArr.length - 1 - i] = Obj[i];
-  //   }
-  //   return NewObj;
-  // };
+  reverseObject = Obj => {
+    // To reverse the allAnnouncements object
+    var TempArr = [];
+    var NewObj = [];
+    for (var Key in Obj) {
+      TempArr.push(Key);
+    }
+    for (var i = 0; i < TempArr.length; i++) {
+      NewObj[TempArr.length - 1 - i] = Obj[i];
+    }
+    return NewObj;
+  };
 
   disabledDate = current => {
     // Can not select days before today and today
@@ -208,39 +219,43 @@ class Assignment extends Component {
 
     let allSubmissions = null;
 
-    allSubmissions = (
-      <React.Fragment>
-        {Object.keys(this.state.assignments).map(key => (
-          <Link to="#" onCLick={this.handleViewDocument(key)}>
-            <font size="4">{this.state.viewSubmissions[key].name}</font>
-          </Link>
-        ))}
-      </React.Fragment>
-    );
+    // allSubmissions = (
+    //   <React.Fragment>
+    //     {Object.keys(this.state.assignments).map(key => (
+    //       <Link to="#" onCLick={this.handleViewDocument(key)}>
+    //         <font size="4">{this.state.viewSubmissions[key].name}</font>
+    //       </Link>
+    //     ))}
+    //   </React.Fragment>
+    // );
 
     // ANCHOR 2
     let assignmentPresent = null;
     // ANCHOR 1
-    if (this.state.assignments === "noAssignments") {
+    if (this.state.assignments === "noAssignments" || this.state.assignments === "") {
       assignmentPresent = (
-        <font className="font-weight-bold" size="3">
-          No assignments available{/**If no assignments present */}
-        </font>
+        <div className="px-4 my-4" style={{ textAlign: "center" }}>
+          <font className="font-weight-bold" size="3">
+            No assignments available{/**If no assignments present */}
+          </font>
+        </div>
       );
     } else if (this.state.assignments.length > 0) {
       // there is something other than noAssignments
+
+      let allAssignments = this.state.assignments;
+      allAssignments = this.reverseObject(allAssignments);
       assignmentPresent = (
         <React.Fragment>
-          {Object.keys(this.state.assignments).map(key => (
-            <div key={key}>
+          {Object.keys(allAssignments).map(key => (
+            <div key={key} style={{ marginLeft: 150 }}>
               <div className="card" style={{ width: 600 }}>
                 <div className="card-body">
                   <div className="row">
-                    <div className="col-sm">
-                      <h5 className="card-title">{this.state.assignments[key].Name}</h5>
+                    <div className="col-sm" style={{ textAlign: "left" }}>
+                      <h5 className="card-title">{allAssignments[key].title}</h5>
                     </div>
                     <div className="col-sm" style={{ textAlign: "right" }}>
-                      {/* FIXME Make course as link and open in new page. And there show the submit button view past submissions */}
                       {/* NOTE by specifiying className as button you can make links with <a> tag as a button in bootstrap */}
                       {/* <a href="#" className="btn btn-success">
                         Submit
@@ -258,15 +273,18 @@ class Assignment extends Component {
                     </div>
                   </div>
                   {allSubmissions}
+                  <p className="card-text" style={{ textAlign: "left" }}>
+                    {allAssignments[key].desc}
+                  </p>
+
                   <div className="row" style={{ marginLeft: 1 }}>
                     <p className="card-text mr-4">
-                      <b>Due by: {this.state.assignments[key].DueBy}</b>
+                      <b>Due by: {allAssignments[key].dueBy}</b>
                     </p>
                     <p className="card-text mx-4">
-                      <b>Points: {this.state.assignments[key].Points}</b>
+                      <b>Points: {allAssignments[key].points}</b>
                     </p>
                   </div>
-                  <p className="card-text">{this.state.assignments[key].Description}</p>
                 </div>
               </div>
               <br />
@@ -291,6 +309,8 @@ class Assignment extends Component {
       <React.Fragment>
         <div style={{ textAlign: "right", marginRight: 20 }}>
           <div>{assignmentButton}</div>
+          <br />
+          <br />
           <div>{assignmentPresent}</div>
           <Modal title="Upload an assignment:" visible={this.state.visible} onOk={e => this.handleOk(e)} onCancel={this.handleCancel}>
             <Form noValidate validated={validated}>

@@ -37,10 +37,10 @@ router.post("/", function(req, res) {
             term: courseData.term,
             capacityUsed: 0,
             waitlistUsed: 0,
-            announcements: {},
-            files: {},
-            assignments: {},
-            quizzes: {},
+            announcements: [],
+            files: [],
+            assignments: [],
+            quizzes: [],
             enrolledStudents: [],
             waitlistedStudents: []
           });
