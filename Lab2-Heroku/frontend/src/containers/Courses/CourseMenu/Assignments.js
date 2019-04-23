@@ -27,7 +27,8 @@ class Assignment extends Component {
     fileList: "",
     document: "",
     numPages: null,
-    pageNumber: 1
+    pageNumber: 1,
+    currentAssignmentStudentEmail: ""
   };
 
   async componentDidMount() {
@@ -163,7 +164,6 @@ class Assignment extends Component {
 
   handleViewDocument = key => {
     let grade = null;
-    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXx", key);
     const { loginRequest } = this.props;
     if (loginRequest.persona == "1") {
       grade = (
@@ -209,7 +209,7 @@ class Assignment extends Component {
         <iframe title="file" style={{ width: "100%", height: 500 }} src="http://localhost:3000/lab2.pdf" />
       </React.Fragment>
     );
-    this.setState({ viewDocument: viewDocument });
+    this.setState({ viewDocument: viewDocument, currentAssignmentStudentEmail: key });
   };
 
   handleGradeSubmit = async e => {
@@ -217,21 +217,23 @@ class Assignment extends Component {
     if (e) e.preventDefault();
 
     const { loginRequest, currentCourseDataToComponent } = this.props;
-    console.log("MMMMMMMMMMMMMMMMMMMMMMMMM", e, this.input.value);
+    console.log("CCCCCCCCCCCCCCCCCCCccccc", this.input.value, this.state.viewSubmissionsKey, this.state.currentAssignmentStudentEmail);
+    const data = {
+      studentEmail: this.state.currentAssignmentStudentEmail,
+      courseId: currentCourseDataToComponent.currentCourse.courseId,
+      assignmentId: this.state.viewSubmissionsKey,
+      grade: Math.abs(this.input.value),
+      type: 1
+      // Type 1 is for assignment and type 2 is for quiz
+    };
 
-    // const data = {
-    //   email: loginRequest.email,
-    //   courseId: currentCourseDataToComponent.currentCourse.Id,
-    //   name: this.state.assignments[e.target.id],
-    //   grade: e.target.value,
-    //   type: 1
-    // };
-
-    // try {
-    //   let response = await API.post("grade", { data });
-    // } catch (error) {
-    //   console.log(error.response);
-    // }
+    try {
+      let response = await API.post("grade", { data });
+      message.success("Assignment graded!");
+    } catch (error) {
+      console.log(error.response);
+      message.error("Unable to grade the assignment!");
+    }
   };
 
   // ANCHOR 2
