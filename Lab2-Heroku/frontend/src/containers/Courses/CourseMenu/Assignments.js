@@ -295,6 +295,13 @@ class Assignment extends Component {
     this.setState({ dueBy: dateString, error: "" });
   };
 
+  handleUpload = e => {
+    console.log(e.target.files[0]);
+    S3FileUpload.uploadFile(e.target.files[0], config)
+      .then(data => console.log(data))
+      .catch(err => console.error(err));
+  };
+
   render() {
     const { validated } = this.state; // form validations
     const { loginRequest } = this.props;
@@ -326,7 +333,6 @@ class Assignment extends Component {
         </React.Fragment>
       );
     } else if (loginRequest.persona == "2") {
-      console.log("YYYYYYYYYYYYYYYYYYYYYYYYYY", typeof this.state.viewSubmissions[0]);
       viewSubmissions = (
         <React.Fragment>
           <br />
@@ -496,6 +502,7 @@ class Assignment extends Component {
 
     return (
       <React.Fragment>
+        <input type="file" onChange={this.handleUpload} />
         <div>{this.state.viewDocument}</div>
         <div>{viewAssignments}</div>
       </React.Fragment>
