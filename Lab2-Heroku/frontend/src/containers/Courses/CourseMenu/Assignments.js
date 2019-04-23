@@ -1,12 +1,15 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"; // Connects the components to the redux store
 import { Link } from "react-router-dom";
-import { Document, Page } from "react-pdf";
+import { Document, Page, pdfjs } from "react-pdf";
 
 import { Button, Modal, DatePicker, message } from "antd";
 import moment from "moment";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
 import API from "../../../_helpers/API";
+
+// To resolve error of pdf.worker.js
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 class Assignment extends Component {
   state = {
@@ -17,24 +20,26 @@ class Assignment extends Component {
     assignments: "",
     viewSubmissions: "",
     viewSubmissionsKey: "",
+    viewDocument: "",
+    dueBy: "",
+    error: "",
     fileList: "",
     document: "",
     numPages: null,
-    pageNumber: 1,
-    viewDocument: "",
-    dueBy: "",
-    error: ""
+    pageNumber: 1
   };
 
   async componentDidMount() {
-    const { currentCourseDataToComponent } = this.props; // redux state to props
-    const data = { courseId: currentCourseDataToComponent.currentCourse.courseId };
+    if (this.state.viewDocument === "") {
+      const { currentCourseDataToComponent } = this.props; // redux state to props
+      const data = { courseId: currentCourseDataToComponent.currentCourse.courseId };
 
-    try {
-      let response = await API.get("allassignments", { params: data });
-      this.setState({ assignments: response.data });
-    } catch (error) {
-      console.log(error.response);
+      try {
+        let response = await API.get("allassignments", { params: data });
+        this.setState({ assignments: response.data });
+      } catch (error) {
+        console.log(error.response);
+      }
     }
   }
 
@@ -151,21 +156,29 @@ class Assignment extends Component {
     this.setState({ document: { file: "file", assignmentId: id } });
   };
 
-  onDocumentLoadSuccess = ({ numPages }) => {
-    this.setState({ numPages });
-  };
+  // onDocumentLoadSuccess = ({ numPages }) => {
+  //   this.setState({ numPages });
+  // };
 
   handleViewDocument = key => {
+    console.log("GGGGGGGGGGGGGGGGGGGGGGGGg");
+    let viewDocument = (
+      <React.Fragment>
+        <iframe title="file" style={{ width: "100%", height: "100%" }} src="http://localhost:3000/lab2.pdf" />
+      </React.Fragment>
+    );
+    this.setState({ viewDocument: viewDocument });
+
     // const { pageNumber, numPages } = this.state;
     // let viewDocument = (
     //   <div>
-    //     <Document file={this.viewSubmissions[key]} onLoadSuccess={this.onDocumentLoadSuccess}>
+    //     <Document file="http://localhost:3000/lab2.pdf" onLoadSuccess={this.onDocumentLoadSuccess}>
     //       <Page pageNumber={pageNumber} />
     //     </Document>
     //     <p>
     //       Page {pageNumber} of {numPages}
     //     </p>
-    //     <div style={{ width: 300, height: "110vh", position: "fixed", right: 0 }}>
+    //     {/* <div style={{ width: 300, height: "110vh", position: "fixed", right: 0 }}>
     //       <div className="p-4">
     //         <h4>Grade</h4>
     //         <input type="number" value="Enter grade" />
@@ -173,7 +186,7 @@ class Assignment extends Component {
     //           Submit
     //         </Button>
     //       </div>
-    //     </div>
+    //     </div> */}
     //   </div>
     // );
     // this.setState({ viewDocument });
@@ -227,6 +240,7 @@ class Assignment extends Component {
     const { loginRequest } = this.props;
 
     let viewSubmissions = null;
+
     if (loginRequest.persona == "1") {
       viewSubmissions = (
         <React.Fragment>
@@ -235,9 +249,14 @@ class Assignment extends Component {
             <div>
               <h6>{key}</h6>
               <div style={{ marginLeft: 40 }}>
-                <Link to="#" onCLick={this.handleViewDocument(key)}>
-                  <font size="4">{this.state.viewSubmissions[key][this.state.viewSubmissions[key].length - 1]}</font>
-                  <br />
+                {/* NOTE Write onCLick={() => {this.handleViewDocument(key)}} instead of onCLick={this.handleViewDocument(key)}. If we use onCLick={this.handleViewDocument(key)} then handleViewDocument will get called without any link click press*/}
+                <Link
+                  to="#"
+                  onClick={() => {
+                    this.handleViewDocument(key);
+                  }}
+                >
+                  {this.state.viewSubmissions[key][this.state.viewSubmissions[key].length - 1]}
                 </Link>
               </div>
             </div>
@@ -251,9 +270,13 @@ class Assignment extends Component {
           {Object.keys(this.state.viewSubmissions)
             .reverse()
             .map(key => (
-              <Link to="#" onCLick={this.handleViewDocument(key)}>
-                <font size="4">{this.state.viewSubmissions[key]}</font>
-                <br />
+              <Link
+                to="#"
+                onClick={() => {
+                  this.handleViewDocument(key);
+                }}
+              >
+                {this.state.viewSubmissions[key]}
               </Link>
             ))}
         </React.Fragment>
@@ -261,6 +284,7 @@ class Assignment extends Component {
     }
 
     let assignmentPresent = null;
+
     if (this.state.assignments === "noAssignments" || this.state.assignments === "" || this.state.assignments.length == 0) {
       assignmentPresent = (
         <div className="px-4 my-4" style={{ textAlign: "center" }}>
@@ -353,9 +377,9 @@ class Assignment extends Component {
         </React.Fragment>
       );
     }
-    // ANCHOR 2
 
     let assignmentButton = null;
+
     if (loginRequest.persona == "1") {
       // If persona is faculty then only show the button
       assignmentButton = (
@@ -367,6 +391,7 @@ class Assignment extends Component {
 
     return (
       <React.Fragment>
+        <div>{this.state.viewDocument}</div>
         <div style={{ textAlign: "right", marginRight: 20 }}>
           <div>{assignmentButton}</div>
           <br />
