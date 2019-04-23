@@ -3,13 +3,14 @@ import { connect } from "react-redux"; // Connects the components to the redux s
 import { Link } from "react-router-dom";
 import { Document, Page, pdfjs } from "react-pdf";
 
-import { Button, Modal, DatePicker, message } from "antd";
+import { Input, Button, Modal, DatePicker, message } from "antd";
 import moment from "moment";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
 import API from "../../../_helpers/API";
 
 // To resolve error of pdf.worker.js
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+const Search = Input.Search;
 
 class Assignment extends Component {
   state = {
@@ -161,53 +162,76 @@ class Assignment extends Component {
   // };
 
   handleViewDocument = key => {
-    console.log("GGGGGGGGGGGGGGGGGGGGGGGGg");
+    let grade = null;
+    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXx", key);
+    const { loginRequest } = this.props;
+    if (loginRequest.persona == "1") {
+      grade = (
+        <React.Fragment>
+          <br />
+          <div className="mx-4" style={{ width: 200 }}>
+            <form onSubmit={this.handleGradeSubmit}>
+              {/* https://stackoverflow.com/questions/28479239/setting-onsubmit-in-react-js */}
+              <font className="font-weight-bold" size="3">
+                Assign grade:
+              </font>
+              <table>
+                <tr>
+                  <th>
+                    <input
+                      type="number"
+                      name="grade"
+                      placeholder="Enter grade"
+                      ref={element => {
+                        this.input = element;
+                      }}
+                      required
+                    />
+                  </th>
+                  <th>
+                    <button className="btn btn-primary btn-sm mx-4">Submit</button>
+                  </th>
+                </tr>
+              </table>
+            </form>
+          </div>
+          <br />
+          <br />
+        </React.Fragment>
+      );
+    } else {
+      grade = <React.Fragment>Grade of this assignment:</React.Fragment>;
+    }
+
     let viewDocument = (
       <React.Fragment>
-        <iframe title="file" style={{ width: "100%", height: "100%" }} src="http://localhost:3000/lab2.pdf" />
+        <div>{grade}</div>
+        <iframe title="file" style={{ width: "100%", height: 500 }} src="http://localhost:3000/lab2.pdf" />
       </React.Fragment>
     );
     this.setState({ viewDocument: viewDocument });
-
-    // const { pageNumber, numPages } = this.state;
-    // let viewDocument = (
-    //   <div>
-    //     <Document file="http://localhost:3000/lab2.pdf" onLoadSuccess={this.onDocumentLoadSuccess}>
-    //       <Page pageNumber={pageNumber} />
-    //     </Document>
-    //     <p>
-    //       Page {pageNumber} of {numPages}
-    //     </p>
-    //     {/* <div style={{ width: 300, height: "110vh", position: "fixed", right: 0 }}>
-    //       <div className="p-4">
-    //         <h4>Grade</h4>
-    //         <input type="number" value="Enter grade" />
-    //         <Button className="shadow" type="primary" onClick={this.handleGradeSubmit}>
-    //           Submit
-    //         </Button>
-    //       </div>
-    //     </div> */}
-    //   </div>
-    // );
-    // this.setState({ viewDocument });
   };
 
   handleGradeSubmit = async e => {
+    // https://stackoverflow.com/questions/28479239/setting-onsubmit-in-react-js
+    if (e) e.preventDefault();
+
     const { loginRequest, currentCourseDataToComponent } = this.props;
+    console.log("MMMMMMMMMMMMMMMMMMMMMMMMM", e, this.input.value);
 
-    const data = {
-      email: loginRequest.email,
-      courseId: currentCourseDataToComponent.currentCourse.Id,
-      name: this.state.assignments[e.target.id],
-      grade: e.target.value,
-      type: 1
-    };
+    // const data = {
+    //   email: loginRequest.email,
+    //   courseId: currentCourseDataToComponent.currentCourse.Id,
+    //   name: this.state.assignments[e.target.id],
+    //   grade: e.target.value,
+    //   type: 1
+    // };
 
-    try {
-      let response = await API.post("grade", { data });
-    } catch (error) {
-      console.log(error.response);
-    }
+    // try {
+    //   let response = await API.post("grade", { data });
+    // } catch (error) {
+    //   console.log(error.response);
+    // }
   };
 
   // ANCHOR 2
@@ -245,22 +269,24 @@ class Assignment extends Component {
       viewSubmissions = (
         <React.Fragment>
           <br />
-          {Object.keys(this.state.viewSubmissions).map(key => (
-            <div>
-              <h6>{key}</h6>
-              <div style={{ marginLeft: 40 }}>
-                {/* NOTE Write onCLick={() => {this.handleViewDocument(key)}} instead of onCLick={this.handleViewDocument(key)}. If we use onCLick={this.handleViewDocument(key)} then handleViewDocument will get called without any link click press*/}
-                <Link
-                  to="#"
-                  onClick={() => {
-                    this.handleViewDocument(key);
-                  }}
-                >
-                  {this.state.viewSubmissions[key][this.state.viewSubmissions[key].length - 1]}
-                </Link>
+          {Object.keys(this.state.viewSubmissions)
+            .reverse()
+            .map(key => (
+              <div>
+                <h6>{key}</h6>
+                <div style={{ marginLeft: 40 }}>
+                  {/* NOTE Write onCLick={() => {this.handleViewDocument(key)}} instead of onCLick={this.handleViewDocument(key)}. If we use onCLick={this.handleViewDocument(key)} then handleViewDocument will get called without any link click press*/}
+                  <Link
+                    to="#"
+                    onClick={() => {
+                      this.handleViewDocument(key);
+                    }}
+                  >
+                    {this.state.viewSubmissions[key][this.state.viewSubmissions[key].length - 1]}
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </React.Fragment>
       );
     } else if (loginRequest.persona == "2") {
@@ -270,14 +296,17 @@ class Assignment extends Component {
           {Object.keys(this.state.viewSubmissions)
             .reverse()
             .map(key => (
-              <Link
-                to="#"
-                onClick={() => {
-                  this.handleViewDocument(key);
-                }}
-              >
-                {this.state.viewSubmissions[key]}
-              </Link>
+              <div>
+                <Link
+                  to="#"
+                  onClick={() => {
+                    this.handleViewDocument(key);
+                  }}
+                >
+                  {this.state.viewSubmissions[key]}
+                </Link>
+                <br />
+              </div>
             ))}
         </React.Fragment>
       );
@@ -389,9 +418,10 @@ class Assignment extends Component {
       );
     }
 
-    return (
-      <React.Fragment>
-        <div>{this.state.viewDocument}</div>
+    let viewAssignments = null;
+
+    if (this.state.viewDocument === "") {
+      viewAssignments = (
         <div style={{ textAlign: "right", marginRight: 20 }}>
           <div>{assignmentButton}</div>
           <br />
@@ -423,6 +453,13 @@ class Assignment extends Component {
             <div className="text-danger">{this.state.error}</div>
           </Modal>
         </div>
+      );
+    }
+
+    return (
+      <React.Fragment>
+        <div>{this.state.viewDocument}</div>
+        <div>{viewAssignments}</div>
       </React.Fragment>
     );
   }
