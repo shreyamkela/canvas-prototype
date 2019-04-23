@@ -29,7 +29,7 @@ var userDetails = mongoose.model("userDetails", {
   enrolledCourses: Array,
   waitlistedCourses: Array,
   permissionNumbers: Array,
-  grades: Array,
+  grades: JSON,
   messages: Array
 });
 

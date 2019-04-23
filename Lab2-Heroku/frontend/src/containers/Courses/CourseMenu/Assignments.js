@@ -2,11 +2,21 @@ import React, { Component } from "react";
 import { connect } from "react-redux"; // Connects the components to the redux store
 import { Link } from "react-router-dom";
 import { Document, Page, pdfjs } from "react-pdf";
+import S3FileUpload from "react-s3";
 
 import { Input, Button, Modal, DatePicker, message } from "antd";
 import moment from "moment";
 import { Form, Col } from "react-bootstrap"; // for the new user modal
 import API from "../../../_helpers/API";
+
+// AWS S3 bucket config
+const keys = require("../../../_keys/keys");
+const config = {
+  bucketName: "cmpe273-canvas-app",
+  region: "us-east-1",
+  accessKeyId: `${keys.accessKey}`,
+  secretAccessKey: `${keys.secretKey}`
+};
 
 // To resolve error of pdf.worker.js
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -164,8 +174,15 @@ class Assignment extends Component {
 
   handleViewDocument = key => {
     let grade = null;
+
     const { loginRequest } = this.props;
     if (loginRequest.persona == "1") {
+      let maxGrade = null;
+      for (var index in this.state.assignments) {
+        if (this.state.assignments[index].assignmentId === this.state.viewSubmissionsKey) {
+          maxGrade = this.state.assignments[index].points;
+        }
+      }
       grade = (
         <React.Fragment>
           <br />
@@ -188,6 +205,8 @@ class Assignment extends Component {
                       required
                     />
                   </th>
+                  <th> / </th>
+                  <th>{maxGrade}</th>
                   <th>
                     <button className="btn btn-primary btn-sm mx-4">Submit</button>
                   </th>
@@ -199,9 +218,11 @@ class Assignment extends Component {
           <br />
         </React.Fragment>
       );
-    } else {
-      grade = <React.Fragment>Grade of this assignment:</React.Fragment>;
     }
+    // FIXME Add functionality for the student to view "Grade of this assignment" when they open the document
+    // else {
+    //   grade = <React.Fragment>Grade of this assignment:<br/></React.Fragment>;
+    // }
 
     let viewDocument = (
       <React.Fragment>
@@ -215,24 +236,37 @@ class Assignment extends Component {
   handleGradeSubmit = async e => {
     // https://stackoverflow.com/questions/28479239/setting-onsubmit-in-react-js
     if (e) e.preventDefault();
+    let excessGrade = false;
+    for (var key in this.state.assignments) {
+      if (
+        this.state.assignments[key].assignmentId === this.state.viewSubmissionsKey &&
+        this.input.value > parseInt(this.state.assignments[key].points)
+      ) {
+        excessGrade = true;
+      }
+    }
+    if (this.input.value < 0) {
+      message.error("Grade cannot be negative!");
+    } else if (excessGrade) {
+      message.error("Maximum grade limit exceeded for this assignment!");
+    } else {
+      const { currentCourseDataToComponent } = this.props;
+      const data = {
+        studentEmail: this.state.currentAssignmentStudentEmail,
+        courseId: currentCourseDataToComponent.currentCourse.courseId,
+        assignmentId: this.state.viewSubmissionsKey,
+        grade: this.input.value,
+        type: 1
+        // Type 1 is for assignment and type 2 is for quiz
+      };
 
-    const { loginRequest, currentCourseDataToComponent } = this.props;
-    console.log("CCCCCCCCCCCCCCCCCCCccccc", this.input.value, this.state.viewSubmissionsKey, this.state.currentAssignmentStudentEmail);
-    const data = {
-      studentEmail: this.state.currentAssignmentStudentEmail,
-      courseId: currentCourseDataToComponent.currentCourse.courseId,
-      assignmentId: this.state.viewSubmissionsKey,
-      grade: Math.abs(this.input.value),
-      type: 1
-      // Type 1 is for assignment and type 2 is for quiz
-    };
-
-    try {
-      let response = await API.post("grade", { data });
-      message.success("Assignment graded!");
-    } catch (error) {
-      console.log(error.response);
-      message.error("Unable to grade the assignment!");
+      try {
+        await API.post("grade", { data });
+        message.success("Assignment graded!");
+      } catch (error) {
+        console.log(error.response);
+        message.error("Unable to grade the assignment!");
+      }
     }
   };
 
@@ -292,6 +326,7 @@ class Assignment extends Component {
         </React.Fragment>
       );
     } else if (loginRequest.persona == "2") {
+      console.log("YYYYYYYYYYYYYYYYYYYYYYYYYY", typeof this.state.viewSubmissions[0]);
       viewSubmissions = (
         <React.Fragment>
           <br />
@@ -305,7 +340,8 @@ class Assignment extends Component {
                     this.handleViewDocument(key);
                   }}
                 >
-                  {this.state.viewSubmissions[key]}
+                  {/* If this.state.viewSubmissions[key] is an object, the page will crash. this.state.viewSubmissions[key] should be a url string */}
+                  {typeof this.state.viewSubmissions[key] == "string" ? this.state.viewSubmissions[key] : null}
                 </Link>
                 <br />
               </div>
