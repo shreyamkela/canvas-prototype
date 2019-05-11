@@ -61,7 +61,7 @@ class Login extends Component {
       return <Redirect to="/home" />;
     } else {
       return (
-        <Layout style={{ height: "100%", width: "100%", background: "light-grey" }}>
+        <Layout style={{ height: "100%", width: "100%", background: "light-grey" }} >
           {/* If cookie name is null then redirectVar is /login, else it is null. If redirectVar is /login. the react router routes the page to login, without loading the divs below */}
           <div className="container shadow p-3 mb-5 bg-white rounded" style={{ marginTop: 100, width: 500 }}>
             <div className="login-form ">
@@ -126,7 +126,7 @@ class Login extends Component {
     }
   }
 }
-//
+
 function mapStateToProps(state) {
   const { loginRequest } = state;
   return { loginRequest };
