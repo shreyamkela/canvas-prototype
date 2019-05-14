@@ -1,75 +1,73 @@
 const graphql = require("graphql");
 var Model = require("../database/connection");
 var bcrypt = require("bcrypt-nodejs");
+const mongoose = require("mongoose");
 
 const { GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLID, GraphQLInt, GraphQLList, GraphQLBoolean, GraphQLDate } = graphql;
 
 const UserDetailsType = new GraphQLObjectType({
   name: "UserDetailsType",
   fields: () => ({
-    Email: {
+    email: {
       type: GraphQLString
     },
-    Password: {
+    password: {
       type: GraphQLString
     },
-    Persona: {
+    persona: {
       // Student or Faculty
       type: GraphQLString
     },
-    FirstName: {
+    firstName: {
       type: GraphQLString
     },
-    LastName: {
+    lastName: {
       type: GraphQLString
     },
-    AboutMe: {
+    aboutMe: {
       type: GraphQLString
     },
-    Gender: {
+    gender: {
       type: GraphQLString
     },
-    ContactNumber: {
+    contactNumber: {
       type: GraphQLString
     },
-    Country: {
+    country: {
       type: GraphQLString
     },
-    City: {
+    city: {
       type: GraphQLString
     },
-    Hometown: {
+    hometown: {
       type: GraphQLString
     },
-    School: {
+    school: {
       type: GraphQLString
     },
-    Company: {
+    company: {
       type: GraphQLString
     },
-    Languages: {
+    languages: {
       type: GraphQLList
     },
-    CreatedCourses: {
+    createdCourses: {
       // If it is a Faculty
       type: GraphQLList
     },
-    EnrolledCourses: {
+    enrolledCourses: {
       // If it is a student
       type: GraphQLList
     },
-    WaitlistedCourses: {
+    waitlistedCourses: {
       // If it is a student
       type: GraphQLList
     },
-    PermissionNumbers: {
+    permissionNumbers: {
       type: GraphQLList
     },
-    Grades: {
+    grades: {
       // If it is a student
-      type: GraphQLList
-    },
-    Messages: {
       type: GraphQLList
     }
   })
@@ -103,14 +101,6 @@ const LoginResponse = new GraphQLObjectType({
   fields: () => ({
     result: { type: GraphQLBoolean }, // Logged in or not
     userData: { type: UserDetailsType }
-  })
-});
-
-const SignupResponse = new GraphQLObjectType({
-  name: "SignupResponse",
-  fields: () => ({
-    success: { type: GraphQLBoolean },
-    alreadyRegistered: { type: GraphQLBoolean }
   })
 });
 
@@ -376,88 +366,51 @@ const updateProfileResult = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: () => ({
-    signup: {
-      type: SignupResponse,
+    newUser: {
+      type: UserDetailsType,
       args: {
-        FirstName: {
-          type: GraphQLString
-        },
-        LastName: {
-          type: GraphQLString
-        },
-        Email: {
-          type: GraphQLString
-        },
-        Password: {
-          type: GraphQLString
-        },
-        Accounttype: {
-          type: GraphQLInt
-        }
+        firstName: { type: GraphQLString },
+        lastName: { type: GraphQLString },
+        email: { type: GraphQLString },
+        password: { type: GraphQLString },
+        persona: { type: GraphQLInt }
       },
 
-      resolve: (parent, args) => {
-        return new Promise(async (resolve, reject) => {
-          var successResult = false;
-          var alreadyRegisteredResult = false;
-          await Model.Userdetails.findOne(
-            {
-              Email: args.Email
-            },
-            (err, user) => {
-              if (err) {
+      async resolve(parent, args) {
+        await Model.userDetails.findOne(
+          {
+            email: args.email
+          },
+          (err, user) => {
+            if (err) {
+            } else {
+              if (user) {
+                console.log("User already exists!", user);
+                return { message: "User already exists!" };
               } else {
-                if (user) {
-                  console.log("User Exists!", user);
-                  if (args.Accounttype === user.Accounttype || user.Accounttype == 3) {
-                    console.log("Duplicate user");
-                    alreadyRegisteredResult = true;
+                // Hashing the password
+                const hashedPassword = bcrypt.hashSync(args.password, saltRounds);
+                var user = new Model.userDetails({
+                  email: args.email,
+                  password: hashedPassword,
+                  persona: args.persona,
+                  firstName: args.firstName,
+                  lastName: args.lastName
+                });
 
-                    var resultData = {
-                      success: successResult,
-                      alreadyRegistered: alreadyRegisteredResult
-                    };
-                    resolve(resultData);
-                  } else {
-                    user.Accounttype = 3;
-
-                    user.save().then(async doc => {
-                      console.log("User saved successfully.", doc);
-                      //callback(null, doc);
-                      successResult = true;
-
-                      var resultData = {
-                        success: successResult,
-                        alreadyRegistered: alreadyRegisteredResult
-                      };
-                      resolve(resultData);
-                    });
-                  }
-                } else {
-                  var user = new Model.Userdetails({
-                    Username: args.Email,
-                    Password: args.Password,
-                    FirstName: args.FirstName,
-                    LastName: args.LastName,
-                    Email: args.Email,
-                    Accounttype: args.Accounttype
-                  });
-                  console.log("Use saving..");
-                  user.save().then(doc => {
+                user.save().then(
+                  doc => {
                     console.log("User saved successfully.", doc);
-                    successResult = true;
-                    console.log("EOF");
-                    var resultData = {
-                      success: successResult,
-                      alreadyRegistered: alreadyRegisteredResult
-                    };
-                    resolve(resultData);
-                  });
-                }
+                    return { message: "Registration Successful!" };
+                  },
+                  err => {
+                    console.log("Unable to save user details.", err);
+                  }
+                );
               }
             }
-          );
-        });
+          }
+        );
       }
     },
     bookProperty: {
