@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import axios from "axios";
+import { getSearchQuery } from "../../queries/queries";
 
 import { Typography, Layout, Input, Radio, message, Pagination } from "antd";
 import API from "../../_helpers/API";
@@ -29,12 +29,19 @@ class Enroll extends Component {
         searchByRadioValue: this.state.searchByRadioValue
       };
 
-      try {
-        let response = await API.get("searchcourses", { params: data });
-        this.setState({ courses: response.data, pagenumber: 1 });
-      } catch (error) {
-        console.log(error.response);
-      }
+      this.props.client
+        .query({
+          query: getSearchQuery,
+          variables: data
+        })
+        .then(res => {
+          if (res.data.courses) {
+            this.props.getSearchData(res);
+          } else {
+            swal("Could not find courses with your search criteria", "Try Searching for other courses");
+          }
+          console.log("CourseSearch " + JSON.stringify(res));
+        });
     }
   }
 
@@ -289,9 +296,14 @@ class Enroll extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  const { loginRequest } = state;
-  return { loginRequest };
-}
+Enroll.propTypes = {
+  getSearchData: propTypes.func.isRequired,
+  newValue: propTypes.object.isRequired
+};
 
-export default connect(mapStateToProps)(Enroll);
+const mapStateToProps = state => ({ loginRequest, newValue: state.home });
+
+export default connect(
+  mapStateToProps,
+  { getSearchData, userEnteredData }
+)(withApollo(Enroll));

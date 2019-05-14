@@ -73,8 +73,8 @@ const UserDetailsType = new GraphQLObjectType({
   })
 });
 
-const Course = new GraphQLObjectType({
-  name: "Course",
+const CourseDetailsType = new GraphQLObjectType({
+  name: "CourseDetailsType",
   fields: () => ({
     CourseId: { type: GraphQLString },
     CourseName: { type: GraphQLString },
@@ -96,129 +96,33 @@ const Course = new GraphQLObjectType({
   })
 });
 
-const LoginResponse = new GraphQLObjectType({
-  name: "LoginResponse",
-  fields: () => ({
-    result: { type: GraphQLBoolean }, // Logged in or not
-    userData: { type: UserDetailsType }
-  })
-});
-
-const SearchResult = new GraphQLObjectType({
-  name: "SearchResult",
-  fields: () => ({
-    courses: { type: new GraphQLList(Course) }
-  })
-});
-
-const CreateCourseResult = new GraphQLObjectType({
-  name: "CreateCourseResult",
-  fields: () => ({
-    success: { type: GraphQLBoolean }
-  })
-});
-
-const tripDetails = new GraphQLObjectType({
-  name: "tripDetailResult",
-  fields: () => ({
-    PropertyId: { type: GraphQLString },
-    Bookingstartdate: { type: GraphQLString },
-    Bookingenddate: { type: GraphQLString },
-    TotalCost: { type: GraphQLString },
-    Ownername: { type: GraphQLString },
-    Travelername: { type: GraphQLString },
-    Headline: { type: GraphQLString },
-    PropertyType: { type: GraphQLString },
-    PropertyBedrooms: { type: GraphQLInt },
-    PropertyBathrooms: { type: GraphQLInt },
-    PropertyAccomodates: { type: GraphQLInt }
-  })
-});
-
-const tripDetailsResult = new GraphQLObjectType({
-  name: "tripDetailsResult",
-  fields: () => ({
-    trips: { type: new GraphQLList(tripDetails) }
-  })
-});
-
-const postedProperty = new GraphQLObjectType({
-  name: "postedProperty",
-  fields: () => ({
-    PropertyId: { type: GraphQLString },
-    AvailabilityStartDate: { type: GraphQLString },
-    AvailabilityEndDate: { type: GraphQLString },
-    Baserate: { type: GraphQLString },
-    Headline: { type: GraphQLString },
-    PropertyType: { type: GraphQLString }
-  })
-});
-
-const postedPropertyDetails = new GraphQLObjectType({
-  name: "postedPropertyDetails",
-  fields: () => ({
-    postedProperties: { type: new GraphQLList(postedProperty) }
-  })
-});
-
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: () => ({
     login: {
-      type: LoginResponse,
+      // Login existing user
+      type: UserDetailsType,
       args: {
-        Username: {
-          type: GraphQLString
-        },
-        Password: {
-          type: GraphQLString
-        }
+        email: { type: GraphQLString },
+        password: { type: GraphQLString }
       },
       async resolve(parent, args) {
-        console.log("args: ", args);
-        var isAuthenticated = false;
-        var profileData = {};
-
-        await Model.Userdetails.findOne(
-          {
-            Username: args.Username
-          },
-          (err, user) => {
-            if (err) {
-              isAuthenticated = false;
-            } else {
-              console.log("result", user.Username);
-              if (!bcrypt.compareSync(args.Password, user.Password)) {
-                console.log("Invalid Credentials!");
-                //callback(null, null);
-                isAuthenticated = false;
-              } else {
-                console.log("Corect creds!");
-                isAuthenticated = true;
-
-                profileData = user;
-              }
-            }
+        const user = await Model.userDetails.findOne({
+          email: args.email
+        });
+        if (user) {
+          var hashpass = await bcrypt.compare(args.password, user.password);
+          if (hashpass) {
+            var token = await jwt.sign({ user: user }, jwtkey.secret, { expiresIn: "10080s" });
           }
-        );
-
-        console.log("isauth", isAuthenticated);
-        console.log("Profile Data", profileData);
-        if (isAuthenticated == true) {
-          var result = {
-            result: true,
-            userData: profileData
-          };
-          console.log("UserData", result.userData);
+          return { jwttoken: token };
         } else {
-          var result = {
-            result: false
-          };
+          return { message: "User does not exist in the database!" };
         }
-        return result;
       }
     },
     profile: {
+      // Get user profile
       type: UserDetailsType,
       args: {
         Email: {
@@ -244,122 +148,165 @@ const RootQuery = new GraphQLObjectType({
         return profileData;
       }
     },
-    search: {
-      type: SearchResult,
+    course: {
+      // Search for a course
+      type: CourseDetailsType,
       args: {
-        searchText: { type: GraphQLString },
-        startDate: { type: GraphQLString },
-        endDate: { type: GraphQLString }
+        searchValue: { type: GraphQLString },
+        filterBy: { type: GraphQLString },
+        searchBy: { type: GraphQLString }
       },
       async resolve(parent, args) {
         console.log(args);
+        let searchValue = args.searchValue.toLowerCase(); // Selecting only those courses to send to frontend, that have been created by the logged in faculty. We make the search query lowercase and will compare with items that will also be made lowercase
+        const filterBy = args.filterRadioValue;
+        const searchBy = args.searchByRadioValue;
+        let searchedCourses = [];
+        let searchByQuery = null;
 
-        var propertyData = [];
-        await Model.PropertyDetails.find(
-          {
-            City: args.searchText
-          },
-          (err, result) => {
-            if (err) {
+        switch (searchBy) {
+          case "id":
+            searchByQuery = "Id";
+            break;
+          case "term":
+            searchByQuery = "Term";
+            break;
+          case "name":
+            searchByQuery = "Name";
+            break;
+        }
+
+        Model.courseDetails.find({}, (err, user) => {
+          if (err) {
+            console.log("Unable to fetch courses", err);
+            return { message: "Unable to fetch courses!" };
+          } else {
+            if (user) {
+              if (searchByQuery === "Id") {
+                for (var key in user) {
+                  let currentId = user[key].id.toLowerCase();
+                  switch (filterBy) {
+                    case "1":
+                      if (currentId === searchValue) {
+                        searchedCourses.push(user[key]);
+                        console.log("searchedCourses", searchedCourses);
+                      }
+                      break;
+                    case "2":
+                      if (currentId > searchValue) {
+                        searchedCourses.push(user[key]);
+                        console.log("searchedCourses", searchedCourses);
+                      }
+                      break;
+                    case "3":
+                      if (currentId < searchValue) {
+                        searchedCourses.push(user[key]);
+                        console.log("searchedCourses", searchedCourses);
+                      }
+                      break;
+                  }
+                }
+                if (searchedCourses == []) {
+                  console.log("No courses available.");
+                  return { message: "No Courses!" };
+                } else {
+                  return searchedCourses;
+                }
+              } else if (searchByQuery === "Term" || searchByQuery === "Name") {
+                for (var key in user) {
+                  if (searchByQuery === "Term") {
+                    let currentTerm = user[key].term.toLowerCase();
+                    if (currentTerm.includes(searchValue)) {
+                      searchedCourses.push(user[key]);
+                    }
+                  } else {
+                    let currentTerm = user[key].courseName.toLowerCase();
+                    if (currentTerm.includes(searchValue)) {
+                      searchedCourses.push(user[key]);
+                    }
+                  }
+                }
+                if (searchedCourses === []) {
+                  console.log("No courses available.");
+                  return { message: "No Courses!" };
+                } else {
+                  console.log("searchedCourses", searchedCourses);
+                  return searchedCourses;
+                }
+              } else {
+                console.log("No courses available.");
+                return { message: "No Courses!" };
+              }
             } else {
-              console.log("props list ", result);
-              propertyData = result.concat();
-              console.log("propserties", propertyData);
+              console.log("Unable to fetch courses", err);
+              return { message: "No courses found!" };
             }
           }
-        );
-
-        var resultData = {
-          properties: propertyData
-        };
-
-        return resultData;
+        });
       }
     },
-    property: {
-      type: Property,
-      args: {
-        propertyId: { type: GraphQLString }
-      },
-      async resolve(parent, args) {
-        console.log(args);
-        var propertyResult = {};
-        await Model.PropertyDetails.find(
-          {
-            PropertyId: args.propertyId
-          },
-          (err, result) => {
-            if (err) {
-            } else {
-              console.log("Result ", result);
-              propertyResult = result[0];
-            }
-          }
-        );
-        return propertyResult;
-      }
-    },
-    tripDetails: {
-      type: tripDetailsResult,
-      args: {
-        Email: { type: GraphQLString }
-      },
-      async resolve(parent, args) {
-        console.log(args);
-        var tripDetails = [];
-        await Model.Userdetails.findOne(
-          {
-            Email: args.Email
-          },
-          (err, result) => {
-            if (err) {
-            } else {
-              console.log("result", result.Tripdetails);
-              tripDetails = result.Tripdetails.concat();
-            }
-          }
-        );
 
-        var tripsResult = {
-          trips: tripDetails
-        };
-
-        return tripsResult;
-      }
-    },
-    postedProperties: {
-      type: postedPropertyDetails,
+    courseDetails: {
+      // Get enrolled course or created course for a particular user depending on the persona of that user - To display course cards
+      type: CourseDetailsType,
       args: {
-        Email: { type: GraphQLString }
+        email: {
+          type: GraphQLString
+        }
       },
       async resolve(parent, args) {
-        console.log(args);
-        var postedProperties = [];
-        await Model.Userdetails.findOne(
+        console.log("args: ", args);
+        await Model.userDetails.findOne(
           {
-            Email: args.Email
+            email: args.email
           },
-          (err, result) => {
+          (err, user) => {
             if (err) {
+              console.log("Unable to fetch user", err);
             } else {
-              console.log("result", result.PropertyDetails);
-              postedProperties = result.PropertyDetails.concat();
+              if (user) {
+                console.log("Courses detail: ", user);
+
+                if (args.persona === "1") {
+                  Model.courseDetails.find({ courseId: { $in: user.createdCourses } }, (err, results) => {
+                    if (err) {
+                      console.log("Unable to fetch courses", err);
+                      return { message: "Unable to fetch courses" };
+                    } else {
+                      if (results) {
+                        console.log("Courses detail: ", results);
+                        return results;
+                      } else {
+                        console.log("Unable to fetch courses");
+                        return { message: "Unable to fetch courses" };
+                      }
+                    }
+                  });
+                } else if (args.persona === "2") {
+                  Model.courseDetails.find({ courseId: { $in: user.enrolledCourses } }, (err, results) => {
+                    if (err) {
+                      console.log("Unable to fetch courses", err);
+                      return { message: "Unable to fetch courses" };
+                    } else {
+                      if (results) {
+                        console.log("Courses detail: ", results);
+                        return results;
+                      } else {
+                        console.log("Unable to fetch courses");
+                        return { message: "Unable to fetch courses" };
+                      }
+                    }
+                  });
+                }
+              } else {
+                console.log("No courses available.");
+                return { message: "No courses" };
+              }
             }
           }
         );
-        var postedPropertyDetails = {
-          postedProperties: postedProperties
-        };
-        return postedPropertyDetails;
       }
     }
-  })
-});
-
-const updateProfileResult = new GraphQLObjectType({
-  name: "updateProfileResult",
-  fields: () => ({
-    success: { type: GraphQLBoolean }
   })
 });
 
@@ -413,133 +360,224 @@ const Mutation = new GraphQLObjectType({
         );
       }
     },
-    bookProperty: {
-      type: createCourseResult,
+    enrollCourse: {
+      type: CourseDetailsType,
       args: {
-        PropertyId: { type: GraphQLString },
-        Ownername: { type: GraphQLString },
-        Headline: { type: GraphQLString },
-        PropertyType: { type: GraphQLString },
-        PropertyBedrooms: { type: GraphQLInt },
-        PropertyBathrooms: { type: GraphQLInt },
-        PropertyAccomodates: { type: GraphQLInt },
-        PropertyBookingStartDate: { type: GraphQLString },
-        PropertyBookingEndDate: { type: GraphQLString },
-        PropertyTotalCost: { type: GraphQLString },
-        Email: { type: GraphQLString },
-        FirstName: { type: GraphQLString }
-      },
-      resolve: (parent, args) => {
-        console.log(args);
-        //var success = true;
-        Model.Userdetails.findOne(
-          {
-            Email: args.Email
-          },
-          function(err, user) {
-            if (err) {
-              console.log("Unable to get user details.", err);
-              //callback(err, null);
-            } else {
-              var propertyDetails = {};
-              propertyDetails.PropertyId = args.PropertyId;
-              propertyDetails.Bookingstartdate = args.PropertyBookingStartDate;
-              propertyDetails.Bookingenddate = args.PropertyBookingEndDate;
-              //propertyDetails.Guests = message.body.Guests;
-              propertyDetails.TotalCost = args.PropertyTotalCost;
-              propertyDetails.Ownername = args.Ownername;
-              propertyDetails.Travelername = args.FirstName;
-              //propertyDetails.TravelerId = userSession.ProfileId;
-              propertyDetails.Headline = args.Headline;
-              propertyDetails.PropertyType = args.PropertyType;
-              propertyDetails.PropertyBedrooms = args.PropertyBedrooms;
-              propertyDetails.PropertyBathrooms = args.PropertyBathrooms;
-              propertyDetails.PropertyAccomodates = args.PropertyAccomodates;
-
-              user.Tripdetails = user.Tripdetails || [];
-              user.Tripdetails.push(propertyDetails);
-              user.save().then(
-                doc => {
-                  console.log("Booking details saved to user details", doc);
-                  //callback(null, doc);
-                },
-                err => {
-                  console.log("Unable to save booking details.", err);
-                  //callback(err, null);
-                }
-              );
-            }
-          }
-        );
-
-        var bookingResult = {
-          success: true
-        };
-
-        return bookingResult;
-      }
-    },
-    updateProfile: {
-      type: updateProfileResult,
-      args: {
-        FirstName: { type: GraphQLString },
-        LastName: { type: GraphQLString },
-        Email: { type: GraphQLString },
-        PhoneNumber: { type: GraphQLString },
-        Aboutme: { type: GraphQLString },
-        Country: { type: GraphQLString },
-        City: { type: GraphQLString },
-        Gender: { type: GraphQLString },
-        School: { type: GraphQLString },
-        Hometown: { type: GraphQLString },
-        Language: { type: GraphQLString },
-        Company: { type: GraphQLString }
+        email: { type: GraphQLString },
+        courseId: { type: GraphQLString }
       },
       async resolve(parent, args) {
         console.log(args);
-        await Model.Userdetails.findOne(
+        //var success = true;
+        await Model.userDetails.findOne(
           {
-            Email: args.Email
+            email: args.email
+          },
+          (err, user) => {
+            if (err) {
+              console.log("Unable to fetch user", err);
+              return { message: "Unable to enroll course. Please try again." };
+            } else {
+              if (user) {
+                if (user.enrolledCourses.includes(args.courseId)) {
+                  // Checking if the course is already enrolled
+                  console.log("Course already enrolled for this email!");
+                  return { message: "Course already enrolled for this email!" };
+                } else if (user.waitlistedCourses.includes(args.courseId)) {
+                  // Checking if the course is already waitlisted
+                  console.log("Course already waitlisted for this email!");
+                  return { message: "Course already waitlisted!" };
+                } else {
+                  user.enrolledCourses.push(args.courseId);
+                  user.save().then(
+                    doc => {
+                      console.log("New details added to this user details", doc);
+                      Model.courseDetails.findOne(
+                        {
+                          courseId: args.courseId
+                        },
+                        (err, results) => {
+                          if (err) {
+                            console.log("Unable to fetch course", err);
+                            return { message: "Unable to enroll course. Please try again." };
+                          } else {
+                            if (results) {
+                              results.enrolledStudents.push(args.email);
+                              results.capacityUsed++;
+                              results.save().then(
+                                doc_1 => {
+                                  console.log("New details added to this course details", doc_1);
+                                  return doc_1;
+                                },
+                                err => {
+                                  console.log("Unable to enroll student in course. Please try again.", err);
+                                  return { message: "Unable to enroll course. Please try again." };
+                                }
+                              );
+                              res.send("Course enrolled!");
+                            } else {
+                              console.log("Unable to fetch course", err);
+                              return { message: "Unable to enroll course. Please try again." };
+                            }
+                          }
+                        }
+                      );
+                    },
+                    err => {
+                      console.log("Unable to enroll course. Please try again.", err);
+                      return { message: "Unable to enroll course. Please try again." };
+                    }
+                  );
+                }
+              } else {
+                return { message: "Unable to enroll course. Please try again." };
+              }
+            }
+          }
+        );
+      }
+    },
+    createCourse: {
+      type: CourseDetailsType,
+      args: {
+        id: { type: GraphQLString },
+        courseName: { type: GraphQLString },
+        facultyEmail: { type: GraphQLString },
+        description: { type: GraphQLString },
+        department: { type: GraphQLString },
+        room: { type: GraphQLString },
+        capacity: { type: GraphQLInt },
+        waitlist: { type: GraphQLInt },
+        term: { type: GraphQLString }
+      },
+      async resolve(parent, args) {
+        console.log(args);
+        //var success = true;
+        await Model.courseDetails.findOne(
+          {
+            courseId: args.courseId
+          },
+          (err, user) => {
+            if (err) {
+              console.log("Unable to fetch courses", err);
+            } else {
+              if (user) {
+                console.log("Course id already present!"); //FIXME Make page stay on frontend if course id already present
+                res.send("Course id already present!");
+              } else {
+                // if not present
+                var id = mongoose.Types.ObjectId();
+                var user = new Model.courseDetails({
+                  id: id,
+                  courseId: args.courseId,
+                  courseName: args.courseName,
+                  facultyEmail: args.email,
+                  department: args.dept,
+                  description: args.descrip,
+                  room: args.room,
+                  capacity: args.classCap,
+                  waitlist: args.waitlistCap,
+                  term: args.term,
+                  capacityUsed: 0,
+                  waitlistUsed: 0,
+                  announcements: [],
+                  files: [],
+                  assignments: [],
+                  quizzes: [],
+                  enrolledStudents: [],
+                  waitlistedStudents: []
+                });
+
+                user.save().then(
+                  doc => {
+                    console.log("Course saved successfully.", doc);
+
+                    Model.userDetails.updateOne(
+                      {
+                        email: args.email
+                      },
+                      { $push: { createdCourses: args.courseId } },
+                      (err, result) => {
+                        if (err) {
+                          console.log("Unable to fetch faculty.", err);
+                          return { message: "Unable to save course details." }; // status should come before send
+                        } else {
+                          if (result) {
+                            return { message: "Creation Successful!" }; // status should come before send
+                          } else {
+                            console.log("Faculty not found!", err);
+                            return { message: "Unable to save course details." }; // status should come before send
+                          }
+                        }
+                      }
+                    );
+                  },
+                  err => {
+                    console.log("Unable to save course details.", err);
+                    return { message: "Unable to save course details." }; // status should come before send
+                  }
+                );
+              }
+            }
+          }
+        );
+      }
+    },
+    updateUser: {
+      type: UserDetailsType,
+      args: {
+        firstName: { type: GraphQLString },
+        lastName: { type: GraphQLString },
+        email: { type: GraphQLString },
+        phoneNumber: { type: GraphQLString },
+        aboutme: { type: GraphQLString },
+        country: { type: GraphQLString },
+        city: { type: GraphQLString },
+        gender: { type: GraphQLString },
+        school: { type: GraphQLString },
+        hometown: { type: GraphQLString },
+        language: { type: GraphQLString },
+        company: { type: GraphQLString }
+      },
+      async resolve(parent, args) {
+        console.log(args);
+        await Model.userDetails.findOne(
+          {
+            email: args.email
           },
           (err, user) => {
             if (err) {
               console.log("Unable to fetch user details.", err);
-              callback(err, null);
+              return { message: "Unable to fetch user details." };
             } else {
-              console.log("Userdetails", user);
+              console.log("User Details: ", user);
 
-              user.FirstName = args.FirstName;
-              user.LastName = args.LastName;
-              user.Email = args.Email;
-              user.Aboutme = args.Aboutme;
-              user.Country = args.Country;
-              user.City = args.City;
-              user.Gender = args.Gender;
-              user.Hometown = args.Hometown;
-              user.School = args.School;
-              user.Company = args.Company;
-              user.Language = args.Language;
-              user.PhoneNumber = args.PhoneNumber;
+              user.firstName = args.firstName;
+              user.lastName = args.lastName;
+              user.email = args.email;
+              user.aboutme = args.aboutme;
+              user.country = args.country;
+              user.city = args.city;
+              user.gender = args.gender;
+              user.hometown = args.hometown;
+              user.school = args.school;
+              user.company = args.company;
+              user.language = args.language;
+              user.phoneNumber = args.phoneNumber;
 
               user.save().then(
                 doc => {
                   console.log("User details saved successfully.", doc);
-                  //callback(null, doc);
+                  return user;
                 },
                 err => {
                   console.log("Unable to save user details.", err);
-                  callback(err, null);
+                  return { message: "Unable to save user details." };
                 }
               );
             }
           }
         );
-
-        var resultData = {
-          success: true
-        };
-
-        return resultData;
       }
     }
   })

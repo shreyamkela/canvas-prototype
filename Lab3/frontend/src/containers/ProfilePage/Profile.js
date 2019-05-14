@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
+import propTypes from "prop-types";
+import { graphql, compose } from "react-apollo";
+import { updateUser } from "../../mutation/mutations";
 
 import { Layout, Button } from "antd";
 import { Modal } from "react-bootstrap"; // for the edit modal
@@ -12,18 +15,18 @@ import API from "../../_helpers/API";
 class Profile extends Component {
   state = { showModal: false, profile: "" };
 
-  async componentDidMount() {
-    // Fetching the full name. Also any profile details if submitted previously
-    const { loginRequest } = this.props; // redux state to props
-    const data = { email: loginRequest.email };
-    try {
-      let response = await API.get("profile", { params: data });
-      console.log("Profile data response:", response);
-      this.setState({ profile: response.data });
-    } catch (error) {
-      console.log(error.response);
-    }
-  }
+  // async componentDidMount() {
+  //   // Fetching the full name. Also any profile details if submitted previously
+  //   const { loginRequest } = this.props; // redux state to props
+  //   const data = { email: loginRequest.email };
+  //   try {
+  //     let response = await API.get("profile", { params: data });
+  //     console.log("Profile data response:", response);
+  //     this.setState({ profile: response.data });
+  //   } catch (error) {
+  //     console.log(error.response);
+  //   }
+  // }
 
   // Edit modal - Toggle the modal by a state property "showModal" - Show a modal if showModal state is true, else dont show
   handleModalClose = () => {

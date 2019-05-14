@@ -3,12 +3,15 @@ import { Modal, Button, Form, Col } from "react-bootstrap"; // for the new user 
 import { connect } from "react-redux"; // Connects the components to the redux store
 import { Redirect } from "react-router";
 import cookie from "react-cookies";
+import { getLoginQuery } from "../../queries/queries";
 
 import Register from "./Register"; // New user modal form
 import canvasImage from "../../_public/images/canvasLogo_light.jpg";
 import { postLoginData } from "../../_actions/user.actions";
 
 import { Layout } from "antd";
+
+// var JWTtoken = localStorage.getItem("token");
 
 class Login extends Component {
   state = { showModal: false, validated: false, redirect: false };
@@ -33,7 +36,26 @@ class Login extends Component {
     } else {
       //console.log("Sending Login Data!", this.refs.email.value, this.refs.email, this.refs);
       let data = { email: this.refs.email.value, password: this.refs.password.value };
-      dispatch(postLoginData(data));
+      // dispatch(postLoginData(data));
+
+      this.props.client
+        .query({
+          query: getLoginQuery,
+          variables: {
+            email: this.refs.email.value,
+            password: this.refs.password.value
+          }
+        })
+        .then(res => {
+          if (res.data.login.message) {
+            alert("Enter Valid Credentials");
+          } else {
+            localStorage.setItem("token", "JWT " + res.data.login.jwttoken);
+            this.props.history.push("/home");
+          }
+          console.log(JSON.stringify(res));
+        });
+
       // FIXME if password is wrong?
       this.setState({ redirect: true });
     }
@@ -61,7 +83,7 @@ class Login extends Component {
       return <Redirect to="/home" />;
     } else {
       return (
-        <Layout style={{ height: "100%", width: "100%", background: "light-grey" }} >
+        <Layout style={{ height: "100%", width: "100%", background: "light-grey" }}>
           {/* If cookie name is null then redirectVar is /login, else it is null. If redirectVar is /login. the react router routes the page to login, without loading the divs below */}
           <div className="container shadow p-3 mb-5 bg-white rounded" style={{ marginTop: 100, width: 500 }}>
             <div className="login-form ">
@@ -127,9 +149,9 @@ class Login extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  const { loginRequest } = state;
-  return { loginRequest };
-}
+// function mapStateToProps(state) {
+//   const { loginRequest } = state;
+//   return { loginRequest };
+// }
 
-export default connect(mapStateToProps)(Login);
+export default withApollo(Login);

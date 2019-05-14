@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { connect } from "react-redux"; // Connects the components to the redux store
-
+import { graphql, compose } from "react-apollo";
+import { updateUser } from "../../mutation/mutations";
 import { postEditData } from "../../_actions/user.actions"; // FIXME REMOVE THIS and its call as it was only included for redux homework shim
+import propTypes from "prop-types";
 
 import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
 import API from "../../_helpers/API";
@@ -21,32 +23,30 @@ class Edit extends Component {
 
     let data = {
       // data is accessible at the backend by req.body.query
-      AboutMe: this.refs.aboutme.value,
-      Gender: this.refs.gender.value,
-      ContactNo: this.refs.contactno.value,
-      City: this.refs.city.value,
-      Country: this.refs.country.value,
-      Company: this.refs.company.value,
-      School: this.refs.school.value,
-      Hometown: this.refs.hometown.value,
-      Languages: this.refs.languages.value,
+      aboutMe: this.refs.aboutme.value,
+      gender: this.refs.gender.value,
+      contactNumber: this.refs.contactno.value,
+      city: this.refs.city.value,
+      country: this.refs.country.value,
+      company: this.refs.company.value,
+      school: this.refs.school.value,
+      hometown: this.refs.hometown.value,
+      languages: this.refs.languages.value,
       email: loginRequest.email
     };
-    console.log("XXXXXXXXXXXX", data);
     // FIXME Remove redux from edit.js if there is no use
-    const { dispatch } = this.props;
-    dispatch(postEditData(data));
+    // const { dispatch } = this.props;
+    // dispatch(postEditData(data));
     //
-    API.post("profile", {
-      // data is accessible at the backend by req.body.query
-      data
-    })
-      .then(response => {
-        console.log("Edit successful!");
-        // message.success(response.data); // cant use antd message as this message would be shown on profile page which is darkened when the modal is open
-        this.setState({ message: `${response.data}` });
+    this.props
+      .updateUser({
+        variables: data
       })
-      .catch(err => console.log(err));
+      .then(res => {
+        if (res.data) {
+          swal("Update Successful", "", "success");
+        }
+      });
 
     event.preventDefault(); // dont do default - default is submitting the data to the database
     event.stopPropagation(); // dont propogate event to parents
@@ -131,9 +131,15 @@ class Edit extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  const { loginRequest } = state;
-  return { loginRequest };
-}
+Edit.propTypes = {
+  updateProfile: propTypes.func.isRequired,
+  update: propTypes.string.isRequired
+};
 
-export default connect(mapStateToProps)(Edit);
+const mapStateToProps = state => ({
+  update: state.profile.profileFlag,
+  getProfile: state.profile.profileData,
+  loginRequest
+});
+
+export default compose(graphql(updateUser, { name: "updateUser" }))(Edit);

@@ -1,11 +1,7 @@
 import React, { Component } from "react";
-import axios from "axios";
-import { connect } from "react-redux"; // Connects the components to the redux store
-
-import { postRegistrationData } from "../../_actions/user.actions"; // FIXME REMOVE THIS and its call as it was only included for redux homework shim
+import { newUserMutation } from "../../mutation/mutations";
 
 import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
-import API from "../../_helpers/API";
 
 class Register extends Component {
   state = {
@@ -35,33 +31,22 @@ class Register extends Component {
       }
     } else {
       console.log("Sending Registration Data!");
-      let data = {
-        // data is accessible at the backend by req.body.query
-        firstname: this.refs.firstname.value,
-        lastname: this.refs.lastname.value,
-        email: this.refs.email.value,
-        password: this.refs.password.value,
-        persona: this.state.persona
-      };
-      // FIXME Remove redux from register.js if there is no use
-      const { dispatch } = this.props;
-      dispatch(postRegistrationData(data));
-      //
-      API.post("newuser", {
-        // data is accessible at the backend by req.body.query
-        data
-      })
-        .then(response => {
-          console.log("Registration successful!");
-
-          this.setState({ message: `${response.data}` });
+      this.props
+        .newUserMutation({
+          variables: {
+            firstName: this.refs.firstName.value,
+            lastName: this.refs.lastName.value,
+            email: this.refs.email.value,
+            password: this.refs.password.value,
+            persona: this.refs.persona.value
+          }
         })
-        .catch(err => {
-          // If bad request 400 status sent from backend - email already taken
-          console.log("Email already registered!");
-          this.setState({ message: "Email already registered!" });
+        .then(res => {
+          console.log("newval " + JSON.stringify(res));
+          if (res.data.newUser.email) {
+            swal("Signup Successful", "", "success");
+          }
         });
-
       event.preventDefault(); // dont do default - default is submitting the data to the database
       event.stopPropagation(); // dont propogate event to parents
     }
@@ -125,4 +110,4 @@ class Register extends Component {
   }
 }
 
-export default connect(null)(Register);
+export default compose(graphql(newUserMutation, { name: "newUserMutation" }))(Register);

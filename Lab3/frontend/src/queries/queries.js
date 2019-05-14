@@ -1,55 +1,68 @@
 // import { gql } from 'apollo-boost';
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
+// Login an existing user
 const getLoginQuery = gql`
-query user($email: String,$password:String) {
-    user(email: $email,password:$password) {
-        error,
-        jwttoken
+  query login($email: String, $password: String) {
+    user(email: $email, password: $password) {
+      error
+      jwttoken
     }
-   }`
+  }
+`;
 
+// Search courses according to search term/value and the filter/criteria
 const getSearchQuery = gql`
-query property($location: String,$arrivaldate:String,$departdate:String,$guests:String) {
-    property(location: $location,arrivaldate:$arrivaldate,departdate:$departdate,guests:$guests) {
-        id,
-        headline,
-        propertydescription,
-        type,
-        bedroom,
-        bathroom,
-        accomodates,
-        price
+  query course($searchValue: String, $filterBy: String, $searchBy: String) {
+    course(searchValue: $searchValue, filterBy: $filterBy, searchBy: $searchBy) {
+      id
+      courseName
+      facultyEmail
+      department
+      description
+      room
+      capacity
+      waitlist
+      term
     }
-   }`
+  }
+`;
 
-const getOwnerBooking = gql`
-   query ownerbooking($email: String) {
-    ownerbooking(email: $email) {
-        location,
-        fromdate,
-        todate,
-        guests,
-        owneremail,
-        propertydescription,
-        prp_headline,
-        property_id,
-        prp_state
-       }
-      }`
+// Show profile
+const getProfileQuery = gql`
+  query profile($email: String) {
+    profile(email: $email) {
+      firstName
+      lastName
+      phoneNumber
+      aboutme
+      country
+      city
+      gender
+      school
+      hometown
+      language
+      company
+    }
+  }
+`;
 
-const getTravelerBooking = gql`
-      query travelerbooking($email: String) {
-        travelerbooking(email: $email) {
-           location,
-           fromdate,
-           todate,
-           guests,
-           owneremail,
-           propertydescription,
-           prp_headline,
-           prp_streetaddress,
-           id
-          }
-         }`
-export { getLoginQuery, getSearchQuery, getOwnerBooking, getTravelerBooking };
+// To show the course cards
+const getCourseDetailsQuery = gql`
+  query courseDetails($email: String) {
+    courseDetails(email: $email) {
+      id
+      courseName
+      facultyEmail
+      description
+      announcements
+      files
+      assignments
+      quizzes
+      enrolledStudents
+      waitlistedStudents
+    }
+  }
+`;
+
+export { getLoginQuery, getSearchQuery, getCourseDetailsQuery, getProfileQuery };

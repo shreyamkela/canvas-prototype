@@ -9,37 +9,40 @@ const newUserMutation = gql`
   }
 `;
 
-const bookpropertyMutation = gql`
-  mutation bookProperty(
-    $location: String
-    $fromdate: String
-    $todate: String
-    $guests: String
-    $email: String
-    $property_id: String
-    $owneremail: String
-    $prp_headline: String
-    $prp_state: String
-    $prp_streetaddress: String
-    $prp_zipcode: String
-    $propertydescription: String
+const enrollCourse = gql`
+  mutation enrollCourse($email: String, $id: String) {
+    enrollCourse(email: $email, id: $id) {
+      email
+      id
+    }
+  }
+`;
+
+const createCourse = gql`
+  mutation createCourse(
+    $id: String
+    $courseName: String
+    $facultyEmail: String
+    $description: String
+    $department: String
+    $room: String
+    $capacity: Number
+    $waitlist: Number
+    $term: String
   ) {
-    bookProperty(
-      location: $location
-      fromdate: $fromdate
-      todate: $todate
-      guests: $guests
-      email: $email
-      property_id: $property_id
-      owneremail: $owneremail
-      prp_headline: $prp_headline
-      prp_state: $prp_state
-      prp_streetaddress: $prp_streetaddress
-      prp_zipcode: $prp_zipcode
-      propertydescription: $propertydescription
+    enrollCourse(
+      id: $id
+      courseName: $courseName
+      facultyEmail: $facultyEmail
+      description: $description
+      department: $department
+      room: $room
+      capacity: $capacity
+      waitlist: $waitlist
+      term: $term
     ) {
-      location
-      fromdate
+      facultyEmail
+      id
     }
   }
 `;
@@ -47,7 +50,7 @@ const bookpropertyMutation = gql`
 const updateUser = gql`
   mutation updateUser(
     $email: String
-    $about_me: String
+    $aboutMe: String
     $city: String
     $country: String
     $school: String
@@ -58,7 +61,7 @@ const updateUser = gql`
   ) {
     updateUser(
       email: $email
-      about_me: $about_me
+      aboutMe: $aboutMe
       city: $city
       country: $country
       school: $school
@@ -68,9 +71,9 @@ const updateUser = gql`
       company: $company
     ) {
       email
-      about_me
+      aboutMe
     }
   }
 `;
 
-export { addUserMutation, bookpropertyMutation, updateUser };
+export { newUserMutation, enrollCourse, createCourse, updateUser };
