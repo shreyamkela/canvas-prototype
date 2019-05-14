@@ -8,7 +8,6 @@ import { updateUser } from "../../mutation/mutations";
 import { Layout, Button } from "antd";
 import { Modal } from "react-bootstrap"; // for the edit modal
 
-import Avatar from "./Avatar";
 import Edit from "./Edit";
 import API from "../../_helpers/API";
 
@@ -54,11 +53,7 @@ class Profile extends Component {
             }}
           >
             <div className="row">
-              <div className="col">
-                <div style={{ marginLeft: 150 }}>
-                  <Avatar />
-                </div>
-              </div>
+              <div className="col" />
               <div className="col">
                 <h2>
                   {this.state.profile.Firstname} {this.state.profile.Lastname}

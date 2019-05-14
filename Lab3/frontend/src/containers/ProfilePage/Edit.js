@@ -142,4 +142,4 @@ const mapStateToProps = state => ({
   loginRequest
 });
 
-export default compose(graphql(updateUser, { name: "updateUser" }))(Edit);
+export default compose(graphql(updateUser, { name: "updateUser" }))(withApollo(Edit));

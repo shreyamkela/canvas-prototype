@@ -4,6 +4,7 @@ import { connect } from "react-redux"; // Connects the components to the redux s
 import { Redirect } from "react-router";
 import cookie from "react-cookies";
 import { getLoginQuery } from "../../queries/queries";
+import { graphql, compose } from "react-apollo";
 
 import Register from "./Register"; // New user modal form
 import canvasImage from "../../_public/images/canvasLogo_light.jpg";

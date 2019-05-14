@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { newUserMutation } from "../../mutation/mutations";
+import { graphql, compose } from "react-apollo";
 
 import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
 
@@ -110,4 +111,4 @@ class Register extends Component {
   }
 }
 
-export default compose(graphql(newUserMutation, { name: "newUserMutation" }))(Register);
+export default compose(graphql(newUserMutation, { name: "newUserMutation" }))(withApollo(Register));

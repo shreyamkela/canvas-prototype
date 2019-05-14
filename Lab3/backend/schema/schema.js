@@ -462,7 +462,7 @@ const Mutation = new GraphQLObjectType({
               console.log("Unable to fetch courses", err);
             } else {
               if (user) {
-                console.log("Course id already present!"); //FIXME Make page stay on frontend if course id already present
+                console.log("Course id already present!");
                 res.send("Course id already present!");
               } else {
                 // if not present
