@@ -5,6 +5,7 @@ import { Redirect } from "react-router";
 import cookie from "react-cookies";
 import { getLoginQuery } from "../../queries/queries";
 import { graphql, compose } from "react-apollo";
+import { withApollo } from "react-apollo";
 
 import Register from "./Register"; // New user modal form
 import canvasImage from "../../_public/images/canvasLogo_light.jpg";
@@ -75,7 +76,8 @@ class Login extends Component {
 
     const { validated } = this.state; // form validations
 
-    const { loginRequest } = this.props; // redux state to props
+    let { loginRequest } = this.props; // redux state to props
+    loginRequest = "Login";
     console.log("loginRequest: ", loginRequest);
     console.log("Cookie:", cookie.load("cookie"));
     console.log("State of Redirect:", this.state.redirect);

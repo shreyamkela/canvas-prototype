@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
+import { withApollo } from "react-apollo";
 
 import { postCreationData } from "../../_actions/user.actions";
 

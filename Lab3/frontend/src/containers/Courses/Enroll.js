@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { getSearchQuery } from "../../queries/queries";
+import { withApollo } from "react-apollo";
 
 import { Typography, Layout, Input, Radio, message, Pagination } from "antd";
 import API from "../../_helpers/API";
@@ -37,8 +38,6 @@ class Enroll extends Component {
         .then(res => {
           if (res.data.courses) {
             this.props.getSearchData(res);
-          } else {
-            swal("Could not find courses with your search criteria", "Try Searching for other courses");
           }
           console.log("CourseSearch " + JSON.stringify(res));
         });
@@ -300,14 +299,14 @@ class Enroll extends Component {
   }
 }
 
-Enroll.propTypes = {
-  getSearchData: propTypes.func.isRequired,
-  newValue: propTypes.object.isRequired
-};
+// Enroll.propTypes = {
+//   getSearchData: propTypes.func.isRequired,
+//   newValue: propTypes.object.isRequired
+// };
 
-const mapStateToProps = state => ({ loginRequest, newValue: state.home });
+const mapStateToProps = state => ({ newValue: state.home });
 
 export default connect(
-  mapStateToProps,
-  { getSearchData, userEnteredData }
+  mapStateToProps
+  // { getSearchData, userEnteredData }
 )(withApollo(Enroll));

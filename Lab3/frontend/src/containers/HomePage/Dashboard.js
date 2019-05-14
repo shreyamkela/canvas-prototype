@@ -3,6 +3,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"; // Connects the components to the redux store
 import { Redirect } from "react-router";
+import { graphql, compose } from "react-apollo";
+import { withApollo } from "react-apollo";
 
 import { Layout, Row, Col } from "antd";
 

@@ -12,7 +12,7 @@ import Create from "../Courses/Create"; // Create a course
 import SideBar from "../Sidebar/SideBar";
 import Enroll from "../Courses/Enroll";
 import Login from "../LoginPage/Login";
-import Inbox from "../Inbox/Inbox";
+// import Inbox from "../Inbox/Inbox";
 
 import { courseDataToComponent } from "../../_actions/user.actions";
 
@@ -104,7 +104,7 @@ class Main extends Component {
                   {/* FIXME Make create route inside the courses file*/}
                   <Route path="/create" component={Create} /> {/* FIXME Configure create and enroll route inside the courses file*/}
                   <Route path="/enroll" component={Enroll} />
-                  <Route path="/inbox" component={Inbox} />
+                  {/* <Route path="/inbox" component={Inbox} /> */}
                   <Route path="/(home|)" component={Dashboard} />
                   {/* Handling home and / routes */}
                   <Route path="*" component={Dashboard} />

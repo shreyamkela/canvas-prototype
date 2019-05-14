@@ -5,6 +5,7 @@ import { graphql, compose } from "react-apollo";
 import { updateUser } from "../../mutation/mutations";
 import { postEditData } from "../../_actions/user.actions"; // FIXME REMOVE THIS and its call as it was only included for redux homework shim
 import propTypes from "prop-types";
+import { withApollo } from "react-apollo";
 
 import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
 import API from "../../_helpers/API";
@@ -38,15 +39,9 @@ class Edit extends Component {
     // const { dispatch } = this.props;
     // dispatch(postEditData(data));
     //
-    this.props
-      .updateUser({
-        variables: data
-      })
-      .then(res => {
-        if (res.data) {
-          swal("Update Successful", "", "success");
-        }
-      });
+    this.props.updateUser({
+      variables: data
+    });
 
     event.preventDefault(); // dont do default - default is submitting the data to the database
     event.stopPropagation(); // dont propogate event to parents
@@ -138,8 +133,7 @@ Edit.propTypes = {
 
 const mapStateToProps = state => ({
   update: state.profile.profileFlag,
-  getProfile: state.profile.profileData,
-  loginRequest
+  getProfile: state.profile.profileData
 });
 
 export default compose(graphql(updateUser, { name: "updateUser" }))(withApollo(Edit));

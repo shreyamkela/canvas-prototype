@@ -6,6 +6,8 @@ import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import logger from "redux-logger";
 import { composeWithDevTools } from "redux-devtools-extension";
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "react-apollo";
 
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.css";
@@ -16,6 +18,10 @@ import rootReducer from "./_reducers";
 
 import * as serviceWorker from "./serviceWorker";
 import { loadState, saveState } from "./_helpers/localStorage";
+
+const client = new ApolloClient({
+  uri: "http://localhost:8080/graphql"
+});
 
 const persistedState = loadState(); // To persist state on page refresh/rerender - https://egghead.io/lessons/javascript-redux-persisting-the-state-to-the-local-storage
 const middleware = [thunk, logger];
@@ -28,17 +34,19 @@ store.subscribe(() => {
 });
 
 ReactDOM.render(
-  <Provider store={store}>
-    {/* Order of provider and browserrouter doesnt matter.
+  <ApolloProvider client={client}>
+    <Provider store={store}>
+      {/* Order of provider and browserrouter doesnt matter.
     Use Browser Router to route to different pages. */}
-    <BrowserRouter>
-      {/* NOTE Routes can also be switched between each other by using Switch, but in our case it is not working. So we use <div> */}
-      <React.Fragment>
-        <Route path="/" component={App} />
-        {/* Here | is the OR operator which means that App component is for / and /signin route. Example /(home|main) means the same component for /home and /main */}
-      </React.Fragment>
-    </BrowserRouter>
-  </Provider>,
+      <BrowserRouter>
+        {/* NOTE Routes can also be switched between each other by using Switch, but in our case it is not working. So we use <div> */}
+        <React.Fragment>
+          <Route path="/" component={App} />
+          {/* Here | is the OR operator which means that App component is for / and /signin route. Example /(home|main) means the same component for /home and /main */}
+        </React.Fragment>
+      </BrowserRouter>
+    </Provider>
+  </ApolloProvider>,
   document.getElementById("root")
 );
 

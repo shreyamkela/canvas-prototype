@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { newUserMutation } from "../../mutation/mutations";
 import { graphql, compose } from "react-apollo";
+import { withApollo } from "react-apollo";
 
 import { Form, Col, InputGroup, Button, ButtonGroup, ToggleButton } from "react-bootstrap"; // for the new user modal
 
@@ -44,9 +45,6 @@ class Register extends Component {
         })
         .then(res => {
           console.log("newval " + JSON.stringify(res));
-          if (res.data.newUser.email) {
-            swal("Signup Successful", "", "success");
-          }
         });
       event.preventDefault(); // dont do default - default is submitting the data to the database
       event.stopPropagation(); // dont propogate event to parents
