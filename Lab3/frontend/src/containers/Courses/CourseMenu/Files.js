@@ -106,7 +106,7 @@ class Files extends Component {
     }
     const props = {
       name: "file",
-      action: "http://localhost:3001/files",
+      action: "http://localhost:8080/files",
       headers: {
         authorization: "authorization-text"
       },

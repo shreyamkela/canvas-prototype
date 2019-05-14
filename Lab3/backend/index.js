@@ -61,6 +61,6 @@ app.use(
   })
 );
 
-//start your server on port 3001
+//start your server on port 8080
 app.listen(process.env.PORT || 8080);
 console.log("GraphQL server listening on port 8080");
