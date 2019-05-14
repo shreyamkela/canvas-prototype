@@ -1,5 +1,6 @@
 import { gql } from "apollo-boost";
 
+// Creating a new user through sign up
 const newUserMutation = gql`
   mutation newUser($firstName: String, $lastName: String, $email: String, $password: String, $persona: String) {
     addUser(firstName: $firstName, lastName: $lastName, email: $email, password: $password, persona: $persona) {
@@ -9,6 +10,7 @@ const newUserMutation = gql`
   }
 `;
 
+// Enrolling into a course
 const enrollCourse = gql`
   mutation enrollCourse($email: String, $id: String) {
     enrollCourse(email: $email, id: $id) {
@@ -18,6 +20,7 @@ const enrollCourse = gql`
   }
 `;
 
+// Creating a new course - by faculty
 const createCourse = gql`
   mutation createCourse(
     $id: String
@@ -30,7 +33,7 @@ const createCourse = gql`
     $waitlist: Number
     $term: String
   ) {
-    enrollCourse(
+    createCourse(
       id: $id
       courseName: $courseName
       facultyEmail: $facultyEmail
@@ -47,6 +50,7 @@ const createCourse = gql`
   }
 `;
 
+// Updating user profile details
 const updateUser = gql`
   mutation updateUser(
     $email: String

@@ -54,15 +54,7 @@ var courseDetails = mongoose.model("courseDetails", {
   waitlistedStudents: Array
 });
 
-var messageDetails = mongoose.model("messageDetails", {
-  senderId: String,
-  recipentId: String,
-  messageId: String,
-  message: Array
-});
-
 module.exports = {
   userDetails,
-  courseDetails,
-  messageDetails
+  courseDetails
 };

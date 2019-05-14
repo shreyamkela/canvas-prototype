@@ -20,9 +20,6 @@ module.exports = function(passport) {
           if (res) {
             var user = res;
             delete user.password;
-            callback(null, user);
-          } else {
-            callback(err, false);
           }
         }
       );
