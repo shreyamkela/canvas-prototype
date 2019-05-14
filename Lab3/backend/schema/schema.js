@@ -255,7 +255,7 @@ const RootQuery = new GraphQLObjectType({
       }
     },
     search: {
-      type: searchResult,
+      type: SearchResult,
       args: {
         searchText: { type: GraphQLString },
         startDate: { type: GraphQLString },
