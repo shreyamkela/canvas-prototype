@@ -71,12 +71,16 @@ class Enroll extends Component {
       message.error("Cannot enroll as the class capacity is full!");
     } else {
       const { loginRequest } = this.props;
-      const data = { courseId: this.state.courses[key].courseId, email: loginRequest.email };
+      const data = { id: this.state.courses[key].courseId, email: loginRequest.email };
       try {
-        let response = await API.post("enroll", { data });
-        message.success(response.data);
-        // Change the count of the capacity used - NOTE Here we are not fetching the courses data again, after the update. We are updating the frontend without requesting any new data from the backend as we know that the database would have been already updated so we can change the count.
-        // If the database would not have been updated then then this setState wont run as there must be an error at backend which will be caught by the catch below
+        this.props
+          .enrollCourse({
+            variables: data
+          })
+          .then(res => {
+            console.log("enroll course " + JSON.stringify(res));
+            this.setState({ courses: res.data }); // FIXME Here we have stored the whole courses data into the redux store. This is not ideal. We dont use redux store for storing stuff that can change on the serverside. We only use redux store to pass props.
+          });
         let newCourses = this.state.courses;
         newCourses[key].capacityUsed++;
         this.setState({ courses: newCourses });

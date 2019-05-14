@@ -37,6 +37,13 @@ class Create extends Component {
         email: loginRequest.email
       };
       dispatch(postCreationData(data));
+      this.props
+        .createCourse({
+          variables: data
+        })
+        .then(res => {
+          console.log("created course " + JSON.stringify(res));
+        });
       // FIXME Redirect to dashboard when a course is successfully created
     }
     this.setState({ validated: true });
@@ -128,4 +135,4 @@ function mapStateToProps(state) {
   return { createRequest, loginRequest };
 }
 
-export default connect(mapStateToProps)(Create);
+export default connect(mapStateToProps)(withApollo(Create));
