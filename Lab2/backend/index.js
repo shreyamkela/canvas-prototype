@@ -9,7 +9,7 @@ const app = express();
 
 //Passport authentication
 const passport = require("passport");
-const origin = "http://localhost:3000";
+const origin = "https://limitless-plateau-82992.herokuapp.com";
 
 // FIXME Use the structure of webstorm repo for backend
 
