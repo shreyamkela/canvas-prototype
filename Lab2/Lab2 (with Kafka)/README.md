@@ -1,0 +1,1 @@
+Kafka integration might not be fully operational.

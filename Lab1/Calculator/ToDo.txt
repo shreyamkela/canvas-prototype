@@ -1,0 +1,20 @@
+backend
+---------
+equal to runs only when the last is a number
+if we press an operator just after pressing an operator, the previous operator should be overwritten
+full query when submitted is being processed, rather we should process it on the fly with seperate routes for add button, substract, etc with onchange, for eg if 4+5 type then send to add route and find result 9 without even pressing =, then if -5 typed after then 9-5 find result 4 and then if = pressed, print 4. Send spaces betwwen entities for splitting. Backspace button? And what if user clear a number or two? How to handle on the fly
+divide by 0 and other math errors
+Show rounded off to a few decimals?
+If output = nan/infinity - invalid input or math error
+restful
+express use all get post
+check for decimal and double
+views ejs/hbs?
+session management?
+
+frontend
+--------
+attractive
+bootstrap
+session management?
+login?

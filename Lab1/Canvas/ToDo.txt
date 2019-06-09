@@ -1,0 +1,27 @@
+At react app start, the page shows student/faculty login message from past logins
+
+Frontend:
+---------
+
+fix logout - sidebar remains sometimes
+
+Enroll page when we havesearched courses and move to some other filter-searchby then searched courses should vanish, Term and name search not working correctly
+
+/getcourses at backend - inside for loop you use res.send but it closes the connection and so more than 1 course cannot be shown
+
+
+new user - check email @, check password length, student faculty button better, toggle personaErrorMessage and persona back to "" for multiple new user submits, new user email already exists?
+
+route protection - no routing without login, no routing to faculty page if student and vice versa, session management, on page refresh session/page should be same - redux persist/localstorage, pressing back on browser should take you back without any loss - history,
+
+ENROLLING COURSES: check student already enrolled in enrolling course, check waitlist, check capacity
+
+make profile and courses drawer shift right
+
+can we remove redirect state value in login.js
+
+if route is typed in url and then tried to be visited, still home will open as the routing depends on state changes of dashboardVisisble and so on
+
+
+Backend:
+--------
