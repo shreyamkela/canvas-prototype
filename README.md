@@ -19,7 +19,7 @@ The project was developed in 3 incremental iterations, having increased function
 </p>
  
  
-### System Architechture
+### System Architecture
 - Lab 1
 
 <p align="middle">
